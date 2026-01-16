@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Search, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Zap, RotateCcw, PenLine } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandResearchForm } from "@/components/BrandResearchForm";
 import { BrandResults } from "@/components/BrandResults";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<BrandResearchResult | null>(null);
 
@@ -43,6 +46,14 @@ const Index = () => {
     }
   };
 
+  const handleReset = () => {
+    setResult(null);
+  };
+
+  const handleEditInBuilder = () => {
+    navigate("/brand-builder", { state: { prefillData: result } });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -69,6 +80,18 @@ const Index = () => {
             <div className="mt-8 max-w-2xl mx-auto">
               <BrandResearchForm onSubmit={handleAnalyze} isLoading={isLoading} />
             </div>
+
+            {/* Navigation to Brand Builder */}
+            <div className="pt-4">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/brand-builder")}
+                className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary/20"
+              >
+                <PenLine className="mr-2 h-4 w-4" />
+                Or define your brand manually
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -77,7 +100,21 @@ const Index = () => {
       <div className="container max-w-4xl py-12">
         {isLoading && <LoadingSkeleton />}
         
-        {!isLoading && result && <BrandResults data={result} />}
+        {!isLoading && result && (
+          <div className="space-y-6">
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Button variant="outline" onClick={handleReset}>
+                <RotateCcw className="mr-2 h-4 w-4" />
+                New Research
+              </Button>
+              <Button onClick={handleEditInBuilder}>
+                <PenLine className="mr-2 h-4 w-4" />
+                Edit in Brand Builder
+              </Button>
+            </div>
+            <BrandResults data={result} />
+          </div>
+        )}
         
         {!isLoading && !result && (
           <div className="text-center py-16">
