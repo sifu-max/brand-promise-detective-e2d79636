@@ -1,0 +1,4 @@
+project_id = "bvmvyahjvviumrmrgmbs"
+
+[functions.brand-research]
+verify_jwt = false
