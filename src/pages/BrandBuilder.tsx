@@ -96,6 +96,110 @@ const BrandBuilder = () => {
     toast.success("Brand profile exported!");
   };
 
+  const handleExportDesignBrief = () => {
+    const cleanedData = {
+      ...formData,
+      core_client_pain_points: formData.core_client_pain_points.filter((p) => p.trim() !== ""),
+    };
+
+    const designBrief = `# Website Design Brief
+
+## Brand Overview
+**Business Tagline:** ${cleanedData.business_tagline}
+**Primary Call-to-Action:** ${cleanedData.primary_call_to_action}
+**Communication Tone:** ${cleanedData.communication_tone}
+**Website:** ${cleanedData.source_url}
+
+## Core Service/Solution
+${cleanedData.core_service_solution}
+
+## Ideal Client Profile
+${cleanedData.ideal_client_niche}
+
+## Client Pain Points (Address These in Copy)
+${cleanedData.core_client_pain_points.map((pain, i) => `${i + 1}. ${pain}`).join('\n')}
+
+## Pricing & Investment
+**Core Offer Investment:** ${cleanedData.core_offer_investment}
+**Client Budget & Timeline:** ${cleanedData.clients_budget_timeline}
+**Offer Structure:** ${cleanedData.offer_structure}
+
+${cleanedData.inference_notes ? `## Additional Notes\n${cleanedData.inference_notes}` : ''}
+
+---
+
+## Design Instructions for Lovable
+
+Create a modern, professional website for this brand with the following pages and features:
+
+### Pages to Include:
+1. **Home Page** - Hero section with tagline, CTA button, pain points addressed, service overview
+2. **Services/Solutions Page** - Detailed breakdown of core service offering
+3. **About Page** - Brand story and team information
+4. **Pricing Page** - ${cleanedData.offer_structure === 'Tiered 3+' ? 'Three-tier pricing table' : cleanedData.offer_structure === 'Basic and Premium options' ? 'Two-tier pricing comparison' : 'Single clear pricing section'}
+5. **Contact Page** - Contact form with CTA: "${cleanedData.primary_call_to_action}"
+
+### Design Guidelines:
+- **Tone:** ${cleanedData.communication_tone} - ${cleanedData.communication_tone === 'Professional' ? 'Use clean lines, corporate colors, trustworthy imagery' : cleanedData.communication_tone === 'Casual/Friendly' ? 'Use warm colors, approachable imagery, conversational copy' : 'Use bold colors, strong CTAs, urgency-driven design'}
+- **Hero Section:** Feature the tagline prominently with a clear CTA button
+- **Pain Points Section:** Address each pain point with solution-focused messaging
+- **Social Proof:** Include testimonial placeholders and trust badges
+- **Mobile Responsive:** Ensure all pages work perfectly on mobile devices
+
+### Copy Direction:
+- Speak directly to: ${cleanedData.ideal_client_niche}
+- Primary CTA everywhere: "${cleanedData.primary_call_to_action}"
+- Address pain points with empathy, then present solutions
+
+---
+
+## Raw JSON Data
+\`\`\`json
+${JSON.stringify(cleanedData, null, 2)}
+\`\`\`
+`;
+
+    const blob = new Blob([designBrief], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "website-design-brief.md";
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Design brief exported! Use this with Lovable to generate your website.");
+  };
+
+  const handleCopyDesignBrief = async () => {
+    const cleanedData = {
+      ...formData,
+      core_client_pain_points: formData.core_client_pain_points.filter((p) => p.trim() !== ""),
+    };
+
+    const designBrief = `Create a professional website for my brand:
+
+**Tagline:** ${cleanedData.business_tagline}
+**CTA:** ${cleanedData.primary_call_to_action}
+**Tone:** ${cleanedData.communication_tone}
+
+**What We Do:** ${cleanedData.core_service_solution}
+
+**Ideal Client:** ${cleanedData.ideal_client_niche}
+
+**Pain Points to Address:**
+${cleanedData.core_client_pain_points.map((pain, i) => `- ${pain}`).join('\n')}
+
+**Pricing:** ${cleanedData.core_offer_investment} (${cleanedData.offer_structure})
+
+Please create a landing page with: hero section featuring the tagline and CTA, pain points section, services overview, pricing section, and contact form. Use a ${cleanedData.communication_tone.toLowerCase()} design style.`;
+
+    try {
+      await navigator.clipboard.writeText(designBrief);
+      toast.success("Design prompt copied! Paste this into Lovable to start building.");
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -322,14 +426,32 @@ const BrandBuilder = () => {
           </Card>
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button onClick={handleSave} size="lg" className="flex-1">
-              <Save className="mr-2 h-4 w-4" />
-              Save & Copy JSON
-            </Button>
-            <Button onClick={handleExport} variant="outline" size="lg" className="flex-1">
-              Export JSON File
-            </Button>
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button onClick={handleSave} size="lg" className="flex-1">
+                <Save className="mr-2 h-4 w-4" />
+                Save & Copy JSON
+              </Button>
+              <Button onClick={handleExport} variant="outline" size="lg" className="flex-1">
+                Export JSON File
+              </Button>
+            </div>
+            
+            {/* Design Brief Export Section */}
+            <div className="border-t pt-4">
+              <p className="text-sm text-muted-foreground mb-3 text-center">
+                Ready to build your website? Export as a design brief for Lovable:
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button onClick={handleCopyDesignBrief} variant="secondary" size="lg" className="flex-1">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Copy Prompt for Lovable
+                </Button>
+                <Button onClick={handleExportDesignBrief} variant="secondary" size="lg" className="flex-1">
+                  Download Full Design Brief
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
