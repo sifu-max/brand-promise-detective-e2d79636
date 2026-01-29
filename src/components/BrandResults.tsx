@@ -17,6 +17,7 @@ import {
 import { useState } from "react";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandResultCard } from "./BrandResultCard";
+import { BrandDNADisplay } from "./BrandDNADisplay";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -137,8 +138,13 @@ export function BrandResults({ data }: BrandResultsProps) {
         </BrandResultCard>
       </div>
 
+      {/* Brand DNA */}
+      {data.brand_dna && (
+        <BrandDNADisplay brandDna={data.brand_dna} delay={400} />
+      )}
+
       {/* Ideal Client */}
-      <BrandResultCard icon={<Users className="h-4 w-4" />} title="Ideal Client Niche" delay={400}>
+      <BrandResultCard icon={<Users className="h-4 w-4" />} title="Ideal Client Niche" delay={450}>
         <p className="text-muted-foreground">{data.ideal_client_niche}</p>
       </BrandResultCard>
 
