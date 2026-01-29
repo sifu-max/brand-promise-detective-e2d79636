@@ -13,13 +13,22 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BrandResearchResult } from "@/types/brand";
+import { BrandResearchResult, BrandDNA } from "@/types/brand";
+import { BrandDNAInputs } from "@/components/BrandDNAInputs";
 import { toast } from "sonner";
 
 const BrandBuilder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const prefillData = location.state?.prefillData as BrandResearchResult | undefined;
+
+  const defaultBrandDNA: BrandDNA = {
+    primary_color: "",
+    secondary_color: "",
+    accent_color: "",
+    heading_font: "",
+    body_font: "",
+  };
 
   const [formData, setFormData] = useState<BrandResearchResult>({
     business_tagline: "",
@@ -33,7 +42,12 @@ const BrandBuilder = () => {
     offer_structure: "Single Price Offer",
     source_url: "",
     inference_notes: "",
+    brand_dna: defaultBrandDNA,
   });
+
+  const updateBrandDNA = (brandDna: BrandDNA) => {
+    setFormData((prev) => ({ ...prev, brand_dna: brandDna }));
+  };
 
   useEffect(() => {
     if (prefillData) {
@@ -126,6 +140,16 @@ ${cleanedData.core_client_pain_points.map((pain, i) => `${i + 1}. ${pain}`).join
 
 ${cleanedData.inference_notes ? `## Additional Notes\n${cleanedData.inference_notes}` : ''}
 
+${cleanedData.brand_dna && (cleanedData.brand_dna.primary_color || cleanedData.brand_dna.heading_font) ? `## Brand DNA (Visual Identity)
+**Colors:**
+- Primary: ${cleanedData.brand_dna.primary_color || 'Not specified'}
+- Secondary: ${cleanedData.brand_dna.secondary_color || 'Not specified'}
+- Accent: ${cleanedData.brand_dna.accent_color || 'Not specified'}
+
+**Typography:**
+- Heading Font: ${cleanedData.brand_dna.heading_font || 'Not specified'}
+- Body Font: ${cleanedData.brand_dna.body_font || 'Not specified'}
+` : ''}
 ---
 
 ## Design Instructions for Lovable
@@ -141,6 +165,8 @@ Create a modern, professional website for this brand with the following pages an
 
 ### Design Guidelines:
 - **Tone:** ${cleanedData.communication_tone} - ${cleanedData.communication_tone === 'Professional' ? 'Use clean lines, corporate colors, trustworthy imagery' : cleanedData.communication_tone === 'Casual/Friendly' ? 'Use warm colors, approachable imagery, conversational copy' : 'Use bold colors, strong CTAs, urgency-driven design'}
+${cleanedData.brand_dna?.primary_color ? `- **Brand Colors:** Use ${cleanedData.brand_dna.primary_color} as primary, ${cleanedData.brand_dna.secondary_color || 'a complementary color'} as secondary, and ${cleanedData.brand_dna.accent_color || 'a bright accent'} for CTAs and highlights` : ''}
+${cleanedData.brand_dna?.heading_font ? `- **Typography:** Use ${cleanedData.brand_dna.heading_font} for headings and ${cleanedData.brand_dna.body_font || 'a clean sans-serif'} for body text` : ''}
 - **Hero Section:** Feature the tagline prominently with a clear CTA button
 - **Pain Points Section:** Address each pain point with solution-focused messaging
 - **Social Proof:** Include testimonial placeholders and trust badges
@@ -175,6 +201,8 @@ ${JSON.stringify(cleanedData, null, 2)}
       core_client_pain_points: formData.core_client_pain_points.filter((p) => p.trim() !== ""),
     };
 
+    const hasBrandDNA = cleanedData.brand_dna && (cleanedData.brand_dna.primary_color || cleanedData.brand_dna.heading_font);
+
     const designBrief = `Create a professional website for my brand:
 
 **Tagline:** ${cleanedData.business_tagline}
@@ -189,8 +217,11 @@ ${JSON.stringify(cleanedData, null, 2)}
 ${cleanedData.core_client_pain_points.map((pain, i) => `- ${pain}`).join('\n')}
 
 **Pricing:** ${cleanedData.core_offer_investment} (${cleanedData.offer_structure})
+${hasBrandDNA ? `
+**Brand Colors:** Primary: ${cleanedData.brand_dna!.primary_color || 'not specified'}, Secondary: ${cleanedData.brand_dna!.secondary_color || 'not specified'}, Accent: ${cleanedData.brand_dna!.accent_color || 'not specified'}
+**Fonts:** Headings: ${cleanedData.brand_dna!.heading_font || 'not specified'}, Body: ${cleanedData.brand_dna!.body_font || 'not specified'}` : ''}
 
-Please create a landing page with: hero section featuring the tagline and CTA, pain points section, services overview, pricing section, and contact form. Use a ${cleanedData.communication_tone.toLowerCase()} design style.`;
+Please create a landing page with: hero section featuring the tagline and CTA, pain points section, services overview, pricing section, and contact form. Use a ${cleanedData.communication_tone.toLowerCase()} design style${hasBrandDNA ? ' with the specified brand colors and fonts' : ''}.`;
 
     try {
       await navigator.clipboard.writeText(designBrief);
@@ -406,6 +437,20 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   </div>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Brand DNA */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Brand DNA</CardTitle>
+              <CardDescription>Visual identity for website generation (optional)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <BrandDNAInputs 
+                brandDna={formData.brand_dna || { primary_color: "", secondary_color: "", accent_color: "", heading_font: "", body_font: "" }} 
+                onChange={updateBrandDNA} 
+              />
             </CardContent>
           </Card>
 

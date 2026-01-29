@@ -1,3 +1,11 @@
+export interface BrandDNA {
+  primary_color: string;
+  secondary_color: string;
+  accent_color: string;
+  heading_font: string;
+  body_font: string;
+}
+
 export interface BrandResearchResult {
   business_tagline: string;
   primary_call_to_action: string;
@@ -10,4 +18,5 @@ export interface BrandResearchResult {
   offer_structure: "Basic and Premium options" | "Single Price Offer" | "Tiered 3+";
   source_url: string;
   inference_notes: string;
+  brand_dna?: BrandDNA;
 }
