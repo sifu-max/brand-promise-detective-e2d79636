@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Zap, RotateCcw, PenLine } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandResearchResult } from "@/types/brand";
-import { BrandResearchForm } from "@/components/BrandResearchForm";
+import { BrandResearchForm, BrandResearchFormRef } from "@/components/BrandResearchForm";
 import { BrandResults } from "@/components/BrandResults";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<BrandResearchResult | null>(null);
+  const formRef = useRef<BrandResearchFormRef>(null);
 
   const handleAnalyze = async (url: string) => {
     setIsLoading(true);
@@ -49,6 +50,7 @@ const Index = () => {
 
   const handleReset = () => {
     setResult(null);
+    formRef.current?.clearAndFocus();
   };
 
   const handleEditInBuilder = () => {
@@ -79,7 +81,7 @@ const Index = () => {
 
             {/* Search Form */}
             <div className="mt-8 max-w-2xl mx-auto">
-              <BrandResearchForm onSubmit={handleAnalyze} isLoading={isLoading} />
+              <BrandResearchForm ref={formRef} onSubmit={handleAnalyze} isLoading={isLoading} />
             </div>
 
             {/* Navigation to Brand Builder */}
