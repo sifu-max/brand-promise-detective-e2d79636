@@ -98,30 +98,45 @@ serve(async (req) => {
 
     console.log("Fetching website content for URL:", url);
 
-    // Actually fetch the website HTML content
-    let htmlContent: string;
+    // Use Jina AI Reader to get rendered content (handles JavaScript SPAs)
+    let pageContent: string;
     try {
-      const websiteResponse = await fetch(url, {
+      const jinaUrl = `https://r.jina.ai/${url}`;
+      const jinaResponse = await fetch(jinaUrl, {
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; BrandResearchBot/1.0)",
-          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept": "text/plain",
         },
       });
       
-      if (!websiteResponse.ok) {
-        return new Response(
-          JSON.stringify({ error: `Failed to fetch website: ${websiteResponse.status} ${websiteResponse.statusText}` }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+      if (!jinaResponse.ok) {
+        // Fallback to direct fetch if Jina fails
+        console.log("Jina Reader failed, falling back to direct fetch");
+        const directResponse = await fetch(url, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (compatible; BrandResearchBot/1.0)",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          },
+        });
+        
+        if (!directResponse.ok) {
+          return new Response(
+            JSON.stringify({ error: `Failed to fetch website: ${directResponse.status} ${directResponse.statusText}` }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        
+        pageContent = await directResponse.text();
+      } else {
+        pageContent = await jinaResponse.text();
+        console.log("Successfully fetched rendered content via Jina Reader");
       }
       
-      htmlContent = await websiteResponse.text();
-      console.log("Fetched HTML content, length:", htmlContent.length);
+      console.log("Fetched content, length:", pageContent.length);
       
-      // Limit HTML size to avoid token limits (keep first 50KB)
-      if (htmlContent.length > 50000) {
-        htmlContent = htmlContent.substring(0, 50000);
-        console.log("Truncated HTML to 50KB");
+      // Limit content size to avoid token limits (keep first 50KB)
+      if (pageContent.length > 50000) {
+        pageContent = pageContent.substring(0, 50000);
+        console.log("Truncated content to 50KB");
       }
     } catch (fetchError) {
       console.error("Failed to fetch website:", fetchError);
@@ -144,7 +159,7 @@ serve(async (req) => {
         temperature: 0, // Set to 0 for consistent, deterministic responses
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Extract brand information from this website HTML. The source URL is: ${url}\n\nHTML Content:\n${htmlContent}` },
+          { role: "user", content: `Extract brand information from this website. The source URL is: ${url}\n\nPage Content:\n${pageContent}` },
         ],
       }),
     });
