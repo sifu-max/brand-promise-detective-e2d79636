@@ -59,10 +59,17 @@ export function BrandResults({ data }: BrandResultsProps) {
     "Urgent/Direct": "bg-orange-500/10 text-orange-600 border-orange-500/20",
   };
 
-  const structureColors = {
+  const structureColors: Record<string, string> = {
     "Basic and Premium options": "bg-purple-500/10 text-purple-600 border-purple-500/20",
     "Single Price Offer": "bg-teal-500/10 text-teal-600 border-teal-500/20",
     "Tiered 3+": "bg-indigo-500/10 text-indigo-600 border-indigo-500/20",
+    "Not determinable from site": "bg-gray-500/10 text-gray-600 border-gray-500/20",
+  };
+
+  const confidenceColors = {
+    High: "bg-green-500/10 text-green-600 border-green-500/20",
+    Medium: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+    Low: "bg-red-500/10 text-red-600 border-red-500/20",
   };
 
   return (
@@ -161,11 +168,16 @@ export function BrandResults({ data }: BrandResultsProps) {
           </a>
         </BrandResultCard>
 
-        {data.inference_notes && (
-          <BrandResultCard icon={<FileText className="h-4 w-4" />} title="Inference Notes" delay={500}>
-            <p className="text-sm text-muted-foreground italic">{data.inference_notes}</p>
-          </BrandResultCard>
-        )}
+        <BrandResultCard icon={<FileText className="h-4 w-4" />} title="Extraction Confidence" delay={500}>
+          <Badge className={`${confidenceColors[data.extraction_confidence]} border text-sm font-medium`}>
+            {data.extraction_confidence}
+          </Badge>
+          <p className="text-xs text-muted-foreground mt-2">
+            {data.extraction_confidence === "High" ? "Most data was found directly on the site" : 
+             data.extraction_confidence === "Medium" ? "Some fields could not be found on the site" :
+             "Limited data found - many fields marked as not found"}
+          </p>
+        </BrandResultCard>
       </div>
     </div>
   );
