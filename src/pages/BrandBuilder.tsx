@@ -41,7 +41,7 @@ const BrandBuilder = () => {
     ideal_client_niche: "",
     offer_structure: "Single Price Offer",
     source_url: "",
-    inference_notes: "",
+    extraction_confidence: "High",
     brand_dna: defaultBrandDNA,
   });
 
@@ -138,7 +138,7 @@ ${cleanedData.core_client_pain_points.map((pain, i) => `${i + 1}. ${pain}`).join
 **Client Budget & Timeline:** ${cleanedData.clients_budget_timeline}
 **Offer Structure:** ${cleanedData.offer_structure}
 
-${cleanedData.inference_notes ? `## Additional Notes\n${cleanedData.inference_notes}` : ''}
+
 
 ${cleanedData.brand_dna && (cleanedData.brand_dna.primary_color || cleanedData.brand_dna.heading_font) ? `## Brand DNA (Visual Identity)
 **Colors:**
@@ -454,21 +454,6 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
             </CardContent>
           </Card>
 
-          {/* Notes */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Additional Notes</CardTitle>
-              <CardDescription>Any context or assumptions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                value={formData.inference_notes}
-                onChange={(e) => updateField("inference_notes", e.target.value)}
-                placeholder="Any additional context, assumptions, or notes about this brand profile..."
-                className="min-h-[100px] text-base"
-              />
-            </CardContent>
-          </Card>
 
           {/* Actions */}
           <div className="space-y-4">

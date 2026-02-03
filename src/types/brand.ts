@@ -15,8 +15,8 @@ export interface BrandResearchResult {
   clients_budget_timeline: string;
   core_offer_investment: string;
   ideal_client_niche: string;
-  offer_structure: "Basic and Premium options" | "Single Price Offer" | "Tiered 3+";
+  offer_structure: "Basic and Premium options" | "Single Price Offer" | "Tiered 3+" | "Not determinable from site";
   source_url: string;
-  inference_notes: string;
+  extraction_confidence: "High" | "Medium" | "Low";
   brand_dna?: BrandDNA;
 }
