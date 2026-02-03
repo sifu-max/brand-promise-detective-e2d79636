@@ -5,16 +5,17 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `You are a Brand Research Agent that EXTRACTS data from websites. Your job is to report what you SEE, not what you think.
+const SYSTEM_PROMPT = `You are a Brand Research Agent. You will receive HTML content from a website and extract structured brand information.
 
 CRITICAL RULES:
-1. ONLY report text, colors, fonts, and data that are EXPLICITLY visible on the website
-2. DO NOT infer, guess, or make up pricing, timelines, budgets, or offer structures
-3. If information is not on the page, use "Not found on site" - NEVER fabricate data
-4. Quote exact text from the site whenever possible
-5. For colors/fonts, only report what you can actually detect from the page
+1. ONLY report text, colors, fonts, and data that are EXPLICITLY visible in the HTML content provided
+2. DO NOT infer, guess, or make up ANY information - especially pricing, timelines, budgets, or offer structures
+3. If information is not in the HTML, use "Not found on site" - NEVER fabricate data
+4. Quote exact text from the HTML whenever possible
+5. For colors/fonts, extract them from inline styles, CSS classes, or style tags if present
+6. Be consistent - the same input should always produce the same output
 
-Given a business website URL, extract ONLY what is explicitly present.
+Given HTML content from a business website, extract ONLY what is explicitly present in the markup.
 
 You must respond with a SINGLE valid JSON object matching this exact schema and nothing else (no markdown, no explanation, no extra text):
 
@@ -85,7 +86,42 @@ serve(async (req) => {
       );
     }
 
-    console.log("Analyzing brand for URL:", url);
+    console.log("Fetching website content for URL:", url);
+
+    // Actually fetch the website HTML content
+    let htmlContent: string;
+    try {
+      const websiteResponse = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0 (compatible; BrandResearchBot/1.0)",
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        },
+      });
+      
+      if (!websiteResponse.ok) {
+        return new Response(
+          JSON.stringify({ error: `Failed to fetch website: ${websiteResponse.status} ${websiteResponse.statusText}` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
+      htmlContent = await websiteResponse.text();
+      console.log("Fetched HTML content, length:", htmlContent.length);
+      
+      // Limit HTML size to avoid token limits (keep first 50KB)
+      if (htmlContent.length > 50000) {
+        htmlContent = htmlContent.substring(0, 50000);
+        console.log("Truncated HTML to 50KB");
+      }
+    } catch (fetchError) {
+      console.error("Failed to fetch website:", fetchError);
+      return new Response(
+        JSON.stringify({ error: `Cannot access website: ${fetchError instanceof Error ? fetchError.message : "Unknown error"}` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log("Analyzing brand with AI for URL:", url);
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -95,9 +131,10 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-pro",
+        temperature: 0, // Set to 0 for consistent, deterministic responses
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Analyze this business website and extract brand information: ${url}` },
+          { role: "user", content: `Extract brand information from this website HTML. The source URL is: ${url}\n\nHTML Content:\n${htmlContent}` },
         ],
       }),
     });
