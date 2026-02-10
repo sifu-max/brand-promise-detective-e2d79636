@@ -1,9 +1,36 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+function validateUrl(urlString: string): { valid: boolean; error?: string } {
+  try {
+    const url = new URL(urlString);
+    if (!["http:", "https:"].includes(url.protocol)) {
+      return { valid: false, error: "Only HTTP and HTTPS URLs are supported" };
+    }
+    const hostname = url.hostname.toLowerCase();
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "0.0.0.0" ||
+      hostname.startsWith("10.") ||
+      hostname.startsWith("192.168.") ||
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(hostname) ||
+      hostname === "169.254.169.254" ||
+      hostname.endsWith(".local") ||
+      hostname.endsWith(".internal")
+    ) {
+      return { valid: false, error: "Private and internal URLs are not allowed" };
+    }
+    return { valid: true };
+  } catch {
+    return { valid: false, error: "Invalid URL format" };
+  }
+}
 
 const SYSTEM_PROMPT = `You are a Brand Research Agent. You will receive HTML content from a website and extract structured brand information.
 
@@ -78,11 +105,48 @@ serve(async (req) => {
   }
 
   try {
+    // --- Authentication check ---
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log("Authenticated user:", userId);
+
+    // --- Parse and validate input ---
     const { url } = await req.json();
 
-    if (!url) {
+    if (!url || typeof url !== "string") {
       return new Response(
         JSON.stringify({ error: "URL is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // --- URL validation (SSRF protection) ---
+    const urlValidation = validateUrl(url);
+    if (!urlValidation.valid) {
+      return new Response(
+        JSON.stringify({ error: urlValidation.error }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -120,7 +184,7 @@ serve(async (req) => {
         
         if (!directResponse.ok) {
           return new Response(
-            JSON.stringify({ error: `Failed to fetch website: ${directResponse.status} ${directResponse.statusText}` }),
+            JSON.stringify({ error: "Unable to access the provided website. Please verify the URL is publicly accessible." }),
             { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
@@ -141,7 +205,7 @@ serve(async (req) => {
     } catch (fetchError) {
       console.error("Failed to fetch website:", fetchError);
       return new Response(
-        JSON.stringify({ error: `Cannot access website: ${fetchError instanceof Error ? fetchError.message : "Unknown error"}` }),
+        JSON.stringify({ error: "Unable to access the provided website. Please verify the URL is publicly accessible." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -156,7 +220,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-pro",
-        temperature: 0, // Set to 0 for consistent, deterministic responses
+        temperature: 0,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: `Extract brand information from this website. The source URL is: ${url}\n\nPage Content:\n${pageContent}` },
@@ -180,8 +244,8 @@ serve(async (req) => {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
       return new Response(
-        JSON.stringify({ error: "Failed to analyze website" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "Analysis service temporarily unavailable. Please try again later." }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
@@ -199,7 +263,6 @@ serve(async (req) => {
     // Parse the JSON response
     let brandData;
     try {
-      // Clean up the response in case there's any markdown formatting
       const cleanedContent = content
         .replace(/```json\n?/g, "")
         .replace(/```\n?/g, "")
@@ -221,7 +284,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Brand research error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "An unexpected error occurred. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
