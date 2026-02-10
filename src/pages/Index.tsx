@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Search, Zap, RotateCcw, PenLine } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandResearchResult } from "@/types/brand";
+import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
 import { BrandResearchForm, BrandResearchFormRef } from "@/components/BrandResearchForm";
 import { BrandResults } from "@/components/BrandResults";
+import { BrandEffectivenessDisplay } from "@/components/BrandEffectivenessDisplay";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -13,12 +15,15 @@ import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 const Index = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isScoring, setIsScoring] = useState(false);
   const [result, setResult] = useState<BrandResearchResult | null>(null);
+  const [effectiveness, setEffectiveness] = useState<BrandEffectivenessResult | null>(null);
   const formRef = useRef<BrandResearchFormRef>(null);
 
   const handleAnalyze = async (url: string) => {
     setIsLoading(true);
     setResult(null);
+    setEffectiveness(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("brand-research", {
@@ -38,7 +43,10 @@ const Index = () => {
 
       if (data?.success && data?.data) {
         setResult(data.data);
-        toast.success("Brand analysis complete!");
+        toast.success("Brand analysis complete! Scoring effectiveness...");
+        
+        // Automatically trigger effectiveness scoring
+        fetchEffectiveness(data.data);
       }
     } catch (err) {
       console.error("Analysis error:", err);
@@ -48,8 +56,33 @@ const Index = () => {
     }
   };
 
+  const fetchEffectiveness = async (brandData: BrandResearchResult) => {
+    setIsScoring(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("brand-effectiveness", {
+        body: { brandData },
+      });
+
+      if (error) {
+        console.error("Effectiveness error:", error);
+        toast.error("Could not score brand effectiveness");
+        return;
+      }
+
+      if (data?.success && data?.data) {
+        setEffectiveness(data.data);
+        toast.success("Brand effectiveness scored!");
+      }
+    } catch (err) {
+      console.error("Effectiveness error:", err);
+    } finally {
+      setIsScoring(false);
+    }
+  };
+
   const handleReset = () => {
     setResult(null);
+    setEffectiveness(null);
     formRef.current?.clearAndFocus();
   };
 
@@ -116,6 +149,17 @@ const Index = () => {
               </Button>
             </div>
             <BrandResults data={result} />
+
+            {/* Effectiveness Score */}
+            {isScoring && (
+              <div className="space-y-4 animate-pulse">
+                <div className="h-8 w-64 bg-muted rounded mx-auto" />
+                <div className="h-48 bg-muted rounded-xl" />
+              </div>
+            )}
+            {!isScoring && effectiveness && (
+              <BrandEffectivenessDisplay data={effectiveness} />
+            )}
           </div>
         )}
         
