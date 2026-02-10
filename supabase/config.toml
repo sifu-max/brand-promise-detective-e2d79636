@@ -2,3 +2,6 @@ project_id = "bvmvyahjvviumrmrgmbs"
 
 [functions.brand-research]
 verify_jwt = false
+
+[functions.brand-effectiveness]
+verify_jwt = false
