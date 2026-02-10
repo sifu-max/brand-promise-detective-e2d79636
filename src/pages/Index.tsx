@@ -32,7 +32,11 @@ const Index = () => {
 
       if (error) {
         console.error("Edge function error:", error);
-        toast.error(error.message || "Failed to analyze website");
+        // Check if the error contains a specific message from the edge function
+        const errorMessage = typeof error === 'object' && 'message' in error 
+          ? error.message 
+          : String(error);
+        toast.error(errorMessage || "Failed to analyze website");
         return;
       }
 
