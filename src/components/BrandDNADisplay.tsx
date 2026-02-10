@@ -1,6 +1,7 @@
 import { Palette, Type } from "lucide-react";
 import { BrandDNA } from "@/types/brand";
 import { BrandResultCard } from "./BrandResultCard";
+import { sanitizeColor, sanitizeFontFamily } from "@/lib/sanitize";
 
 interface BrandDNADisplayProps {
   brandDna: BrandDNA;
@@ -8,13 +9,11 @@ interface BrandDNADisplayProps {
 }
 
 function ColorSwatch({ color, label }: { color: string; label: string }) {
-  const isValidHex = /^#[0-9A-Fa-f]{6}$/.test(color);
-  
   return (
     <div className="flex items-center gap-3">
       <div 
         className="w-10 h-10 rounded-lg border border-border shadow-sm flex-shrink-0"
-        style={{ backgroundColor: isValidHex ? color : '#cccccc' }}
+        style={{ backgroundColor: sanitizeColor(color) }}
       />
       <div>
         <p className="text-sm font-medium text-foreground">{label}</p>
@@ -43,7 +42,7 @@ export function BrandDNADisplay({ brandDna, delay = 0 }: BrandDNADisplayProps) {
             <p className="text-sm text-muted-foreground mb-1">Heading Font</p>
             <p 
               className="text-lg font-semibold text-foreground"
-              style={{ fontFamily: brandDna.heading_font || 'inherit' }}
+              style={{ fontFamily: sanitizeFontFamily(brandDna.heading_font || '') }}
             >
               {brandDna.heading_font || 'Not detected'}
             </p>
@@ -52,7 +51,7 @@ export function BrandDNADisplay({ brandDna, delay = 0 }: BrandDNADisplayProps) {
             <p className="text-sm text-muted-foreground mb-1">Body Font</p>
             <p 
               className="text-base text-foreground"
-              style={{ fontFamily: brandDna.body_font || 'inherit' }}
+              style={{ fontFamily: sanitizeFontFamily(brandDna.body_font || '') }}
             >
               {brandDna.body_font || 'Not detected'}
             </p>
