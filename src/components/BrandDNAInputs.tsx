@@ -2,6 +2,7 @@ import { Palette } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BrandDNA } from "@/types/brand";
+import { sanitizeColor } from "@/lib/sanitize";
 
 interface BrandDNAInputsProps {
   brandDna: BrandDNA;
@@ -19,15 +20,13 @@ function ColorInput({
   onChange: (value: string) => void;
   placeholder: string;
 }) {
-  const isValidHex = /^#[0-9A-Fa-f]{6}$/.test(value);
-  
   return (
     <div className="space-y-2">
       <Label className="text-sm font-medium">{label}</Label>
       <div className="flex gap-2">
         <div 
           className="w-10 h-10 rounded-lg border border-border shadow-sm flex-shrink-0"
-          style={{ backgroundColor: isValidHex ? value : '#e5e5e5' }}
+          style={{ backgroundColor: sanitizeColor(value) }}
         />
         <Input
           value={value}
