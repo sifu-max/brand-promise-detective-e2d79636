@@ -61,6 +61,10 @@ export default {
           dark: "hsl(var(--teal-dark))",
           light: "hsl(var(--teal-light))",
         },
+        coral: {
+          DEFAULT: "hsl(var(--coral))",
+          light: "hsl(var(--coral-light))",
+        },
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
         sidebar: {

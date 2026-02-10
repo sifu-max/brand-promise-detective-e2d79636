@@ -104,7 +104,7 @@ const Index = () => {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
               Discover Your Brand's
               <br />
-              <span className="text-teal-light">Core Promise</span>
+              <span className="text-coral">Core Promise</span>
             </h1>
             
             <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto">
