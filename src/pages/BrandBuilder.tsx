@@ -467,21 +467,6 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
               </Button>
             </div>
             
-            {/* Design Brief Export Section */}
-            <div className="border-t pt-4">
-              <p className="text-sm text-muted-foreground mb-3 text-center">
-                Ready to build your website? Export as a design brief for Lovable:
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button onClick={handleCopyDesignBrief} variant="secondary" size="lg" className="flex-1">
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Copy Prompt for Lovable
-                </Button>
-                <Button onClick={handleExportDesignBrief} variant="secondary" size="lg" className="flex-1">
-                  Download Full Design Brief
-                </Button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
