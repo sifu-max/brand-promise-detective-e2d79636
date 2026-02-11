@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Sparkles } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, Video, Link, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,6 +44,30 @@ const BrandBuilder = () => {
     extraction_confidence: "High",
     brand_dna: defaultBrandDNA,
   });
+
+  const [mediaAssets, setMediaAssets] = useState({
+    video_url: "",
+    embed_links: [""],
+  });
+
+  const updateEmbedLink = (index: number, value: string) => {
+    const updated = [...mediaAssets.embed_links];
+    updated[index] = value;
+    setMediaAssets((prev) => ({ ...prev, embed_links: updated }));
+  };
+
+  const addEmbedLink = () => {
+    if (mediaAssets.embed_links.length < 6) {
+      setMediaAssets((prev) => ({ ...prev, embed_links: [...prev.embed_links, ""] }));
+    }
+  };
+
+  const removeEmbedLink = (index: number) => {
+    if (mediaAssets.embed_links.length > 1) {
+      const updated = mediaAssets.embed_links.filter((_, i) => i !== index);
+      setMediaAssets((prev) => ({ ...prev, embed_links: updated }));
+    }
+  };
 
   const updateBrandDNA = (brandDna: BrandDNA) => {
     setFormData((prev) => ({ ...prev, brand_dna: brandDna }));
@@ -454,6 +478,72 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
             </CardContent>
           </Card>
 
+          {/* Media & Assets */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Video className="h-5 w-5" />
+                Media & Assets
+              </CardTitle>
+              <CardDescription>Add video links or file URLs to include in your design</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="video-url" className="text-base font-medium">Video URL</Label>
+                <Input
+                  id="video-url"
+                  type="url"
+                  value={mediaAssets.video_url}
+                  onChange={(e) => setMediaAssets((prev) => ({ ...prev, video_url: e.target.value }))}
+                  placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+                  className="text-base"
+                />
+                <p className="text-sm text-muted-foreground">YouTube, Vimeo, or any embeddable video link</p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-medium flex items-center gap-2">
+                    <Link className="h-4 w-4" />
+                    Files / Embed Links
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addEmbedLink}
+                    disabled={mediaAssets.embed_links.length >= 6}
+                  >
+                    <Plus className="mr-1 h-3 w-3" />
+                    Add Link
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground -mt-2">
+                  Links to files, documents, or embeds (Google Drive, Figma, Canva, etc.)
+                </p>
+                {mediaAssets.embed_links.map((link, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={link}
+                      onChange={(e) => updateEmbedLink(index, e.target.value)}
+                      placeholder="https://drive.google.com/... or any file URL"
+                      className="text-base"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeEmbedLink(index)}
+                      disabled={mediaAssets.embed_links.length <= 1}
+                      className="shrink-0"
+                    >
+                      ×
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Actions */}
           <div className="space-y-4">
