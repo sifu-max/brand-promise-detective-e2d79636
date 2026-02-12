@@ -42,8 +42,8 @@ export const BrandResearchForm = forwardRef<BrandResearchFormRef, BrandResearchF
             type="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Enter your business website URL..."
-            className="h-16 pl-12 pr-36 text-lg bg-card border-border/50 shadow-sm focus:shadow-md transition-shadow placeholder:text-base"
+            placeholder="https://yourdomain.com/"
+            className="h-16 pl-12 pr-36 text-lg text-foreground bg-card border-border/50 shadow-sm focus:shadow-md transition-shadow placeholder:text-base"
             disabled={isLoading}
             required
           />
