@@ -183,7 +183,7 @@ const Index = () => {
                 Edit in Brand Builder
               </Button>
             </div>
-            <BrandResults data={result} />
+            <BrandResults data={result} effectiveness={effectiveness} visibility={visibility} />
 
             {/* Effectiveness Score */}
             {isScoring && (
