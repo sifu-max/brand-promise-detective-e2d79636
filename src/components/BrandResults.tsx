@@ -15,7 +15,7 @@ import {
   Download,
   Printer
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
 import { AIVisibilityResult } from "@/types/ai-visibility";
@@ -36,6 +36,18 @@ interface BrandResultsProps {
 export function BrandResults({ data, effectiveness, visibility }: BrandResultsProps) {
   const [copied, setCopied] = useState(false);
   const [serviceType, setServiceType] = useState<string>("complete");
+  const [adminMode, setAdminMode] = useState(false);
+
+  // Secret keyboard shortcut: Ctrl+Shift+A toggles admin tools
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "A") {
+        setAdminMode(prev => !prev);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   const buildExportData = () => {
     const exportData: any = {
@@ -92,21 +104,23 @@ export function BrandResults({ data, effectiveness, visibility }: BrandResultsPr
 
   return (
     <div className="space-y-6">
-      {/* Service Type Selector */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 p-4 rounded-lg bg-muted/50 border border-border">
-        <div className="flex-1 space-y-1.5">
-          <Label htmlFor="service-type" className="text-sm font-medium">Service Type</Label>
-          <Select value={serviceType} onValueChange={setServiceType}>
-            <SelectTrigger id="service-type" className="w-full sm:w-[320px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="schema_only">Add AI Schema Only — No Other Modifications</SelectItem>
-              <SelectItem value="complete">Complete Design or Redesign</SelectItem>
-            </SelectContent>
-          </Select>
+      {/* Service Type Selector - Admin only */}
+      {adminMode && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 p-4 rounded-lg bg-muted/50 border border-border">
+          <div className="flex-1 space-y-1.5">
+            <Label htmlFor="service-type" className="text-sm font-medium">Service Type</Label>
+            <Select value={serviceType} onValueChange={setServiceType}>
+              <SelectTrigger id="service-type" className="w-full sm:w-[320px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="schema_only">Add AI Schema Only — No Other Modifications</SelectItem>
+                <SelectItem value="complete">Complete Design or Redesign</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Actions Bar */}
       <div className="flex items-center justify-between">
@@ -116,14 +130,18 @@ export function BrandResults({ data, effectiveness, visibility }: BrandResultsPr
             <Printer className="h-4 w-4 mr-2" />
             Print
           </Button>
-          <Button variant="outline" size="sm" onClick={handleCopyJson}>
-            {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
-            {copied ? "Copied" : "Copy JSON"}
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleDownloadJson}>
-            <Download className="h-4 w-4 mr-2" />
-            Download
-          </Button>
+          {adminMode && (
+            <>
+              <Button variant="outline" size="sm" onClick={handleCopyJson}>
+                {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
+                {copied ? "Copied" : "Copy JSON"}
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleDownloadJson}>
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
