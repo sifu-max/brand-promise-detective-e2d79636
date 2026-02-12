@@ -16,22 +16,39 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { BrandResearchResult } from "@/types/brand";
+import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
+import { AIVisibilityResult } from "@/types/ai-visibility";
 import { BrandResultCard } from "./BrandResultCard";
 import { BrandDNADisplay } from "./BrandDNADisplay";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 interface BrandResultsProps {
   data: BrandResearchResult;
+  effectiveness?: BrandEffectivenessResult | null;
+  visibility?: AIVisibilityResult | null;
 }
 
-export function BrandResults({ data }: BrandResultsProps) {
+export function BrandResults({ data, effectiveness, visibility }: BrandResultsProps) {
   const [copied, setCopied] = useState(false);
+  const [serviceType, setServiceType] = useState<string>("complete");
+
+  const buildExportData = () => {
+    const exportData: any = {
+      service_type: serviceType === "schema_only" ? "AI Schema Implementation Only" : "Complete Design / Redesign",
+      brand_research: data,
+    };
+    if (effectiveness) exportData.brand_effectiveness = effectiveness;
+    if (visibility) exportData.ai_visibility_schema = visibility;
+    return exportData;
+  };
 
   const handleCopyJson = async () => {
     try {
-      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+      await navigator.clipboard.writeText(JSON.stringify(buildExportData(), null, 2));
       setCopied(true);
       toast.success("JSON copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
@@ -41,7 +58,7 @@ export function BrandResults({ data }: BrandResultsProps) {
   };
 
   const handleDownloadJson = () => {
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(buildExportData(), null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -74,6 +91,22 @@ export function BrandResults({ data }: BrandResultsProps) {
 
   return (
     <div className="space-y-6">
+      {/* Service Type Selector */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 p-4 rounded-lg bg-muted/50 border border-border">
+        <div className="flex-1 space-y-1.5">
+          <Label htmlFor="service-type" className="text-sm font-medium">Service Type</Label>
+          <Select value={serviceType} onValueChange={setServiceType}>
+            <SelectTrigger id="service-type" className="w-full sm:w-[320px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="schema_only">Add AI Schema Only — No Other Modifications</SelectItem>
+              <SelectItem value="complete">Complete Design or Redesign</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       {/* Actions Bar */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-foreground">Brand Analysis Results</h2>
