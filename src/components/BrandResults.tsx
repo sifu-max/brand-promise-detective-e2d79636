@@ -12,7 +12,8 @@ import {
   FileText,
   Copy,
   Check,
-  Download
+  Download,
+  Printer
 } from "lucide-react";
 import { useState } from "react";
 import { BrandResearchResult } from "@/types/brand";
@@ -110,7 +111,11 @@ export function BrandResults({ data, effectiveness, visibility }: BrandResultsPr
       {/* Actions Bar */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold text-foreground">Brand Analysis Results</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={() => window.print()}>
+            <Printer className="h-4 w-4 mr-2" />
+            Print
+          </Button>
           <Button variant="outline" size="sm" onClick={handleCopyJson}>
             {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
             {copied ? "Copied" : "Copy JSON"}
