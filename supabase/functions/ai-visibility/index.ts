@@ -56,30 +56,43 @@ serve(async (req) => {
 
     console.log("Scanning AI visibility for URL:", url);
 
-    // Fetch raw HTML (not Jina - we need actual HTML to check for schema markup)
+    // Fetch raw HTML - try direct first, then fallback to Jina Reader
     let htmlContent: string;
     try {
       const response = await fetch(url, {
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; AIVisibilityBot/1.0)",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.9",
         },
+        redirect: "follow",
       });
 
       if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      htmlContent = await response.text();
+    } catch (directError) {
+      console.warn("Direct fetch failed, trying Jina Reader:", directError);
+      try {
+        const jinaResponse = await fetch(`https://r.jina.ai/${url}`, {
+          headers: {
+            "Accept": "text/html",
+            "X-Return-Format": "html",
+          },
+        });
+        if (!jinaResponse.ok) {
+          throw new Error(`Jina HTTP ${jinaResponse.status}`);
+        }
+        htmlContent = await jinaResponse.text();
+      } catch (jinaError) {
+        console.error("Both fetch methods failed:", jinaError);
         return new Response(
           JSON.stringify({ error: "Unable to access the provided website." }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-
-      htmlContent = await response.text();
-    } catch (fetchError) {
-      console.error("Failed to fetch website:", fetchError);
-      return new Response(
-        JSON.stringify({ error: "Unable to access the provided website." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
     }
 
     const htmlLower = htmlContent.toLowerCase();
