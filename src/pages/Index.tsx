@@ -144,7 +144,7 @@ const Index = () => {
             
             <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto">
               Enter any business URL and let our AI extract the essential brand messaging, 
-              ideal client profile, and competitive positioning in seconds.
+              ideal client profile, competitive positioning, and AI visibility schema in seconds.
             </p>
 
             {/* Search Form */}
