@@ -4,9 +4,11 @@ import { Search, Zap, RotateCcw, PenLine } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
+import { AIVisibilityResult } from "@/types/ai-visibility";
 import { BrandResearchForm, BrandResearchFormRef } from "@/components/BrandResearchForm";
 import { BrandResults } from "@/components/BrandResults";
 import { BrandEffectivenessDisplay } from "@/components/BrandEffectivenessDisplay";
+import { AIVisibilityDisplay } from "@/components/AIVisibilityDisplay";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -16,14 +18,17 @@ const Index = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isScoring, setIsScoring] = useState(false);
+  const [isScanningVisibility, setIsScanningVisibility] = useState(false);
   const [result, setResult] = useState<BrandResearchResult | null>(null);
   const [effectiveness, setEffectiveness] = useState<BrandEffectivenessResult | null>(null);
+  const [visibility, setVisibility] = useState<AIVisibilityResult | null>(null);
   const formRef = useRef<BrandResearchFormRef>(null);
 
   const handleAnalyze = async (url: string) => {
     setIsLoading(true);
     setResult(null);
     setEffectiveness(null);
+    setVisibility(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("brand-research", {
@@ -49,8 +54,9 @@ const Index = () => {
         setResult(data.data);
         toast.success("Brand analysis complete! Scoring effectiveness...");
         
-        // Automatically trigger effectiveness scoring
+        // Automatically trigger effectiveness scoring and AI visibility scan
         fetchEffectiveness(data.data);
+        fetchVisibility(url);
       }
     } catch (err) {
       console.error("Analysis error:", err);
@@ -84,9 +90,34 @@ const Index = () => {
     }
   };
 
+  const fetchVisibility = async (url: string) => {
+    setIsScanningVisibility(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ai-visibility", {
+        body: { url },
+      });
+
+      if (error) {
+        console.error("Visibility scan error:", error);
+        toast.error("Could not scan AI visibility");
+        return;
+      }
+
+      if (data?.success && data?.data) {
+        setVisibility(data.data);
+        toast.success("AI visibility scan complete!");
+      }
+    } catch (err) {
+      console.error("Visibility error:", err);
+    } finally {
+      setIsScanningVisibility(false);
+    }
+  };
+
   const handleReset = () => {
     setResult(null);
     setEffectiveness(null);
+    setVisibility(null);
     formRef.current?.clearAndFocus();
   };
 
@@ -163,6 +194,17 @@ const Index = () => {
             )}
             {!isScoring && effectiveness && (
               <BrandEffectivenessDisplay data={effectiveness} />
+            )}
+
+            {/* AI Visibility Scan */}
+            {isScanningVisibility && (
+              <div className="space-y-4 animate-pulse">
+                <div className="h-8 w-64 bg-muted rounded mx-auto" />
+                <div className="h-48 bg-muted rounded-xl" />
+              </div>
+            )}
+            {!isScanningVisibility && visibility && (
+              <AIVisibilityDisplay data={visibility} />
             )}
           </div>
         )}

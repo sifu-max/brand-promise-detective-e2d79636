@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.brand-effectiveness]
 verify_jwt = false
+
+[functions.ai-visibility]
+verify_jwt = false
