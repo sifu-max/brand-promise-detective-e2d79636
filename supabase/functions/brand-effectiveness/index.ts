@@ -122,16 +122,18 @@ serve(async (req) => {
       );
     }
 
-    // Split suggestions: 2 free, rest gated
+    // Split suggestions: 2 free, rest gated (but include all for dev access)
     const allSuggestions = parsed.suggestions || [];
     const freeSuggestions = allSuggestions.slice(0, 2);
-    const gatedCount = Math.max(0, allSuggestions.length - 2);
+    const gatedSuggestions = allSuggestions.slice(2);
+    const gatedCount = gatedSuggestions.length;
 
     const result = {
       overall_score: parsed.overall_score,
       overall_grade: parsed.overall_grade,
       categories: parsed.categories,
       free_suggestions: freeSuggestions,
+      gated_suggestions: gatedSuggestions,
       gated_suggestion_count: gatedCount,
     };
 

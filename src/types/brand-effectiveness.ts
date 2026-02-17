@@ -16,5 +16,6 @@ export interface BrandEffectivenessResult {
   overall_grade: string;
   categories: CategoryScore[];
   free_suggestions: BrandSuggestion[];
+  gated_suggestions?: BrandSuggestion[];
   gated_suggestion_count: number;
 }
