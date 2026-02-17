@@ -91,15 +91,18 @@ FOR MISSING DATA: Use format "Suggested: [inference]"
 
 BRAND DNA - COLOR EXTRACTION (CRITICAL):
 - "primary_color": The dominant brand color as a hex code (#RRGGBB). Look for:
-  * CSS variables like --primary, --brand-color, --main-color
+  * CSS custom properties in HSL format: --primary: 222.2 47.4% 11.2% (convert HSL to hex!)
+  * Tailwind/shadcn CSS variables: --background, --foreground, --primary, --secondary, --accent, --muted (these use space-separated HSL values WITHOUT "hsl()" wrapper, e.g. "222.2 47.4% 11.2%")
+  * Standard CSS variables like --primary, --brand-color, --main-color
   * The most prominent background or text color in the hero/header
   * Logo colors or accent colors used throughout
   * Theme color meta tags
-  * If the site uses a CSS framework, decode the color classes
-- "secondary_color": The second most used color as hex.
-- "accent_color": Accent/highlight color as hex (buttons, links, CTAs).
-- "heading_font": Font family for headings. Check font-family CSS rules, Google Fonts links, @font-face declarations.
-- "body_font": Font family for body text.
+  * If the site uses Tailwind CSS, decode color classes (bg-primary, text-primary, etc.) by cross-referencing with :root CSS variables
+- "secondary_color": The second most used color as hex. Check --secondary or --muted CSS variables.
+- "accent_color": Accent/highlight color as hex (buttons, links, CTAs). Check --accent CSS variable.
+- IMPORTANT: If colors are defined as HSL values (e.g. "222.2 47.4% 11.2%"), you MUST convert them to hex (#RRGGBB) before returning.
+- "heading_font": Font family for headings. Check font-family CSS rules, Google Fonts links, @font-face declarations, and Tailwind fontFamily config.
+- "body_font": Font family for body text. Also check CSS variables like --font-sans, --font-heading.
 
 If a color or font truly cannot be determined from the HTML, use "Unable to detect".
 
@@ -237,6 +240,11 @@ serve(async (req) => {
         const colorClasses = bodySnippet.match(/class="[^"]*(?:bg-|text-|border-|color)[^"]*"/gi);
         if (colorClasses) {
           styleContent += "=== COLOR CLASSES ===\n" + colorClasses.slice(0, 50).join("\n") + "\n\n";
+        }
+        // Extract CSS custom properties (critical for Lovable/Tailwind sites)
+        const cssVarMatches = (headMatch?.[1] || '') .match(/--[\w-]+:\s*[^;]+/g);
+        if (cssVarMatches) {
+          styleContent += "=== CSS CUSTOM PROPERTIES ===\n" + cssVarMatches.join("\n") + "\n\n";
         }
       }
     }
