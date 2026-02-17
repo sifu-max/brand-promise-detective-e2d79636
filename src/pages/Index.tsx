@@ -8,6 +8,7 @@ import { AIVisibilityResult } from "@/types/ai-visibility";
 import { BrandResearchForm, BrandResearchFormRef } from "@/components/BrandResearchForm";
 import { BrandResults } from "@/components/BrandResults";
 import { BrandEffectivenessDisplay } from "@/components/BrandEffectivenessDisplay";
+import { BrandEffectivenessComparison } from "@/components/BrandEffectivenessComparison";
 import { AIVisibilityDisplay } from "@/components/AIVisibilityDisplay";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import { Button } from "@/components/ui/button";
@@ -24,11 +25,21 @@ const Index = () => {
   const [visibility, setVisibility] = useState<AIVisibilityResult | null>(null);
   const formRef = useRef<BrandResearchFormRef>(null);
 
+  // Comparison state
+  const [isComparing, setIsComparing] = useState(false);
+  const [comparisonOriginal, setComparisonOriginal] = useState<BrandEffectivenessResult | null>(null);
+  const [comparisonImproved, setComparisonImproved] = useState<BrandEffectivenessResult | null>(null);
+  const [comparisonUrls, setComparisonUrls] = useState<{ original: string; improved: string } | null>(null);
+
   const handleAnalyze = async (url: string) => {
     setIsLoading(true);
     setResult(null);
     setEffectiveness(null);
     setVisibility(null);
+    setIsComparing(false);
+    setComparisonOriginal(null);
+    setComparisonImproved(null);
+    setComparisonUrls(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("brand-research", {
@@ -37,7 +48,6 @@ const Index = () => {
 
       if (error) {
         console.error("Edge function error:", error);
-        // Check if the error contains a specific message from the edge function
         const errorMessage = typeof error === 'object' && 'message' in error 
           ? error.message 
           : String(error);
@@ -53,8 +63,6 @@ const Index = () => {
       if (data?.success && data?.data) {
         setResult(data.data);
         toast.success("Brand analysis complete! Scoring effectiveness...");
-        
-        // Automatically trigger effectiveness scoring and AI visibility scan
         fetchEffectiveness(data.data);
         fetchVisibility(url);
       }
@@ -84,15 +92,18 @@ const Index = () => {
       if (error) {
         console.error("Effectiveness error:", error);
         toast.error("Could not score brand effectiveness");
-        return;
+        return null;
       }
 
       if (data?.success && data?.data) {
         setEffectiveness(data.data);
         toast.success("Brand effectiveness scored!");
+        return data.data as BrandEffectivenessResult;
       }
+      return null;
     } catch (err) {
       console.error("Effectiveness error:", err);
+      return null;
     } finally {
       setIsScoring(false);
     }
@@ -122,10 +133,101 @@ const Index = () => {
     }
   };
 
+  const handleCompare = async (originalUrl: string, improvedUrl: string) => {
+    setIsLoading(true);
+    setIsComparing(true);
+    setResult(null);
+    setEffectiveness(null);
+    setVisibility(null);
+    setComparisonOriginal(null);
+    setComparisonImproved(null);
+    setComparisonUrls({ original: originalUrl, improved: improvedUrl });
+
+    try {
+      toast.info("Step 1/4: Analyzing original site...");
+
+      // Fetch both brand research results in parallel
+      const [originalRes, improvedRes] = await Promise.all([
+        supabase.functions.invoke("brand-research", { body: { url: originalUrl } }),
+        supabase.functions.invoke("brand-research", { body: { url: improvedUrl } }),
+      ]);
+
+      if (originalRes.error || !originalRes.data?.success) {
+        toast.error("Failed to analyze original site");
+        return;
+      }
+      if (improvedRes.error || !improvedRes.data?.success) {
+        toast.error("Failed to analyze improved site");
+        return;
+      }
+
+      // Show improved site's brand research as the main result
+      setResult(improvedRes.data.data);
+      setIsLoading(false);
+
+      toast.info("Step 2/4: Scoring original site...");
+
+      // Score original site first
+      setIsScoring(true);
+      const originalEffRes = await supabase.functions.invoke("brand-effectiveness", {
+        body: { brandData: originalRes.data.data },
+      });
+
+      if (!originalEffRes.data?.success) {
+        toast.error("Failed to score original site");
+        setIsScoring(false);
+        return;
+      }
+
+      const originalScores = originalEffRes.data.data as BrandEffectivenessResult;
+      setComparisonOriginal(originalScores);
+
+      toast.info("Step 3/4: Scoring improved site (anchored)...");
+
+      // Score improved site with anchoring
+      const improvedEffRes = await supabase.functions.invoke("brand-effectiveness", {
+        body: {
+          brandData: improvedRes.data.data,
+          previousScores: {
+            overall_score: originalScores.overall_score,
+            overall_grade: originalScores.overall_grade,
+            categories: originalScores.categories,
+          },
+        },
+      });
+
+      if (!improvedEffRes.data?.success) {
+        toast.error("Failed to score improved site");
+        setIsScoring(false);
+        return;
+      }
+
+      const improvedScores = improvedEffRes.data.data as BrandEffectivenessResult;
+      setComparisonImproved(improvedScores);
+      setEffectiveness(improvedScores);
+      setIsScoring(false);
+
+      toast.info("Step 4/4: Scanning AI visibility...");
+      fetchVisibility(improvedUrl);
+
+      toast.success("Comparison complete!");
+    } catch (err) {
+      console.error("Comparison error:", err);
+      toast.error("Failed to complete comparison");
+    } finally {
+      setIsLoading(false);
+      setIsScoring(false);
+    }
+  };
+
   const handleReset = () => {
     setResult(null);
     setEffectiveness(null);
     setVisibility(null);
+    setIsComparing(false);
+    setComparisonOriginal(null);
+    setComparisonImproved(null);
+    setComparisonUrls(null);
     formRef.current?.clearAndFocus();
   };
 
@@ -157,7 +259,7 @@ const Index = () => {
 
             {/* Search Form */}
             <div className="mt-8 max-w-2xl mx-auto">
-              <BrandResearchForm ref={formRef} onSubmit={handleAnalyze} isLoading={isLoading} />
+              <BrandResearchForm ref={formRef} onSubmit={handleAnalyze} onCompare={handleCompare} isLoading={isLoading} />
             </div>
 
             {/* Navigation to Brand Builder */}
@@ -193,14 +295,22 @@ const Index = () => {
             </div>
             <BrandResults data={result} effectiveness={effectiveness} visibility={visibility} />
 
-            {/* Effectiveness Score */}
+            {/* Effectiveness Score or Comparison */}
             {isScoring && (
               <div className="space-y-4 animate-pulse">
                 <div className="h-8 w-64 bg-muted rounded mx-auto" />
                 <div className="h-48 bg-muted rounded-xl" />
               </div>
             )}
-            {!isScoring && effectiveness && (
+            {!isScoring && isComparing && comparisonOriginal && comparisonImproved && comparisonUrls && (
+              <BrandEffectivenessComparison
+                original={comparisonOriginal}
+                improved={comparisonImproved}
+                originalUrl={comparisonUrls.original}
+                improvedUrl={comparisonUrls.improved}
+              />
+            )}
+            {!isScoring && !isComparing && effectiveness && (
               <BrandEffectivenessDisplay data={effectiveness} />
             )}
 
