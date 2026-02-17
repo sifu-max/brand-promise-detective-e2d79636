@@ -66,11 +66,19 @@ const Index = () => {
     }
   };
 
-  const fetchEffectiveness = async (brandData: BrandResearchResult) => {
+  const fetchEffectiveness = async (brandData: BrandResearchResult, previousScores?: BrandEffectivenessResult | null) => {
     setIsScoring(true);
     try {
+      const body: any = { brandData };
+      if (previousScores) {
+        body.previousScores = {
+          overall_score: previousScores.overall_score,
+          overall_grade: previousScores.overall_grade,
+          categories: previousScores.categories,
+        };
+      }
       const { data, error } = await supabase.functions.invoke("brand-effectiveness", {
-        body: { brandData },
+        body,
       });
 
       if (error) {
