@@ -26,11 +26,11 @@ const Index = () => {
   const formRef = useRef<BrandResearchFormRef>(null);
   const [adminMode, setAdminMode] = useState(false);
 
-  // Secret keyboard shortcut: Ctrl+Shift+A toggles admin tools
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === "A") {
-        setAdminMode(prev => !prev);
+   // Secret keyboard shortcut: Ctrl+Shift+B toggles admin tools
+   useEffect(() => {
+     const handler = (e: KeyboardEvent) => {
+       if (e.ctrlKey && e.shiftKey && e.key === "B") {
+         setAdminMode(prev => !prev);
       }
     };
     window.addEventListener("keydown", handler);
