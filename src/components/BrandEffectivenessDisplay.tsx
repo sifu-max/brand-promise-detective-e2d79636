@@ -1,4 +1,5 @@
-import { TrendingUp, Award, Lock, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { TrendingUp, Award, Lock, ArrowRight, Eye } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +40,7 @@ function getImpactColor(impact: string): string {
 }
 
 export function BrandEffectivenessDisplay({ data }: BrandEffectivenessDisplayProps) {
+  const [showGated, setShowGated] = useState(false);
   return (
     <div className="space-y-6">
       {/* Overall Score */}
@@ -112,10 +114,9 @@ export function BrandEffectivenessDisplay({ data }: BrandEffectivenessDisplayPro
             </div>
           ))}
 
-          {/* Gated CTA */}
-          {data.gated_suggestion_count > 0 && (
+          {/* Gated CTA or revealed suggestions */}
+          {data.gated_suggestion_count > 0 && !showGated && (
             <div className="relative mt-4">
-              {/* Blurred placeholder */}
               <div className="space-y-3 opacity-40 blur-[2px] pointer-events-none select-none">
                 {Array.from({ length: Math.min(data.gated_suggestion_count, 2) }).map((_, i) => (
                   <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
@@ -127,8 +128,6 @@ export function BrandEffectivenessDisplay({ data }: BrandEffectivenessDisplayPro
                   </div>
                 ))}
               </div>
-
-              {/* CTA overlay */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="bg-card/95 backdrop-blur-sm border border-border rounded-xl p-6 text-center shadow-lg max-w-sm mx-4">
                   <Lock className="h-8 w-8 text-primary mx-auto mb-3" />
@@ -138,20 +137,41 @@ export function BrandEffectivenessDisplay({ data }: BrandEffectivenessDisplayPro
                   <p className="text-sm text-muted-foreground mb-4">
                     Get a full brand audit with actionable recommendations from CRMChains
                   </p>
-                  <Button asChild className="w-full">
-                    <a
-                      href="https://www.crmchains.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Contact CRMChains
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <Button asChild className="w-full">
+                      <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer">
+                        Contact CRMChains
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </a>
+                    </Button>
+                    {data.gated_suggestions && data.gated_suggestions.length > 0 && (
+                      <Button variant="ghost" size="sm" onClick={() => setShowGated(true)} className="text-xs text-muted-foreground">
+                        <Eye className="mr-1 h-3 w-3" />
+                        Dev: Reveal all
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           )}
+
+          {showGated && data.gated_suggestions && data.gated_suggestions.map((suggestion, i) => (
+            <div key={`gated-${i}`} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-dashed border-primary/20">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-sm font-medium flex items-center justify-center mt-0.5">
+                {data.free_suggestions.length + i + 1}
+              </span>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-medium text-foreground">{suggestion.category}</span>
+                  <Badge className={`${getImpactColor(suggestion.impact)} border text-xs`}>
+                    {suggestion.impact} Impact
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">{suggestion.suggestion}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </BrandResultCard>
     </div>
