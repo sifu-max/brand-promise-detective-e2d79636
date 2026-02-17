@@ -15,7 +15,7 @@ import {
   Download,
   Printer
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
 import { AIVisibilityResult } from "@/types/ai-visibility";
@@ -31,23 +31,12 @@ interface BrandResultsProps {
   data: BrandResearchResult;
   effectiveness?: BrandEffectivenessResult | null;
   visibility?: AIVisibilityResult | null;
+  adminMode?: boolean;
 }
 
-export function BrandResults({ data, effectiveness, visibility }: BrandResultsProps) {
+export function BrandResults({ data, effectiveness, visibility, adminMode = false }: BrandResultsProps) {
   const [copied, setCopied] = useState(false);
   const [serviceType, setServiceType] = useState<string>("complete");
-  const [adminMode, setAdminMode] = useState(false);
-
-  // Secret keyboard shortcut: Ctrl+Shift+A toggles admin tools
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === "A") {
-        setAdminMode(prev => !prev);
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, []);
 
   const buildExportData = () => {
     const exportData: any = {

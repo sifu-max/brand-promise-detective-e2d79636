@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Zap, RotateCcw, PenLine } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +24,18 @@ const Index = () => {
   const [effectiveness, setEffectiveness] = useState<BrandEffectivenessResult | null>(null);
   const [visibility, setVisibility] = useState<AIVisibilityResult | null>(null);
   const formRef = useRef<BrandResearchFormRef>(null);
+  const [adminMode, setAdminMode] = useState(false);
+
+  // Secret keyboard shortcut: Ctrl+Shift+A toggles admin tools
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "A") {
+        setAdminMode(prev => !prev);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   // Comparison state
   const [isComparing, setIsComparing] = useState(false);
@@ -259,7 +271,7 @@ const Index = () => {
 
             {/* Search Form */}
             <div className="mt-8 max-w-2xl mx-auto">
-              <BrandResearchForm ref={formRef} onSubmit={handleAnalyze} onCompare={handleCompare} isLoading={isLoading} />
+              <BrandResearchForm ref={formRef} onSubmit={handleAnalyze} onCompare={handleCompare} isLoading={isLoading} adminMode={adminMode} />
             </div>
 
             {/* Navigation to Brand Builder */}
@@ -293,7 +305,7 @@ const Index = () => {
                 Edit in Brand Builder
               </Button>
             </div>
-            <BrandResults data={result} effectiveness={effectiveness} visibility={visibility} />
+            <BrandResults data={result} effectiveness={effectiveness} visibility={visibility} adminMode={adminMode} />
 
             {/* Effectiveness Score or Comparison */}
             {isScoring && (
