@@ -108,14 +108,26 @@ Return ONLY the JSON object. No markdown, no backticks, no commentary.`;
 async function fetchRawHtml(url: string): Promise<string | null> {
   try {
     const response = await fetch(url, {
+      redirect: "follow",
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
       },
     });
-    if (!response.ok) return null;
-    return await response.text();
-  } catch {
+    console.log("Raw HTML fetch status:", response.status);
+    if (!response.ok) {
+      console.log("Raw HTML fetch failed with status:", response.status);
+      return null;
+    }
+    const text = await response.text();
+    if (text.length < 200) {
+      console.log("Raw HTML too short, likely a challenge page:", text.length);
+      return null;
+    }
+    return text;
+  } catch (e) {
+    console.error("Raw HTML fetch error:", e);
     return null;
   }
 }
@@ -128,6 +140,25 @@ async function fetchJinaContent(url: string): Promise<string | null> {
     if (!response.ok) return null;
     return await response.text();
   } catch {
+    return null;
+  }
+}
+
+async function fetchJinaHtml(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(`https://r.jina.ai/${url}`, {
+      headers: {
+        "Accept": "text/html",
+        "X-Return-Format": "html",
+      },
+    });
+    if (!response.ok) {
+      console.log("Jina HTML fetch failed:", response.status);
+      return null;
+    }
+    return await response.text();
+  } catch (e) {
+    console.error("Jina HTML fetch error:", e);
     return null;
   }
 }
@@ -165,44 +196,47 @@ serve(async (req) => {
 
     console.log("Fetching website content for URL:", url);
 
-    // Dual fetch: raw HTML for styles/colors + Jina for rendered text
-    const [rawHtml, jinaText] = await Promise.all([
+    // Triple fetch: raw HTML for styles/colors, Jina text for content, Jina HTML as fallback for styles
+    const [rawHtml, jinaText, jinaHtml] = await Promise.all([
       fetchRawHtml(url),
       fetchJinaContent(url),
+      fetchJinaHtml(url),
     ]);
 
-    if (!rawHtml && !jinaText) {
+    if (!rawHtml && !jinaText && !jinaHtml) {
       return new Response(
         JSON.stringify({ error: "Unable to access the provided website. Please verify the URL is publicly accessible." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log("Raw HTML length:", rawHtml?.length ?? 0, "| Jina text length:", jinaText?.length ?? 0);
+    console.log("Raw HTML length:", rawHtml?.length ?? 0, "| Jina text length:", jinaText?.length ?? 0, "| Jina HTML length:", jinaHtml?.length ?? 0);
 
-    // Extract just the <head> and <style> blocks + first portion of body for color/font data
+    // Extract style data from raw HTML or Jina HTML fallback
+    const htmlSource = rawHtml || jinaHtml;
     let styleContent = "";
-    if (rawHtml) {
-      // Extract <head> section (contains meta tags, linked stylesheets, inline styles)
-      const headMatch = rawHtml.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+    if (htmlSource) {
+      const headMatch = htmlSource.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
       if (headMatch) {
         styleContent += "=== HEAD SECTION ===\n" + headMatch[1].substring(0, 15000) + "\n\n";
       }
 
-      // Extract all <style> tags from the entire document
-      const styleMatches = rawHtml.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
+      const styleMatches = htmlSource.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
       if (styleMatches) {
         styleContent += "=== STYLE TAGS ===\n" + styleMatches.join("\n").substring(0, 15000) + "\n\n";
       }
 
-      // Extract inline styles from the first 30KB of body (hero area likely has brand colors)
-      const bodyMatch = rawHtml.match(/<body[^>]*>([\s\S]*)/i);
+      const bodyMatch = htmlSource.match(/<body[^>]*>([\s\S]*)/i);
       if (bodyMatch) {
         const bodySnippet = bodyMatch[1].substring(0, 30000);
-        // Extract elements with style attributes
         const styledElements = bodySnippet.match(/<[^>]+style="[^"]*"[^>]*>/gi);
         if (styledElements) {
           styleContent += "=== INLINE STYLES ===\n" + styledElements.join("\n").substring(0, 10000) + "\n\n";
+        }
+        // Also extract class names with color hints
+        const colorClasses = bodySnippet.match(/class="[^"]*(?:bg-|text-|border-|color)[^"]*"/gi);
+        if (colorClasses) {
+          styleContent += "=== COLOR CLASSES ===\n" + colorClasses.slice(0, 50).join("\n") + "\n\n";
         }
       }
     }
@@ -212,24 +246,19 @@ serve(async (req) => {
 
     if (styleContent) {
       pageContent += "=== RAW HTML (styles, colors, fonts) ===\n" + styleContent + "\n\n";
-    } else if (rawHtml) {
-      // If no structured extraction worked, send truncated raw HTML
-      pageContent += "=== RAW HTML ===\n" + rawHtml.substring(0, 25000) + "\n\n";
+    } else if (htmlSource) {
+      pageContent += "=== RAW HTML ===\n" + htmlSource.substring(0, 25000) + "\n\n";
     }
 
     if (jinaText) {
       pageContent += "=== RENDERED TEXT CONTENT ===\n" + jinaText.substring(0, 25000);
-    } else if (rawHtml && !styleContent) {
-      // Already included raw HTML above
-    } else if (rawHtml) {
-      // Include body text from raw HTML as fallback
-      const bodyMatch = rawHtml.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+    } else if (htmlSource) {
+      const bodyMatch = htmlSource.match(/<body[^>]*>([\s\S]*)<\/body>/i);
       if (bodyMatch) {
         pageContent += "=== BODY HTML ===\n" + bodyMatch[1].substring(0, 20000);
       }
     }
 
-    // Limit total content
     if (pageContent.length > 60000) {
       pageContent = pageContent.substring(0, 60000);
     }
