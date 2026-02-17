@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,18 +31,25 @@ function validateUrl(urlString: string): { valid: boolean; error?: string } {
   }
 }
 
-const SYSTEM_PROMPT = `You are a Brand Research Agent. You will receive HTML content from a website and extract structured brand information.
+const SYSTEM_PROMPT = `You are a Brand Research Agent. You will receive content from a website in TWO parts:
+
+1. RAW HTML — contains CSS styles, inline styles, style tags, meta tags, and class names where colors and fonts are defined.
+2. RENDERED TEXT — the readable text content extracted from the page (may be empty if unavailable).
 
 CRITICAL RULES:
-1. ONLY report text, colors, fonts, and data that are EXPLICITLY visible in the HTML content provided
-2. Quote exact text from the HTML whenever possible
-3. For colors/fonts, extract them from inline styles, CSS classes, or style tags if present
-4. Be consistent - the same input should always produce the same output
-5. When information is NOT explicitly found, provide a logical suggestion based on what IS found (see format below)
+1. For COLORS and FONTS: Extract them from the RAW HTML section. Look in:
+   - Inline style attributes (style="color: #FF5733")
+   - <style> tags and CSS rules
+   - CSS custom properties (--primary-color: #xxx)
+   - Meta theme-color tags
+   - Class names that hint at color systems (e.g. bg-blue-500, text-primary)
+   - Common CSS frameworks (Tailwind, Bootstrap) color classes
+2. For TEXT CONTENT: Use the RENDERED TEXT section primarily, supplemented by the RAW HTML.
+3. Quote exact text whenever possible.
+4. Be consistent - the same input should always produce the same output.
+5. When information is NOT explicitly found, provide a logical suggestion prefixed with "Suggested:".
 
-Given HTML content from a business website, extract what is explicitly present in the markup.
-
-You must respond with a SINGLE valid JSON object matching this exact schema and nothing else (no markdown, no explanation, no extra text):
+You must respond with a SINGLE valid JSON object matching this exact schema and nothing else:
 
 {
   "business_tagline": "",
@@ -70,34 +76,61 @@ Field rules:
 
 FOR EXPLICIT DATA (found on site):
 - "business_tagline": Copy the EXACT tagline/headline from the hero section.
-- "primary_call_to_action": The EXACT text of the main button/link (e.g., "Book a Call", "Get Started").
-- "core_service_solution": Summarize what the site explicitly says they do using their words.
-- "core_client_pain_points": List pain points if explicitly mentioned on the site.
-- "communication_tone": Choose EXACTLY ONE of: "Professional", "Casual/Friendly", "Urgent/Direct" - based on the actual language used.
-- "clients_budget_timeline": Only if pricing/timeline is shown on the site.
+- "primary_call_to_action": The EXACT text of the main button/link.
+- "core_service_solution": Summarize what the site explicitly says they do.
+- "core_client_pain_points": List pain points if explicitly mentioned.
+- "communication_tone": Choose ONE of: "Professional", "Casual/Friendly", "Urgent/Direct".
+- "clients_budget_timeline": Only if pricing/timeline is shown.
 - "core_offer_investment": Only if pricing is explicitly listed.
 - "ideal_client_niche": Only if the site explicitly states who they serve.
-- "offer_structure": Choose EXACTLY ONE of: "Basic and Premium options", "Single Price Offer", "Tiered 3+", "Not determinable from site"
+- "offer_structure": Choose ONE of: "Basic and Premium options", "Single Price Offer", "Tiered 3+", "Not determinable from site"
 - "source_url": The URL provided by the user.
-- "extraction_confidence": Rate as "High" (most data found), "Medium" (some data missing), or "Low" (mostly missing).
+- "extraction_confidence": "High", "Medium", or "Low".
 
-FOR MISSING DATA (not found on site) - PROVIDE LOGICAL SUGGESTIONS:
-When data is not explicitly stated, use this format: "Suggested: [your logical inference based on what IS on the site]"
+FOR MISSING DATA: Use format "Suggested: [inference]"
 
-Examples:
-- If no pricing shown but it's a consulting site with "Book a Call" CTA: "Suggested: Custom pricing discussed on consultation call"
-- If no target audience stated but services are healthcare-related: "Suggested: Individuals and families seeking accessible healthcare services"
-- If no pain points listed but it's a career coaching site: "Suggested: Professionals feeling stuck in their career, seeking advancement or transition"
-- If no budget/timeline but it's a SaaS product: "Suggested: Monthly subscription model based on feature tiers"
+BRAND DNA - COLOR EXTRACTION (CRITICAL):
+- "primary_color": The dominant brand color as a hex code (#RRGGBB). Look for:
+  * CSS variables like --primary, --brand-color, --main-color
+  * The most prominent background or text color in the hero/header
+  * Logo colors or accent colors used throughout
+  * Theme color meta tags
+  * If the site uses a CSS framework, decode the color classes
+- "secondary_color": The second most used color as hex.
+- "accent_color": Accent/highlight color as hex (buttons, links, CTAs).
+- "heading_font": Font family for headings. Check font-family CSS rules, Google Fonts links, @font-face declarations.
+- "body_font": Font family for body text.
 
-BRAND DNA - Visual identity from the HTML:
-- "primary_color": Main color as hex if detectable, otherwise "Unable to detect".
-- "secondary_color": Secondary color as hex if detectable, otherwise "Unable to detect".
-- "accent_color": Accent color as hex if detectable, otherwise "Unable to detect".
-- "heading_font": Font name if detectable, otherwise "Unable to detect".
-- "body_font": Font name if detectable, otherwise "Unable to detect".
+If a color or font truly cannot be determined from the HTML, use "Unable to detect".
 
-Return ONLY the JSON object. Do not wrap it in backticks, markdown, or add any commentary.`;
+Return ONLY the JSON object. No markdown, no backticks, no commentary.`;
+
+async function fetchRawHtml(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      },
+    });
+    if (!response.ok) return null;
+    return await response.text();
+  } catch {
+    return null;
+  }
+}
+
+async function fetchJinaContent(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(`https://r.jina.ai/${url}`, {
+      headers: { "Accept": "text/plain" },
+    });
+    if (!response.ok) return null;
+    return await response.text();
+  } catch {
+    return null;
+  }
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -105,9 +138,6 @@ serve(async (req) => {
   }
 
   try {
-    // No authentication required - this is a public brand research tool
-
-    // --- Parse and validate input ---
     const { url } = await req.json();
 
     if (!url || typeof url !== "string") {
@@ -117,7 +147,6 @@ serve(async (req) => {
       );
     }
 
-    // --- URL validation (SSRF protection) ---
     const urlValidation = validateUrl(url);
     if (!urlValidation.valid) {
       return new Response(
@@ -128,7 +157,6 @@ serve(async (req) => {
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY is not configured");
       return new Response(
         JSON.stringify({ error: "AI service not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -137,55 +165,76 @@ serve(async (req) => {
 
     console.log("Fetching website content for URL:", url);
 
-    // Use Jina AI Reader to get rendered content (handles JavaScript SPAs)
-    let pageContent: string;
-    try {
-      const jinaUrl = `https://r.jina.ai/${url}`;
-      const jinaResponse = await fetch(jinaUrl, {
-        headers: {
-          "Accept": "text/plain",
-        },
-      });
-      
-      if (!jinaResponse.ok) {
-        // Fallback to direct fetch if Jina fails
-        console.log("Jina Reader failed, falling back to direct fetch");
-        const directResponse = await fetch(url, {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (compatible; BrandResearchBot/1.0)",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-          },
-        });
-        
-        if (!directResponse.ok) {
-          return new Response(
-            JSON.stringify({ error: "Unable to access the provided website. Please verify the URL is publicly accessible." }),
-            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-        
-        pageContent = await directResponse.text();
-      } else {
-        pageContent = await jinaResponse.text();
-        console.log("Successfully fetched rendered content via Jina Reader");
-      }
-      
-      console.log("Fetched content, length:", pageContent.length);
-      
-      // Limit content size to avoid token limits (keep first 50KB)
-      if (pageContent.length > 50000) {
-        pageContent = pageContent.substring(0, 50000);
-        console.log("Truncated content to 50KB");
-      }
-    } catch (fetchError) {
-      console.error("Failed to fetch website:", fetchError);
+    // Dual fetch: raw HTML for styles/colors + Jina for rendered text
+    const [rawHtml, jinaText] = await Promise.all([
+      fetchRawHtml(url),
+      fetchJinaContent(url),
+    ]);
+
+    if (!rawHtml && !jinaText) {
       return new Response(
         JSON.stringify({ error: "Unable to access the provided website. Please verify the URL is publicly accessible." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    console.log("Analyzing brand with AI for URL:", url);
+    console.log("Raw HTML length:", rawHtml?.length ?? 0, "| Jina text length:", jinaText?.length ?? 0);
+
+    // Extract just the <head> and <style> blocks + first portion of body for color/font data
+    let styleContent = "";
+    if (rawHtml) {
+      // Extract <head> section (contains meta tags, linked stylesheets, inline styles)
+      const headMatch = rawHtml.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+      if (headMatch) {
+        styleContent += "=== HEAD SECTION ===\n" + headMatch[1].substring(0, 15000) + "\n\n";
+      }
+
+      // Extract all <style> tags from the entire document
+      const styleMatches = rawHtml.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
+      if (styleMatches) {
+        styleContent += "=== STYLE TAGS ===\n" + styleMatches.join("\n").substring(0, 15000) + "\n\n";
+      }
+
+      // Extract inline styles from the first 30KB of body (hero area likely has brand colors)
+      const bodyMatch = rawHtml.match(/<body[^>]*>([\s\S]*)/i);
+      if (bodyMatch) {
+        const bodySnippet = bodyMatch[1].substring(0, 30000);
+        // Extract elements with style attributes
+        const styledElements = bodySnippet.match(/<[^>]+style="[^"]*"[^>]*>/gi);
+        if (styledElements) {
+          styleContent += "=== INLINE STYLES ===\n" + styledElements.join("\n").substring(0, 10000) + "\n\n";
+        }
+      }
+    }
+
+    // Build the content for AI analysis
+    let pageContent = "";
+
+    if (styleContent) {
+      pageContent += "=== RAW HTML (styles, colors, fonts) ===\n" + styleContent + "\n\n";
+    } else if (rawHtml) {
+      // If no structured extraction worked, send truncated raw HTML
+      pageContent += "=== RAW HTML ===\n" + rawHtml.substring(0, 25000) + "\n\n";
+    }
+
+    if (jinaText) {
+      pageContent += "=== RENDERED TEXT CONTENT ===\n" + jinaText.substring(0, 25000);
+    } else if (rawHtml && !styleContent) {
+      // Already included raw HTML above
+    } else if (rawHtml) {
+      // Include body text from raw HTML as fallback
+      const bodyMatch = rawHtml.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+      if (bodyMatch) {
+        pageContent += "=== BODY HTML ===\n" + bodyMatch[1].substring(0, 20000);
+      }
+    }
+
+    // Limit total content
+    if (pageContent.length > 60000) {
+      pageContent = pageContent.substring(0, 60000);
+    }
+
+    console.log("Total content for AI analysis:", pageContent.length, "chars");
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -198,7 +247,7 @@ serve(async (req) => {
         temperature: 0,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Extract brand information from this website. The source URL is: ${url}\n\nPage Content:\n${pageContent}` },
+          { role: "user", content: `Extract brand information from this website. The source URL is: ${url}\n\n${pageContent}` },
         ],
       }),
     });
@@ -228,14 +277,12 @@ serve(async (req) => {
     const content = aiResponse.choices?.[0]?.message?.content;
 
     if (!content) {
-      console.error("No content in AI response");
       return new Response(
         JSON.stringify({ error: "Failed to get analysis from AI" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Parse the JSON response
     let brandData;
     try {
       const cleanedContent = content
@@ -243,7 +290,7 @@ serve(async (req) => {
         .replace(/```\n?/g, "")
         .trim();
       brandData = JSON.parse(cleanedContent);
-    } catch (parseError) {
+    } catch {
       console.error("Failed to parse AI response:", content);
       return new Response(
         JSON.stringify({ error: "Failed to parse brand analysis" }),
@@ -251,7 +298,7 @@ serve(async (req) => {
       );
     }
 
-    console.log("Brand analysis successful");
+    console.log("Brand analysis successful. Colors:", JSON.stringify(brandData.brand_dna));
     return new Response(
       JSON.stringify({ success: true, data: brandData }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
