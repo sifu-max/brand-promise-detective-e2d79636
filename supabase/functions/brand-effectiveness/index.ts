@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SYSTEM_PROMPT = `You are a Brand Effectiveness Analyst. You will receive structured brand research data extracted from a website and evaluate the brand's effectiveness.
+const BASE_SYSTEM_PROMPT = `You are a Brand Effectiveness Analyst. You will receive structured brand research data extracted from a website and evaluate the brand's effectiveness.
 
 Score the brand across these 5 categories (0-100 each):
 
@@ -37,13 +37,25 @@ Respond with ONLY a valid JSON object matching this schema (no markdown, no expl
 
 Grade mapping: A (90-100), A- (85-89), B+ (80-84), B (75-79), B- (70-74), C+ (65-69), C (60-64), C- (55-59), D (40-54), F (0-39)`;
 
+const ANCHORING_ADDENDUM = `
+
+IMPORTANT — ANCHORED SCORING:
+You are provided with the PREVIOUS scores for this brand from a prior analysis. Use these as your baseline.
+- If the brand content has NOT materially changed in a category, keep the score the SAME (±2 points max for rounding).
+- If the brand content HAS improved in a category, the score MUST increase or stay the same — never decrease.
+- If the brand content has gotten worse, the score may decrease, but you must explicitly explain what degraded.
+- In your "reasoning" for each category, briefly reference the previous score and explain any change.
+
+Previous scores:
+`;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { brandData } = await req.json();
+    const { brandData, previousScores } = await req.json();
 
     if (!brandData) {
       return new Response(
@@ -63,6 +75,16 @@ serve(async (req) => {
 
     console.log("Evaluating brand effectiveness for:", brandData.source_url);
 
+    // Build system prompt with optional anchoring
+    let systemPrompt = BASE_SYSTEM_PROMPT;
+    if (previousScores && Array.isArray(previousScores.categories)) {
+      const scoresSummary = previousScores.categories
+        .map((c: any) => `- ${c.category}: ${c.score}/100 (${c.label})`)
+        .join("\n");
+      systemPrompt += ANCHORING_ADDENDUM + scoresSummary + `\nPrevious overall: ${previousScores.overall_score}/100 (${previousScores.overall_grade})`;
+      console.log("Using anchored scoring with previous scores");
+    }
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -73,7 +95,7 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         temperature: 0,
         messages: [
-          { role: "system", content: SYSTEM_PROMPT },
+          { role: "system", content: systemPrompt },
           { role: "user", content: `Evaluate this brand's effectiveness:\n\n${JSON.stringify(brandData, null, 2)}` },
         ],
       }),
