@@ -9,6 +9,7 @@ interface BrandResearchFormProps {
   onSubmit: (url: string) => void;
   onCompare?: (originalUrl: string, improvedUrl: string) => void;
   isLoading: boolean;
+  adminMode?: boolean;
 }
 
 export interface BrandResearchFormRef {
@@ -16,7 +17,7 @@ export interface BrandResearchFormRef {
 }
 
 export const BrandResearchForm = forwardRef<BrandResearchFormRef, BrandResearchFormProps>(
-  ({ onSubmit, onCompare, isLoading }, ref) => {
+  ({ onSubmit, onCompare, isLoading, adminMode = false }, ref) => {
     const [url, setUrl] = useState("");
     const [improvedUrl, setImprovedUrl] = useState("");
     const [compareMode, setCompareMode] = useState(false);
@@ -41,19 +42,21 @@ export const BrandResearchForm = forwardRef<BrandResearchFormRef, BrandResearchF
 
     return (
       <form onSubmit={handleSubmit} className="w-full space-y-3">
-        {/* Compare toggle */}
-        <div className="flex items-center justify-center gap-2">
-          <Switch
-            id="compare-mode"
-            checked={compareMode}
-            onCheckedChange={setCompareMode}
-            disabled={isLoading}
-          />
-          <Label htmlFor="compare-mode" className="text-sm text-primary-foreground/70 cursor-pointer flex items-center gap-1.5">
-            <GitCompareArrows className="h-3.5 w-3.5" />
-            Compare original vs improved
-          </Label>
-        </div>
+        {/* Compare toggle - admin only */}
+        {adminMode && (
+          <div className="flex items-center justify-center gap-2">
+            <Switch
+              id="compare-mode"
+              checked={compareMode}
+              onCheckedChange={setCompareMode}
+              disabled={isLoading}
+            />
+            <Label htmlFor="compare-mode" className="text-sm text-primary-foreground/70 cursor-pointer flex items-center gap-1.5">
+              <GitCompareArrows className="h-3.5 w-3.5" />
+              Compare original vs improved
+            </Label>
+          </div>
+        )}
 
         {/* Original URL */}
         <div className="relative">
