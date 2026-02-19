@@ -267,56 +267,77 @@ serve(async (req) => {
       }
     }
 
-    if (pageContent.length > 60000) {
-      pageContent = pageContent.substring(0, 60000);
+    // Strip base64 data, SVG paths, and other binary-like content that bloats the payload
+    pageContent = pageContent
+      .replace(/data:[^;]+;base64,[A-Za-z0-9+/=]+/g, "[base64-image]")
+      .replace(/d="[^"]{200,}"/g, 'd="[svg-path]"')
+      .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, "[svg-graphic]")
+      .replace(/url\(data:[^)]+\)/g, "url([inline-image])");
+
+    if (pageContent.length > 25000) {
+      pageContent = pageContent.substring(0, 25000);
     }
 
     console.log("Total content for AI analysis:", pageContent.length, "chars");
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
-        temperature: 0,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `Extract brand information from this website. The source URL is: ${url}\n\n${pageContent}` },
-        ],
-      }),
-    });
+    const models = ["google/gemini-2.5-flash", "openai/gpt-5-mini", "google/gemini-2.5-flash-lite"];
+    let content: string | null = null;
 
-    if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+    for (const model of models) {
+      console.log("Trying model:", model);
+      const isOpenAI = model.startsWith("openai/");
+      try {
+        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model,
+            ...(isOpenAI ? {} : { temperature: 0 }),
+            messages: [
+              { role: "system", content: SYSTEM_PROMPT },
+              { role: "user", content: `Extract brand information from this website. The source URL is: ${url}\n\n${pageContent}` },
+            ],
+          }),
+        });
+
+        if (response.status === 429) {
+          return new Response(
+            JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
+            { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+        if (response.status === 402) {
+          return new Response(
+            JSON.stringify({ error: "AI credits depleted. Please add credits to continue." }),
+            { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Model ${model} failed:`, response.status, errorText);
+          continue; // Try next model
+        }
+
+        const aiResponse = await response.json();
+        content = aiResponse.choices?.[0]?.message?.content;
+        if (content) {
+          console.log("Success with model:", model);
+          break;
+        }
+      } catch (e) {
+        console.error(`Model ${model} error:`, e);
+        continue;
       }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "AI credits depleted. Please add credits to continue." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      return new Response(
-        JSON.stringify({ error: "Analysis service temporarily unavailable. Please try again later." }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
     }
-
-    const aiResponse = await response.json();
-    const content = aiResponse.choices?.[0]?.message?.content;
 
     if (!content) {
       return new Response(
-        JSON.stringify({ error: "Failed to get analysis from AI" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "Analysis service temporarily unavailable. Please try again later." }),
+        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
