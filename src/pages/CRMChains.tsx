@@ -22,7 +22,7 @@ const services = [
   {
     icon: <Globe className="h-6 w-6" />,
     title: "Branded Website Ecosystem",
-    description: "Seamless website design connected to your CRM. When your agency onboards a new agent, we auto-generate a branded landing page instantly.",
+    description: "Seamless website design connected to your CRM. When your agency onboards a new agent, we auto-generate a branded landing page, digital business card, QR code, and personalized URL — all matching your agency branding.",
   },
   {
     icon: <Bot className="h-6 w-6" />,
