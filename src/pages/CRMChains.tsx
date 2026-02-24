@@ -93,7 +93,7 @@ const CRMChains = () => {
                     Book a Strategy Call <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
-                <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" asChild>
+                <Button size="lg" variant="outline" className="border-coral/50 text-coral-light hover:bg-coral/10" asChild>
                   <a href="#services">See How It Works</a>
                 </Button>
               </div>
