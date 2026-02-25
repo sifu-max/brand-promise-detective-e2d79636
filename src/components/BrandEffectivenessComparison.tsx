@@ -83,6 +83,18 @@ export function BrandEffectivenessComparison({ original, improved, originalUrl, 
             </div>
           </div>
 
+          {/* Executive Summary */}
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 text-sm text-foreground leading-relaxed">
+            We analyzed your current site and created a preliminary revamp. Your brand effectiveness score went from{" "}
+            <strong className={getScoreColor(original.overall_score)}>{original.overall_score} ({original.overall_grade})</strong> to{" "}
+            <strong className={getScoreColor(improved.overall_score)}>{improved.overall_score} ({improved.overall_grade})</strong>.
+            {" "}Our goal is to have all clients score a <strong>B or better</strong> with full AI visibility.
+            {" "}Let us know if there is anything we can do to assist you —{" "}
+            <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer" className="text-primary font-medium hover:underline">
+              www.crmchains.com
+            </a>
+          </div>
+
           {/* Category-by-category comparison */}
           <div className="space-y-5">
             {improved.categories.map((improvedCat, i) => {
