@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Award, TrendingUp, TrendingDown, Minus, AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
 
 interface BrandEffectivenessComparisonProps {
@@ -42,6 +44,13 @@ export function BrandEffectivenessComparison({ original, improved, originalUrl, 
   const overallDelta = improved.overall_score - original.overall_score;
   const overallDeltaDisplay = getDeltaDisplay(overallDelta);
 
+  const defaultSummary = `We analyzed your current site and created a preliminary revamp. Your brand effectiveness score went from ${original.overall_score} (${original.overall_grade}) to ${improved.overall_score} (${improved.overall_grade}). Our goal is to have all clients score a B or better with full AI visibility. Let us know if there is anything we can do to assist you — www.crmchains.com`;
+
+  const [summary, setSummary] = useState(defaultSummary);
+
+  useEffect(() => {
+    setSummary(defaultSummary);
+  }, [original.overall_score, improved.overall_score]);
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Overall Comparison Header */}
@@ -83,16 +92,14 @@ export function BrandEffectivenessComparison({ original, improved, originalUrl, 
             </div>
           </div>
 
-          {/* Executive Summary */}
-          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 text-sm text-foreground leading-relaxed">
-            We analyzed your current site and created a preliminary revamp. Your brand effectiveness score went from{" "}
-            <strong className={getScoreColor(original.overall_score)}>{original.overall_score} ({original.overall_grade})</strong> to{" "}
-            <strong className={getScoreColor(improved.overall_score)}>{improved.overall_score} ({improved.overall_grade})</strong>.
-            {" "}Our goal is to have all clients score a <strong>B or better</strong> with full AI visibility.
-            {" "}Let us know if there is anything we can do to assist you —{" "}
-            <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer" className="text-primary font-medium hover:underline">
-              www.crmchains.com
-            </a>
+          {/* Editable Executive Summary */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">Client Summary (editable — will appear in print)</label>
+            <Textarea
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+              className="min-h-[80px] text-sm leading-relaxed bg-primary/5 border-primary/20 resize-y"
+            />
           </div>
 
           {/* Category-by-category comparison */}
