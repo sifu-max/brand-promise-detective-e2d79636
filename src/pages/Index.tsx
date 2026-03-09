@@ -125,7 +125,7 @@ const Index = () => {
     }
   };
 
-  const fetchEffectiveness = async (brandData: BrandResearchResult, previousScores?: BrandEffectivenessResult | null) => {
+  const fetchEffectiveness = async (brandData: BrandResearchResult, previousScores?: BrandEffectivenessResult | null, analysisId?: string | null) => {
     setIsScoring(true);
     try {
       const body: any = { brandData };
