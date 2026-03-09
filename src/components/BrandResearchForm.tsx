@@ -1,13 +1,13 @@
 import { useState, useRef, useImperativeHandle, forwardRef } from "react";
-import { Globe, ArrowRight, Loader2, GitCompareArrows } from "lucide-react";
+import { Globe, ArrowRight, Loader2, GitCompareArrows, User, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
 interface BrandResearchFormProps {
-  onSubmit: (url: string) => void;
-  onCompare?: (originalUrl: string, improvedUrl: string) => void;
+  onSubmit: (url: string, leadInfo?: { firstName?: string; email?: string }) => void;
+  onCompare?: (originalUrl: string, improvedUrl: string, leadInfo?: { firstName?: string; email?: string }) => void;
   isLoading: boolean;
   adminMode?: boolean;
 }
@@ -21,6 +21,8 @@ export const BrandResearchForm = forwardRef<BrandResearchFormRef, BrandResearchF
     const [url, setUrl] = useState("");
     const [improvedUrl, setImprovedUrl] = useState("");
     const [compareMode, setCompareMode] = useState(false);
+    const [firstName, setFirstName] = useState("");
+    const [email, setEmail] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => ({
@@ -33,10 +35,14 @@ export const BrandResearchForm = forwardRef<BrandResearchFormRef, BrandResearchF
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
+      const leadInfo = (firstName.trim() || email.trim())
+        ? { firstName: firstName.trim() || undefined, email: email.trim() || undefined }
+        : undefined;
+
       if (compareMode && url.trim() && improvedUrl.trim() && onCompare) {
-        onCompare(url.trim(), improvedUrl.trim());
+        onCompare(url.trim(), improvedUrl.trim(), leadInfo);
       } else if (url.trim()) {
-        onSubmit(url.trim());
+        onSubmit(url.trim(), leadInfo);
       }
     };
 
@@ -57,6 +63,36 @@ export const BrandResearchForm = forwardRef<BrandResearchFormRef, BrandResearchF
             </Label>
           </div>
         )}
+
+        {/* Optional Lead Capture */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+              <User className="h-4 w-4" />
+            </div>
+            <Input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="First name (optional)"
+              className="h-11 pl-9 text-sm text-foreground bg-card border-border/50 shadow-sm placeholder:text-muted-foreground/60"
+              disabled={isLoading}
+            />
+          </div>
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+              <Mail className="h-4 w-4" />
+            </div>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email (optional)"
+              className="h-11 pl-9 text-sm text-foreground bg-card border-border/50 shadow-sm placeholder:text-muted-foreground/60"
+              disabled={isLoading}
+            />
+          </div>
+        </div>
 
         {/* Original URL */}
         <div className="relative">
