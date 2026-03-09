@@ -15,6 +15,7 @@ import {
   Download,
   Printer
 } from "lucide-react";
+import { BrandBoardExport } from "./BrandBoardExport";
 import { useState } from "react";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
