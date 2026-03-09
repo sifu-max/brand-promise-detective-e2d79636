@@ -148,6 +148,7 @@ const Index = () => {
 
       if (data?.success && data?.data) {
         setEffectiveness(data.data);
+        if (analysisId) updateAnalysis(analysisId, { effectiveness: data.data });
         toast.success("Brand effectiveness scored!");
         return data.data as BrandEffectivenessResult;
       }
