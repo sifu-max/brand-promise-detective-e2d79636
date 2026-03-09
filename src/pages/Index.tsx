@@ -176,6 +176,7 @@ const Index = () => {
 
       if (data?.success && data?.data) {
         setVisibility(data.data);
+        if (analysisId) updateAnalysis(analysisId, { ai_visibility: data.data });
         toast.success("AI visibility scan complete!");
       }
     } catch (err) {
