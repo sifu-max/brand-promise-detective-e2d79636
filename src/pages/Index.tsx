@@ -43,7 +43,40 @@ const Index = () => {
   const [comparisonImproved, setComparisonImproved] = useState<BrandEffectivenessResult | null>(null);
   const [comparisonUrls, setComparisonUrls] = useState<{ original: string; improved: string } | null>(null);
 
-  const handleAnalyze = async (url: string) => {
+  // Store lead + create analysis record, return analysis id
+  const saveLead = async (url: string, leadInfo?: { firstName?: string; email?: string }) => {
+    try {
+      let leadId: string | null = null;
+      if (leadInfo?.firstName || leadInfo?.email) {
+        const { data: lead } = await supabase
+          .from("leads")
+          .insert({ first_name: leadInfo.firstName || null, email: leadInfo.email || null })
+          .select("id")
+          .single();
+        leadId = lead?.id || null;
+      }
+      const { data: analysis } = await supabase
+        .from("brand_analyses")
+        .insert({ lead_id: leadId, source_url: url })
+        .select("id")
+        .single();
+      return analysis?.id || null;
+    } catch (err) {
+      console.error("Failed to save lead:", err);
+      return null;
+    }
+  };
+
+  const updateAnalysis = async (analysisId: string | null, updates: Record<string, any>) => {
+    if (!analysisId) return;
+    try {
+      await supabase.from("brand_analyses").update(updates).eq("id", analysisId);
+    } catch (err) {
+      console.error("Failed to update analysis:", err);
+    }
+  };
+
+  const handleAnalyze = async (url: string, leadInfo?: { firstName?: string; email?: string }) => {
     setIsLoading(true);
     setResult(null);
     setEffectiveness(null);
@@ -52,6 +85,10 @@ const Index = () => {
     setComparisonOriginal(null);
     setComparisonImproved(null);
     setComparisonUrls(null);
+
+    // Save lead & create analysis record
+    const analysisId = await saveLead(url, leadInfo);
+    currentAnalysisIdRef.current = analysisId;
 
     try {
       const { data, error } = await supabase.functions.invoke("brand-research", {
@@ -74,9 +111,10 @@ const Index = () => {
 
       if (data?.success && data?.data) {
         setResult(data.data);
+        updateAnalysis(analysisId, { brand_research: data.data });
         toast.success("Brand analysis complete! Scoring effectiveness...");
-        fetchEffectiveness(data.data);
-        fetchVisibility(url);
+        fetchEffectiveness(data.data, null, analysisId);
+        fetchVisibility(url, analysisId);
       }
     } catch (err) {
       console.error("Analysis error:", err);
