@@ -15,6 +15,7 @@ import {
   Download,
   Printer
 } from "lucide-react";
+import { BrandBoardExport } from "./BrandBoardExport";
 import { useState } from "react";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
@@ -119,6 +120,7 @@ export function BrandResults({ data, effectiveness, visibility, adminMode = fals
             <Printer className="h-4 w-4 mr-2" />
             Print
           </Button>
+          <BrandBoardExport data={data} />
           {adminMode && (
             <>
               <Button variant="outline" size="sm" onClick={handleCopyJson}>
