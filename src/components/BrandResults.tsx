@@ -16,6 +16,7 @@ import {
   Printer
 } from "lucide-react";
 import { BrandBoardExport } from "./BrandBoardExport";
+import { TeaserGate } from "./TeaserGate";
 import { useState } from "react";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
@@ -136,6 +137,7 @@ export function BrandResults({ data, effectiveness, visibility, adminMode = fals
         </div>
       </div>
 
+      {/* TEASER SECTION — Shown to everyone */}
       {/* Hero Section - Tagline & CTA */}
       <div className="grid gap-4 md:grid-cols-2">
         <BrandResultCard icon={<Sparkles className="h-4 w-4" />} title="Business Tagline" delay={0}>
@@ -147,15 +149,10 @@ export function BrandResults({ data, effectiveness, visibility, adminMode = fals
         </BrandResultCard>
       </div>
 
-      {/* Core Solution */}
-      <BrandResultCard icon={<Lightbulb className="h-4 w-4" />} title="Core Service/Solution" delay={100}>
-        <p className="text-muted-foreground leading-relaxed">{data.core_service_solution}</p>
-      </BrandResultCard>
-
-      {/* Pain Points */}
+      {/* Pain Points — show top 2 only for non-admins */}
       <BrandResultCard icon={<AlertCircle className="h-4 w-4" />} title="Core Client Pain Points" delay={150}>
         <ul className="space-y-2">
-          {data.core_client_pain_points.map((pain, index) => (
+          {(adminMode ? data.core_client_pain_points : data.core_client_pain_points.slice(0, 2)).map((pain, index) => (
             <li key={index} className="flex items-start gap-3">
               <span className="flex-shrink-0 w-6 h-6 rounded-full bg-destructive/10 text-destructive text-sm font-medium flex items-center justify-center mt-0.5">
                 {index + 1}
@@ -164,68 +161,89 @@ export function BrandResults({ data, effectiveness, visibility, adminMode = fals
             </li>
           ))}
         </ul>
+        {!adminMode && data.core_client_pain_points.length > 2 && (
+          <p className="text-xs text-muted-foreground mt-3 italic">
+            +{data.core_client_pain_points.length - 2} more pain points available in the full report
+          </p>
+        )}
       </BrandResultCard>
 
-      {/* Communication & Structure Badges */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <BrandResultCard icon={<MessageSquare className="h-4 w-4" />} title="Communication Tone" delay={200}>
-          <Badge className={`${toneColors[data.communication_tone]} border text-sm font-medium`}>
-            {data.communication_tone}
-          </Badge>
-        </BrandResultCard>
-
-        <BrandResultCard icon={<Layers className="h-4 w-4" />} title="Offer Structure" delay={250}>
-          <Badge className={`${structureColors[data.offer_structure]} border text-sm font-medium`}>
-            {data.offer_structure}
-          </Badge>
-        </BrandResultCard>
-      </div>
-
-      {/* Pricing & Timeline */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <BrandResultCard icon={<DollarSign className="h-4 w-4" />} title="Core Offer Investment" delay={300}>
-          <p className="text-muted-foreground">{data.core_offer_investment}</p>
-        </BrandResultCard>
-
-        <BrandResultCard icon={<Clock className="h-4 w-4" />} title="Client Budget & Timeline" delay={350}>
-          <p className="text-muted-foreground">{data.clients_budget_timeline}</p>
-        </BrandResultCard>
-      </div>
-
-      {/* Brand DNA */}
+      {/* Brand DNA — teaser: show colors only */}
       {data.brand_dna && (
         <BrandDNADisplay brandDna={data.brand_dna} delay={400} />
       )}
 
-      {/* Ideal Client */}
-      <BrandResultCard icon={<Users className="h-4 w-4" />} title="Ideal Client Niche" delay={450}>
-        <p className="text-muted-foreground">{data.ideal_client_niche}</p>
-      </BrandResultCard>
+      {/* GATED SECTION — Full details only for admin */}
+      {adminMode ? (
+        <>
+          {/* Core Solution */}
+          <BrandResultCard icon={<Lightbulb className="h-4 w-4" />} title="Core Service/Solution" delay={100}>
+            <p className="text-muted-foreground leading-relaxed">{data.core_service_solution}</p>
+          </BrandResultCard>
 
-      {/* Source & Inference Notes */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <BrandResultCard icon={<Link className="h-4 w-4" />} title="Source URL" delay={450}>
-          <a 
-            href={data.source_url} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="text-primary hover:underline break-all"
-          >
-            {data.source_url}
-          </a>
-        </BrandResultCard>
+          {/* Communication & Structure Badges */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <BrandResultCard icon={<MessageSquare className="h-4 w-4" />} title="Communication Tone" delay={200}>
+              <Badge className={`${toneColors[data.communication_tone]} border text-sm font-medium`}>
+                {data.communication_tone}
+              </Badge>
+            </BrandResultCard>
 
-        <BrandResultCard icon={<FileText className="h-4 w-4" />} title="Extraction Confidence" delay={500}>
-          <Badge className={`${confidenceColors[data.extraction_confidence]} border text-sm font-medium`}>
-            {data.extraction_confidence}
-          </Badge>
-          <p className="text-xs text-muted-foreground mt-2">
-            {data.extraction_confidence === "High" ? "Most data was found directly on the site" : 
-             data.extraction_confidence === "Medium" ? "Some fields could not be found on the site" :
-             "Limited data found - many fields marked as not found"}
-          </p>
-        </BrandResultCard>
-      </div>
+            <BrandResultCard icon={<Layers className="h-4 w-4" />} title="Offer Structure" delay={250}>
+              <Badge className={`${structureColors[data.offer_structure]} border text-sm font-medium`}>
+                {data.offer_structure}
+              </Badge>
+            </BrandResultCard>
+          </div>
+
+          {/* Pricing & Timeline */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <BrandResultCard icon={<DollarSign className="h-4 w-4" />} title="Core Offer Investment" delay={300}>
+              <p className="text-muted-foreground">{data.core_offer_investment}</p>
+            </BrandResultCard>
+
+            <BrandResultCard icon={<Clock className="h-4 w-4" />} title="Client Budget & Timeline" delay={350}>
+              <p className="text-muted-foreground">{data.clients_budget_timeline}</p>
+            </BrandResultCard>
+          </div>
+
+          {/* Ideal Client */}
+          <BrandResultCard icon={<Users className="h-4 w-4" />} title="Ideal Client Niche" delay={450}>
+            <p className="text-muted-foreground">{data.ideal_client_niche}</p>
+          </BrandResultCard>
+
+          {/* Source & Inference Notes */}
+          <div className="grid gap-4 md:grid-cols-2">
+            <BrandResultCard icon={<Link className="h-4 w-4" />} title="Source URL" delay={450}>
+              <a 
+                href={data.source_url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-primary hover:underline break-all"
+              >
+                {data.source_url}
+              </a>
+            </BrandResultCard>
+
+            <BrandResultCard icon={<FileText className="h-4 w-4" />} title="Extraction Confidence" delay={500}>
+              <Badge className={`${confidenceColors[data.extraction_confidence]} border text-sm font-medium`}>
+                {data.extraction_confidence}
+              </Badge>
+              <p className="text-xs text-muted-foreground mt-2">
+                {data.extraction_confidence === "High" ? "Most data was found directly on the site" : 
+                 data.extraction_confidence === "Medium" ? "Some fields could not be found on the site" :
+                 "Limited data found - many fields marked as not found"}
+              </p>
+            </BrandResultCard>
+          </div>
+        </>
+      ) : (
+        /* Teaser gate for non-admins */
+        <TeaserGate 
+          featureName="Full Brand Analysis Report" 
+          description="Get detailed insights including core solution, communication tone, offer structure, pricing strategy, ideal client profile, and actionable improvement recommendations."
+        />
+      )}
     </div>
   );
 }
