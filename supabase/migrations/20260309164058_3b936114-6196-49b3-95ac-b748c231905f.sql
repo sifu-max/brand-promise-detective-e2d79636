@@ -1,0 +1,1 @@
+CREATE POLICY "Allow anonymous select on leads" ON public.leads FOR SELECT TO anon USING (true);
