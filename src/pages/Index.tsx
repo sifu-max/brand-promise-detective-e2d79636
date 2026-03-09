@@ -24,6 +24,7 @@ const Index = () => {
   const [effectiveness, setEffectiveness] = useState<BrandEffectivenessResult | null>(null);
   const [visibility, setVisibility] = useState<AIVisibilityResult | null>(null);
   const formRef = useRef<BrandResearchFormRef>(null);
+  const currentAnalysisIdRef = useRef<string | null>(null);
   const [adminMode, setAdminMode] = useState(false);
 
    // Secret keyboard shortcut: Ctrl+Shift+B toggles admin tools
