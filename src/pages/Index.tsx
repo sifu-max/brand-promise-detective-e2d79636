@@ -186,7 +186,7 @@ const Index = () => {
     }
   };
 
-  const handleCompare = async (originalUrl: string, improvedUrl: string) => {
+  const handleCompare = async (originalUrl: string, improvedUrl: string, leadInfo?: { firstName?: string; email?: string }) => {
     setIsLoading(true);
     setIsComparing(true);
     setResult(null);
