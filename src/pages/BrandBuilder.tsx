@@ -560,15 +560,26 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
           {/* Actions */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button onClick={handleSave} size="lg" className="flex-1">
-                <Save className="mr-2 h-4 w-4" />
-                Save & Copy JSON
-              </Button>
-              <Button onClick={handleExport} variant="outline" size="lg" className="flex-1">
-                Export JSON File
-              </Button>
+              {adminMode ? (
+                <>
+                  <Button onClick={handleSave} size="lg" className="flex-1">
+                    <Save className="mr-2 h-4 w-4" />
+                    Save & Copy JSON
+                  </Button>
+                  <Button onClick={handleExport} variant="outline" size="lg" className="flex-1">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export JSON File
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button onClick={() => window.print()} size="lg" className="flex-1">
+                    <Printer className="mr-2 h-4 w-4" />
+                    Print / Save as PDF
+                  </Button>
+                </>
+              )}
             </div>
-            
           </div>
         </div>
       </div>
