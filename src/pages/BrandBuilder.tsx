@@ -21,6 +21,18 @@ const BrandBuilder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const prefillData = location.state?.prefillData as BrandResearchResult | undefined;
+  const [adminMode, setAdminMode] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "B") {
+        setAdminMode((prev) => !prev);
+        toast.success(adminMode ? "Admin mode off" : "Admin mode on");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [adminMode]);
 
   const defaultBrandDNA: BrandDNA = {
     primary_color: "",
