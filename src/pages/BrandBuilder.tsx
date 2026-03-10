@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Sparkles, Video, Link, Plus } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, Video, Link, Plus, Printer, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,18 @@ const BrandBuilder = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const prefillData = location.state?.prefillData as BrandResearchResult | undefined;
+  const [adminMode, setAdminMode] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "B") {
+        setAdminMode((prev) => !prev);
+        toast.success(adminMode ? "Admin mode off" : "Admin mode on");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [adminMode]);
 
   const defaultBrandDNA: BrandDNA = {
     primary_color: "",
@@ -548,15 +560,26 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
           {/* Actions */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button onClick={handleSave} size="lg" className="flex-1">
-                <Save className="mr-2 h-4 w-4" />
-                Save & Copy JSON
-              </Button>
-              <Button onClick={handleExport} variant="outline" size="lg" className="flex-1">
-                Export JSON File
-              </Button>
+              {adminMode ? (
+                <>
+                  <Button onClick={handleSave} size="lg" className="flex-1">
+                    <Save className="mr-2 h-4 w-4" />
+                    Save & Copy JSON
+                  </Button>
+                  <Button onClick={handleExport} variant="outline" size="lg" className="flex-1">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export JSON File
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button onClick={() => window.print()} size="lg" className="flex-1">
+                    <Printer className="mr-2 h-4 w-4" />
+                    Print / Save as PDF
+                  </Button>
+                </>
+              )}
             </div>
-            
           </div>
         </div>
       </div>
