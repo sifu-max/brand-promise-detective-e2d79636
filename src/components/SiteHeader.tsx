@@ -57,7 +57,7 @@ export function SiteHeader() {
             </a>
           </Button>
           <Button variant="secondary" className="font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
-            <a href="https://app.crmchains.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://app.crmchains.com/" target="_blank" rel="noopener noreferrer">
               LOGIN TO APP
             </a>
           </Button>
