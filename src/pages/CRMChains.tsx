@@ -78,7 +78,7 @@ const CRMChains = () => {
 
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" className="bg-coral hover:bg-coral/90 text-primary-foreground" asChild>
-                  <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+                  <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
                     Book a Strategy Call <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
@@ -218,7 +218,7 @@ const CRMChains = () => {
             replaces your disconnected tools with one system built for growth.
           </p>
           <Button size="lg" className="bg-coral hover:bg-coral/90 text-primary-foreground px-10 py-6 text-lg" asChild>
-            <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+            <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
               Book Your Strategy Call <ArrowRight className="ml-2 h-5 w-5" />
             </a>
           </Button>
@@ -229,13 +229,13 @@ const CRMChains = () => {
       <footer className="border-t border-border py-12">
         <div className="container max-w-6xl">
           <div className="flex flex-col items-center gap-6 text-center">
-            <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
+            <a href="https://crmchains.com/" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
               <img src={crmchainsLogo} alt="CRMChains Logo" className="h-16 w-auto" />
             </a>
             <p className="text-base text-muted-foreground max-w-xl leading-relaxed">
               "A defined brand promise attracts your ideal client. CRMChains nurtures them into solutions orchestrated by your team."
             </p>
-            <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
+            <a href="https://crmchains.com/" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
               www.crmchains.com
             </a>
           </div>

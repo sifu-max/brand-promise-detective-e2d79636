@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 
 const navLinks = [
-  { label: "Home", href: "https://www.crmchains.com", external: true },
-  { label: "About", href: "https://www.crmchains.com/about", external: true },
-  { label: "Service", href: "https://www.crmchains.com/service", external: true },
-  { label: "Contact", href: "https://www.crmchains.com/contact", external: true },
+  { label: "Home", href: "https://crmchains.com/home-2433", external: true },
+  { label: "About", href: "https://crmchains.com/home-195168#section-ttYNiV2QSb", external: true },
+  { label: "Service", href: "https://crmchains.com/#section-g5ULlseAzv", external: true },
+  { label: "Contact", href: "https://crmchains.com/#section-4rhM9e5ju9", external: true },
   { label: "Branding", href: "/brand-builder", external: false },
-  { label: "Showcase", href: "https://www.crmchains.com/showcase", external: true },
+  { label: "Showcase", href: "https://showcase.crmchains.com/", external: true },
 ];
 
 export function SiteHeader() {
@@ -52,17 +52,17 @@ export function SiteHeader() {
             className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-xs px-4"
             asChild
           >
-            <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+            <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
               BOOK A DEMO
             </a>
           </Button>
           <Button variant="secondary" className="font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
-            <a href="https://app.crmchains.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://app.crmchains.com/" target="_blank" rel="noopener noreferrer">
               LOGIN TO APP
             </a>
           </Button>
           <Button className="bg-coral hover:bg-coral/90 text-primary-foreground font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
-            <a href="https://www.crmchains.com/get-started" target="_blank" rel="noopener noreferrer">
+            <a href="https://crmchains.com/#view" target="_blank" rel="noopener noreferrer">
               Get Started
             </a>
           </Button>
