@@ -5,8 +5,8 @@ import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 
 const navLinks = [
   { label: "Home", href: "https://crmchains.com/home-2433", external: true },
-  { label: "About", href: "https://crmchains.com/home-195168#section-ttYNiV2QSb", external: true },
-  { label: "Service", href: "https://crmchains.com/#section-g5ULlseAzv", external: true },
+  { label: "About", href: "https://branding.crmchains.com/crmchains", external: true },
+  { label: "Service", href: "https://crmchains.com/#view", external: true },
   { label: "Contact", href: "https://crmchains.com/#section-4rhM9e5ju9", external: true },
   { label: "Branding", href: "/brand-builder", external: false },
   { label: "Showcase", href: "https://showcase.crmchains.com/", external: true },
