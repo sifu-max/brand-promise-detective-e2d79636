@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 
 const navLinks = [
-  { label: "Home", href: "https://www.crmchains.com", external: true },
-  { label: "About", href: "https://www.crmchains.com/about", external: true },
-  { label: "Service", href: "https://www.crmchains.com/service", external: true },
-  { label: "Contact", href: "https://www.crmchains.com/contact", external: true },
+  { label: "Home", href: "https://crmchains.com/home-2433", external: true },
+  { label: "About", href: "https://crmchains.com/home-195168#section-ttYNiV2QSb", external: true },
+  { label: "Service", href: "https://crmchains.com/#section-g5ULlseAzv", external: true },
+  { label: "Contact", href: "https://crmchains.com/#section-4rhM9e5ju9", external: true },
   { label: "Branding", href: "/brand-builder", external: false },
-  { label: "Showcase", href: "https://www.crmchains.com/showcase", external: true },
+  { label: "Showcase", href: "https://showcase.crmchains.com/", external: true },
 ];
 
 export function SiteHeader() {
