@@ -59,11 +59,47 @@ const CRMChains = () => {
           <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer">
             <img src={crmchainsLogo} alt="CRMChains" className="h-10 w-auto" />
           </a>
-          <Button asChild>
-            <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
-              Book a Demo <ArrowRight className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
+
+          {/* Nav Links */}
+          <div className="hidden md:flex items-center gap-6">
+            {[
+              { label: "Home", href: "https://www.crmchains.com" },
+              { label: "About", href: "https://www.crmchains.com/about" },
+              { label: "Service", href: "https://www.crmchains.com/service" },
+              { label: "Contact", href: "https://www.crmchains.com/contact" },
+              { label: "Branding", href: "/brand-builder" },
+              { label: "Showcase", href: "https://www.crmchains.com/showcase" },
+            ].map((link) =>
+              link.href.startsWith("/") ? (
+                <a key={link.label} href={link.href} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  {link.label}
+                </a>
+              ) : (
+                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+                  {link.label}
+                </a>
+              )
+            )}
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex items-center gap-2">
+            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-xs px-4" asChild>
+              <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+                BOOK A DEMO
+              </a>
+            </Button>
+            <Button variant="secondary" className="font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
+              <a href="https://www.crmchains.com/login" target="_blank" rel="noopener noreferrer">
+                LOGIN TO APP
+              </a>
+            </Button>
+            <Button className="bg-coral hover:bg-coral/90 text-primary-foreground font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
+              <a href="https://www.crmchains.com/get-started" target="_blank" rel="noopener noreferrer">
+                Get Started
+              </a>
+            </Button>
+          </div>
         </div>
       </nav>
 
