@@ -270,6 +270,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteHeader />
       {/* Header */}
       <div className="gradient-hero text-primary-foreground">
         <div className="container max-w-4xl py-12">

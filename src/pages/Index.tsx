@@ -291,6 +291,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteHeader />
       {/* Hero Section */}
       <div className="gradient-hero text-primary-foreground">
         <div className="container max-w-4xl py-16 md:py-24">
