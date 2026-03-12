@@ -218,7 +218,7 @@ const CRMChains = () => {
             replaces your disconnected tools with one system built for growth.
           </p>
           <Button size="lg" className="bg-coral hover:bg-coral/90 text-primary-foreground px-10 py-6 text-lg" asChild>
-            <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+            <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
               Book Your Strategy Call <ArrowRight className="ml-2 h-5 w-5" />
             </a>
           </Button>
