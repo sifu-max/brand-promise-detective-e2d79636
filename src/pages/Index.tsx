@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Zap, RotateCcw, PenLine } from "lucide-react";
+import { SiteHeader } from "@/components/SiteHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
@@ -290,6 +291,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteHeader />
       {/* Hero Section */}
       <div className="gradient-hero text-primary-foreground">
         <div className="container max-w-4xl py-16 md:py-24">

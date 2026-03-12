@@ -1,6 +1,7 @@
 import { ArrowRight, Phone, Bot, Globe, Calculator, Shield, Users, Zap, CheckCircle2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { SiteHeader } from "@/components/SiteHeader";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 
 const services = [
@@ -53,55 +54,7 @@ const painPoints = [
 const CRMChains = () => {
   return (
     <div className="min-h-screen bg-background">
-      {/* Nav */}
-      <nav className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container max-w-6xl flex items-center justify-between h-16">
-          <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer">
-            <img src={crmchainsLogo} alt="CRMChains" className="h-10 w-auto" />
-          </a>
-
-          {/* Nav Links */}
-          <div className="hidden md:flex items-center gap-6">
-            {[
-              { label: "Home", href: "https://www.crmchains.com" },
-              { label: "About", href: "https://www.crmchains.com/about" },
-              { label: "Service", href: "https://www.crmchains.com/service" },
-              { label: "Contact", href: "https://www.crmchains.com/contact" },
-              { label: "Branding", href: "/brand-builder" },
-              { label: "Showcase", href: "https://www.crmchains.com/showcase" },
-            ].map((link) =>
-              link.href.startsWith("/") ? (
-                <a key={link.label} href={link.href} className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-                  {link.label}
-                </a>
-              ) : (
-                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-                  {link.label}
-                </a>
-              )
-            )}
-          </div>
-
-          {/* CTA Buttons */}
-          <div className="flex items-center gap-2">
-            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-xs px-4" asChild>
-              <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
-                BOOK A DEMO
-              </a>
-            </Button>
-            <Button variant="secondary" className="font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
-              <a href="https://www.crmchains.com/login" target="_blank" rel="noopener noreferrer">
-                LOGIN TO APP
-              </a>
-            </Button>
-            <Button className="bg-coral hover:bg-coral/90 text-primary-foreground font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
-              <a href="https://www.crmchains.com/get-started" target="_blank" rel="noopener noreferrer">
-                Get Started
-              </a>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <SiteHeader />
 
       {/* Hero */}
       <section className="gradient-hero text-primary-foreground">

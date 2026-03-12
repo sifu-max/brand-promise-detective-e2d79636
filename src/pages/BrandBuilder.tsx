@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, Sparkles, Video, Link, Plus, Printer, Download } from "lucide-react";
+import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -269,6 +270,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteHeader />
       {/* Header */}
       <div className="gradient-hero text-primary-foreground">
         <div className="container max-w-4xl py-12">
