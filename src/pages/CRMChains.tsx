@@ -229,7 +229,7 @@ const CRMChains = () => {
       <footer className="border-t border-border py-12">
         <div className="container max-w-6xl">
           <div className="flex flex-col items-center gap-6 text-center">
-            <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
+            <a href="https://crmchains.com/" target="_blank" rel="noopener noreferrer" className="transition-opacity hover:opacity-80">
               <img src={crmchainsLogo} alt="CRMChains Logo" className="h-16 w-auto" />
             </a>
             <p className="text-base text-muted-foreground max-w-xl leading-relaxed">
