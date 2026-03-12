@@ -52,7 +52,7 @@ export function SiteHeader() {
             className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold text-xs px-4"
             asChild
           >
-            <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+            <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
               BOOK A DEMO
             </a>
           </Button>
