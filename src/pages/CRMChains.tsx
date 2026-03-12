@@ -235,7 +235,7 @@ const CRMChains = () => {
             <p className="text-base text-muted-foreground max-w-xl leading-relaxed">
               "A defined brand promise attracts your ideal client. CRMChains nurtures them into solutions orchestrated by your team."
             </p>
-            <a href="https://www.crmchains.com" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
+            <a href="https://crmchains.com/" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary hover:underline">
               www.crmchains.com
             </a>
           </div>
