@@ -62,7 +62,7 @@ export function SiteHeader() {
             </a>
           </Button>
           <Button className="bg-coral hover:bg-coral/90 text-primary-foreground font-semibold text-xs px-4 hidden sm:inline-flex" asChild>
-            <a href="https://www.crmchains.com/get-started" target="_blank" rel="noopener noreferrer">
+            <a href="https://crmchains.com/#view" target="_blank" rel="noopener noreferrer">
               Get Started
             </a>
           </Button>
