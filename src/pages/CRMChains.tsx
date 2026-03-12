@@ -2,6 +2,7 @@ import { ArrowRight, Phone, Bot, Globe, Calculator, Shield, Users, Zap, CheckCir
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SiteHeader } from "@/components/SiteHeader";
+import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 
 const services = [
   {
