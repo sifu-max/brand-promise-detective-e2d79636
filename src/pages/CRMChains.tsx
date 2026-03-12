@@ -78,7 +78,7 @@ const CRMChains = () => {
 
               <div className="flex flex-wrap gap-4">
                 <Button size="lg" className="bg-coral hover:bg-coral/90 text-primary-foreground" asChild>
-                  <a href="https://www.crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+                  <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
                     Book a Strategy Call <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
