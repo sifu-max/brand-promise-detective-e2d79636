@@ -1,7 +1,7 @@
 import { ArrowRight, Phone, Bot, Globe, Calculator, Shield, Users, Zap, CheckCircle2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import crmchainsLogo from "@/assets/crmchains-logo.jpg";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const services = [
   {
