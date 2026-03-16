@@ -132,10 +132,15 @@ const ClearFaithLanding = () => {
           />
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-          <a href="https://www.youtube.com/live/9Dgz0ReUHV4" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.youtube.com/@clearfaithchristianministr1532" target="_blank" rel="noopener noreferrer">
             <Button className="bg-[#4C1D95] hover:bg-[#3B0764] text-white font-semibold px-6 rounded-xl">
               <Play className="mr-2 h-4 w-4" />
               Watch More on YouTube
+            </Button>
+          </a>
+          <a href="https://www.youtube.com/@clearfaithchristianministr1532?sub_confirmation=1" target="_blank" rel="noopener noreferrer">
+            <Button className="bg-[#FF0000] hover:bg-[#CC0000] text-white font-semibold px-6 rounded-xl">
+              Subscribe to Our Channel
             </Button>
           </a>
           <Button
