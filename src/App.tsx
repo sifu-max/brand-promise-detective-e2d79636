@@ -23,6 +23,7 @@ const App = () => (
           <Route path="/brand-builder" element={<BrandBuilder />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/crmchains" element={<CRMChains />} />
+          <Route path="/clearfaith" element={<ClearFaithLanding />} />
           <Route path="/clear-faith" element={<ClearFaithLanding />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
