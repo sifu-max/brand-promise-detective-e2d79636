@@ -1,11 +1,79 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, BookOpen, Users, Heart, MessageCircle, Play, CheckCircle, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+const CLEAR_FAITH_SEO = {
+  title: "Clear Faith Christian Ministries | Virtual Church — Teaching, Counseling & Coaching",
+  description: "Join Clear Faith Christian Ministries — a 100% virtual church empowering ministry leaders and faith-driven business owners through teaching, counseling, and coaching. Watch live, catch replays, and grow in faith from anywhere.",
+  url: "https://branding.crmchains.com/clearfaith",
+  type: "website",
+};
+
 const ClearFaithLanding = () => {
   const [videoOpen, setVideoOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Save original meta values
+    const originalTitle = document.title;
+    const metaTags: Record<string, { el: HTMLMetaElement | null; original: string }> = {};
+
+    const setMeta = (attr: string, key: string, content: string) => {
+      let el = document.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
+      const original = el?.getAttribute("content") || "";
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+      metaTags[key] = { el, original };
+    };
+
+    document.title = CLEAR_FAITH_SEO.title;
+    setMeta("name", "description", CLEAR_FAITH_SEO.description);
+    setMeta("property", "og:title", CLEAR_FAITH_SEO.title);
+    setMeta("property", "og:description", CLEAR_FAITH_SEO.description);
+    setMeta("property", "og:url", CLEAR_FAITH_SEO.url);
+    setMeta("property", "og:type", CLEAR_FAITH_SEO.type);
+    setMeta("name", "twitter:title", CLEAR_FAITH_SEO.title);
+    setMeta("name", "twitter:description", CLEAR_FAITH_SEO.description);
+
+    // Add canonical
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    const hadCanonical = !!canonical;
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.setAttribute("rel", "canonical");
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute("href", CLEAR_FAITH_SEO.url);
+
+    // Add JSON-LD
+    const jsonLd = document.createElement("script");
+    jsonLd.type = "application/ld+json";
+    jsonLd.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Church",
+      name: "Clear Faith Christian Ministries",
+      description: CLEAR_FAITH_SEO.description,
+      url: CLEAR_FAITH_SEO.url,
+      sameAs: ["https://www.youtube.com/@clearfaithchristianministr1532"],
+      serviceType: ["Teaching", "Counseling", "Coaching"],
+      areaServed: { "@type": "Place", name: "Virtual / Online" },
+    });
+    document.head.appendChild(jsonLd);
+
+    return () => {
+      document.title = originalTitle;
+      Object.entries(metaTags).forEach(([key, { el, original }]) => {
+        if (el) el.setAttribute("content", original);
+      });
+      if (!hadCanonical && canonical) canonical.remove();
+      jsonLd.remove();
+    };
+  }, []);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
