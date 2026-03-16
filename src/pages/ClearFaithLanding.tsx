@@ -260,7 +260,7 @@ const ClearFaithLanding = () => {
       {/* Pricing */}
       <section id="pricing" className="bg-white py-20">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">Your Investment</span>
+          <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">Personal & Spiritual Enrichment</span>
           <h2 className="text-3xl md:text-5xl font-bold mt-3 text-[#1E293B] tracking-tight mb-6">
             One Clear Path Forward
           </h2>
