@@ -85,7 +85,7 @@ const ClearFaithLanding = () => {
       <nav className="sticky top-0 z-50 bg-[#4C1D95]/95 backdrop-blur-md border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/images/clearfaith-og.png" alt="Clear Faith Christian Ministries" className="w-16 h-16 rounded-full object-cover" />
+            <img src="/images/clearfaith-og.png" alt="Clear Faith Christian Ministries" className="w-24 h-24 rounded-full object-cover" />
             <div>
               <span className="text-white font-bold text-lg tracking-tight">Clear Faith</span>
               <span className="text-white/60 text-sm block leading-none">Christian Ministries</span>
@@ -430,7 +430,7 @@ const ClearFaithLanding = () => {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <img src="/images/clearfaith-og.png" alt="Clear Faith Christian Ministries" className="w-12 h-12 rounded-full object-cover" />
+              <img src="/images/clearfaith-og.png" alt="Clear Faith Christian Ministries" className="w-16 h-16 rounded-full object-cover" />
               <span className="text-white font-semibold">Clear Faith Christian Ministries</span>
             </div>
             <p className="text-sm">
