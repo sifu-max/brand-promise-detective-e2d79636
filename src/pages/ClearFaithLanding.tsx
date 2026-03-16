@@ -436,7 +436,6 @@ const ClearFaithLanding = () => {
                 <span className="text-[#D4A017] text-xs block leading-none mt-0.5">Teaching • Counseling • Coaching</span>
               </div>
             </div>
-            </div>
             <p className="text-sm">
               © {new Date().getFullYear()} Clear Faith Christian Ministries. All rights reserved.
             </p>
