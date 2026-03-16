@@ -12,12 +12,12 @@ const ClearFaithLanding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-[#1E293B]" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen bg-[#FAF9F6] text-[#1E293B]" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-[#1E40AF]/95 backdrop-blur-md border-b border-white/10">
+      <nav className="sticky top-0 z-50 bg-[#4C1D95]/95 backdrop-blur-md border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#F59E0B] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-[#D4A017] flex items-center justify-center">
               <span className="text-white font-bold text-lg">✝</span>
             </div>
             <div>
@@ -39,7 +39,7 @@ const ClearFaithLanding = () => {
             </a>
             <Button
               onClick={() => scrollToSection("contact")}
-              className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-semibold text-sm px-5"
+              className="bg-[#D4A017] hover:bg-[#B8860B] text-white font-semibold text-sm px-5"
             >
               Get Started
             </Button>
@@ -49,19 +49,19 @@ const ClearFaithLanding = () => {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1E40AF] via-[#1E3A8A] to-[#172554]" />
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, rgba(245,158,11,0.3) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(100,116,139,0.2) 0%, transparent 50%)" }} />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#4C1D95] via-[#3B0764] to-[#2E1065]" />
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 30% 50%, rgba(212,160,23,0.4) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(139,92,246,0.2) 0%, transparent 50%)" }} />
         <div className="relative max-w-6xl mx-auto px-6 py-24 md:py-36">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-8">
-              <span className="w-2 h-2 rounded-full bg-[#F59E0B] animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#D4A017] animate-pulse" />
               <span className="text-white/80 text-sm font-medium">Teaching • Counseling • Coaching</span>
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight">
               Ministries that are{" "}
-              <span className="text-[#F59E0B]">CLEAR</span>{" "}
+              <span className="text-[#D4A017]">CLEAR</span>{" "}
               on where their{" "}
-              <span className="text-[#F59E0B]">FAITH</span>{" "}
+              <span className="text-[#D4A017]">FAITH</span>{" "}
               lies.
             </h1>
             <p className="text-xl text-white/70 mb-10 max-w-xl leading-relaxed">
@@ -71,7 +71,7 @@ const ClearFaithLanding = () => {
               <Button
                 size="lg"
                 onClick={() => scrollToSection("contact")}
-                className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-semibold text-lg px-8 py-6 rounded-xl shadow-lg shadow-amber-500/25"
+                className="bg-[#D4A017] hover:bg-[#B8860B] text-white font-semibold text-lg px-8 py-6 rounded-xl shadow-lg shadow-yellow-700/25"
               >
                 Start Your Journey
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -91,7 +91,7 @@ const ClearFaithLanding = () => {
         {/* Bottom curve */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 60" fill="none" className="w-full">
-            <path d="M0 60L1440 60L1440 0C1200 50 240 50 0 0L0 60Z" fill="#F8F7F4" />
+            <path d="M0 60L1440 60L1440 0C1200 50 240 50 0 0L0 60Z" fill="#FAF9F6" />
           </svg>
         </div>
       </section>
@@ -114,7 +114,7 @@ const ClearFaithLanding = () => {
       {/* Featured Video */}
       <section className="max-w-5xl mx-auto px-6 py-20">
         <div className="text-center mb-10">
-          <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">Watch & Worship</span>
+          <span className="text-[#D4A017] font-semibold text-sm uppercase tracking-widest">Watch & Worship</span>
           <h2 className="text-3xl md:text-4xl font-bold mt-3 text-[#1E293B] tracking-tight">
             Experience Clear Faith Live
           </h2>
@@ -122,7 +122,7 @@ const ClearFaithLanding = () => {
             Join our 100% virtual church community. Watch live sessions, catch replays, and grow in faith — from anywhere.
           </p>
         </div>
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/15 aspect-video">
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-purple-900/15 aspect-video">
           <iframe
             src="https://www.youtube.com/embed/9Dgz0ReUHV4"
             className="w-full h-full"
@@ -133,7 +133,7 @@ const ClearFaithLanding = () => {
         </div>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
           <a href="https://www.youtube.com/live/9Dgz0ReUHV4" target="_blank" rel="noopener noreferrer">
-            <Button className="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-semibold px-6 rounded-xl">
+            <Button className="bg-[#4C1D95] hover:bg-[#3B0764] text-white font-semibold px-6 rounded-xl">
               <Play className="mr-2 h-4 w-4" />
               Watch More on YouTube
             </Button>
@@ -141,7 +141,7 @@ const ClearFaithLanding = () => {
           <Button
             variant="outline"
             onClick={() => scrollToSection("contact")}
-            className="border-[#1E40AF]/30 text-[#1E40AF] hover:bg-[#1E40AF]/5 font-semibold px-6 rounded-xl"
+            className="border-[#4C1D95]/30 text-[#4C1D95] hover:bg-[#4C1D95]/5 font-semibold px-6 rounded-xl"
           >
             Join the Community
           </Button>
@@ -151,7 +151,7 @@ const ClearFaithLanding = () => {
       {/* Who We Serve */}
       <section id="about" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">Who We Serve</span>
+          <span className="text-[#D4A017] font-semibold text-sm uppercase tracking-widest">Who We Serve</span>
           <h2 className="text-3xl md:text-5xl font-bold mt-3 text-[#1E293B] tracking-tight">
             Called to Lead. Built to Serve.
           </h2>
@@ -166,8 +166,8 @@ const ClearFaithLanding = () => {
             { icon: Heart, title: "Team Leaders", desc: "Leaders of decentralized, faith-based organizations building engaged, purpose-driven teams." },
           ].map((item, i) => (
             <Card key={i} className="group p-8 bg-white border-0 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl hover:-translate-y-1">
-              <div className="w-14 h-14 rounded-2xl bg-[#1E40AF]/10 flex items-center justify-center mb-6 group-hover:bg-[#1E40AF] transition-colors">
-                <item.icon className="h-7 w-7 text-[#1E40AF] group-hover:text-white transition-colors" />
+              <div className="w-14 h-14 rounded-2xl bg-[#4C1D95]/10 flex items-center justify-center mb-6 group-hover:bg-[#4C1D95] transition-colors">
+                <item.icon className="h-7 w-7 text-[#4C1D95] group-hover:text-white transition-colors" />
               </div>
               <h3 className="text-xl font-bold mb-3 text-[#1E293B]">{item.title}</h3>
               <p className="text-[#64748B] leading-relaxed">{item.desc}</p>
@@ -177,11 +177,11 @@ const ClearFaithLanding = () => {
       </section>
 
       {/* Pain Points */}
-      <section className="bg-[#1E40AF] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, rgba(245,158,11,0.4) 0%, transparent 40%)" }} />
+      <section className="bg-[#4C1D95] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, rgba(212,160,23,0.4) 0%, transparent 40%)" }} />
         <div className="relative max-w-6xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
-            <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">The Challenge</span>
+            <span className="text-[#D4A017] font-semibold text-sm uppercase tracking-widest">The Challenge</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-3 text-white tracking-tight">
               We Understand Your Needs
             </h2>
@@ -194,7 +194,7 @@ const ClearFaithLanding = () => {
             ].map((item, i) => (
               <div key={i} className="flex gap-4">
                 <div className="flex-shrink-0 mt-1">
-                  <CheckCircle className="h-6 w-6 text-[#F59E0B]" />
+                  <CheckCircle className="h-6 w-6 text-[#D4A017]" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
@@ -209,7 +209,7 @@ const ClearFaithLanding = () => {
       {/* Services */}
       <section id="services" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
-          <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">What We Offer</span>
+          <span className="text-[#D4A017] font-semibold text-sm uppercase tracking-widest">What We Offer</span>
           <h2 className="text-3xl md:text-5xl font-bold mt-3 text-[#1E293B] tracking-tight">
             Three Pillars of Growth
           </h2>
@@ -236,17 +236,17 @@ const ClearFaithLanding = () => {
             },
           ].map((service, i) => (
             <Card key={i} className="relative overflow-hidden bg-white border-0 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl group">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1E40AF] to-[#F59E0B] opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#4C1D95] to-[#D4A017] opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="p-8">
-                <div className="w-14 h-14 rounded-2xl bg-[#F59E0B]/10 flex items-center justify-center mb-6">
-                  <service.icon className="h-7 w-7 text-[#F59E0B]" />
+                <div className="w-14 h-14 rounded-2xl bg-[#D4A017]/10 flex items-center justify-center mb-6">
+                  <service.icon className="h-7 w-7 text-[#D4A017]" />
                 </div>
                 <h3 className="text-2xl font-bold mb-3 text-[#1E293B]">{service.title}</h3>
                 <p className="text-[#64748B] leading-relaxed mb-6">{service.desc}</p>
                 <ul className="space-y-3">
                   {service.features.map((f, j) => (
                     <li key={j} className="flex items-center gap-3 text-[#1E293B] text-sm">
-                      <CheckCircle className="h-4 w-4 text-[#1E40AF] flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-[#4C1D95] flex-shrink-0" />
                       {f}
                     </li>
                   ))}
@@ -260,17 +260,17 @@ const ClearFaithLanding = () => {
       {/* Pricing */}
       <section id="pricing" className="bg-white py-20">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">Personal & Spiritual Enrichment</span>
+          <span className="text-[#D4A017] font-semibold text-sm uppercase tracking-widest">Personal & Spiritual Enrichment</span>
           <h2 className="text-3xl md:text-5xl font-bold mt-3 text-[#1E293B] tracking-tight mb-6">
             One Clear Path Forward
           </h2>
           <p className="text-[#64748B] text-lg mb-12 max-w-xl mx-auto">
             A single, straightforward investment in your growth — no confusing tiers, no hidden fees.
           </p>
-          <Card className="max-w-md mx-auto bg-gradient-to-br from-[#1E40AF] to-[#172554] border-0 rounded-3xl overflow-hidden shadow-2xl shadow-blue-900/20">
+          <Card className="max-w-md mx-auto bg-gradient-to-br from-[#4C1D95] to-[#2E1065] border-0 rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/20">
             <div className="p-10">
-              <div className="inline-flex items-center gap-2 bg-[#F59E0B]/20 border border-[#F59E0B]/30 rounded-full px-4 py-1.5 mb-6">
-                <span className="text-[#F59E0B] text-sm font-semibold">Complete Package</span>
+              <div className="inline-flex items-center gap-2 bg-[#D4A017]/20 border border-[#D4A017]/30 rounded-full px-4 py-1.5 mb-6">
+                <span className="text-[#D4A017] text-sm font-semibold">Complete Package</span>
               </div>
               <div className="mb-6">
                 <span className="text-6xl font-bold text-white">$250</span>
@@ -285,7 +285,7 @@ const ClearFaithLanding = () => {
                   "Flexible scheduling",
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-white/90">
-                    <CheckCircle className="h-5 w-5 text-[#F59E0B] flex-shrink-0" />
+                    <CheckCircle className="h-5 w-5 text-[#D4A017] flex-shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -293,7 +293,7 @@ const ClearFaithLanding = () => {
               <Button
                 size="lg"
                 onClick={() => scrollToSection("contact")}
-                className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white font-semibold text-lg py-6 rounded-xl shadow-lg"
+                className="w-full bg-[#D4A017] hover:bg-[#B8860B] text-white font-semibold text-lg py-6 rounded-xl shadow-lg"
               >
                 Begin Today
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -330,12 +330,12 @@ const ClearFaithLanding = () => {
       </section>
 
       {/* Contact CTA */}
-      <section id="contact" className="bg-gradient-to-br from-[#1E40AF] via-[#1E3A8A] to-[#172554] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 80%, rgba(245,158,11,0.4) 0%, transparent 40%)" }} />
+      <section id="contact" className="bg-gradient-to-br from-[#4C1D95] via-[#3B0764] to-[#2E1065] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 80%, rgba(212,160,23,0.4) 0%, transparent 40%)" }} />
         <div className="relative max-w-3xl mx-auto px-6 py-24 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-6">
             Ready to Walk in{" "}
-            <span className="text-[#F59E0B]">Clear Faith</span>?
+            <span className="text-[#D4A017]">Clear Faith</span>?
           </h2>
           <p className="text-xl text-white/70 mb-10 max-w-xl mx-auto leading-relaxed">
             Take the first step toward clarity in your ministry, business, or leadership. Let's build something rooted in faith together.
@@ -344,7 +344,7 @@ const ClearFaithLanding = () => {
             <a href="mailto:devinlmiller65@gmail.com">
               <Button
                 size="lg"
-                className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-semibold text-lg px-10 py-6 rounded-xl shadow-lg shadow-amber-500/25"
+                className="bg-[#D4A017] hover:bg-[#B8860B] text-white font-semibold text-lg px-10 py-6 rounded-xl shadow-lg shadow-yellow-700/25"
               >
                 Contact Us Today
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -355,11 +355,11 @@ const ClearFaithLanding = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#0F172A] text-white/60 py-12">
+      <footer className="bg-[#1C0A33] text-white/60 py-12">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#F59E0B] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-[#D4A017] flex items-center justify-center">
                 <span className="text-white font-bold text-sm">✝</span>
               </div>
               <span className="text-white font-semibold">Clear Faith Christian Ministries</span>
