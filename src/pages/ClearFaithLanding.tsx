@@ -104,6 +104,43 @@ const ClearFaithLanding = () => {
         </div>
       )}
 
+      {/* Featured Video */}
+      <section className="max-w-5xl mx-auto px-6 py-20">
+        <div className="text-center mb-10">
+          <span className="text-[#F59E0B] font-semibold text-sm uppercase tracking-widest">Watch & Worship</span>
+          <h2 className="text-3xl md:text-4xl font-bold mt-3 text-[#1E293B] tracking-tight">
+            Experience Clear Faith Live
+          </h2>
+          <p className="text-[#64748B] text-lg mt-4 max-w-xl mx-auto">
+            Join our 100% virtual church community. Watch live sessions, catch replays, and grow in faith — from anywhere.
+          </p>
+        </div>
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/15 aspect-video">
+          <iframe
+            src="https://www.youtube.com/embed/9Dgz0ReUHV4"
+            className="w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title="Clear Faith Christian Ministries — Live Session"
+          />
+        </div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+          <a href="https://www.youtube.com/live/9Dgz0ReUHV4" target="_blank" rel="noopener noreferrer">
+            <Button className="bg-[#1E40AF] hover:bg-[#1E3A8A] text-white font-semibold px-6 rounded-xl">
+              <Play className="mr-2 h-4 w-4" />
+              Watch More on YouTube
+            </Button>
+          </a>
+          <Button
+            variant="outline"
+            onClick={() => scrollToSection("contact")}
+            className="border-[#1E40AF]/30 text-[#1E40AF] hover:bg-[#1E40AF]/5 font-semibold px-6 rounded-xl"
+          >
+            Join the Community
+          </Button>
+        </div>
+      </section>
+
       {/* Who We Serve */}
       <section id="about" className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-16">
