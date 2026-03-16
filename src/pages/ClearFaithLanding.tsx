@@ -430,8 +430,12 @@ const ClearFaithLanding = () => {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <img src="/images/clearfaith-og.png" alt="Clear Faith Christian Ministries" className="w-8 h-8 rounded-full object-cover" />
-              <span className="text-white font-semibold">Clear Faith Christian Ministries</span>
+              <img src="/images/clearfaith-cross.png" alt="Clear Faith" className="w-10 h-10 rounded-lg object-cover" />
+              <div>
+                <span className="text-white font-semibold leading-tight">Clear Faith Christian Ministries</span>
+                <span className="text-[#D4A017] text-xs block leading-none mt-0.5">Teaching • Counseling • Coaching</span>
+              </div>
+            </div>
             </div>
             <p className="text-sm">
               © {new Date().getFullYear()} Clear Faith Christian Ministries. All rights reserved.
