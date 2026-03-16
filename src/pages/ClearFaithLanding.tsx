@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, BookOpen, Users, Heart, MessageCircle, Play, CheckCircle, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+
+const CLEAR_FAITH_SEO = {
+  title: "Clear Faith Christian Ministries | Virtual Church — Teaching, Counseling & Coaching",
+  description: "Join Clear Faith Christian Ministries — a 100% virtual church empowering ministry leaders and faith-driven business owners through teaching, counseling, and coaching. Watch live, catch replays, and grow in faith from anywhere.",
+  url: "https://branding.crmchains.com/clearfaith",
+  type: "website",
+};
 
 const ClearFaithLanding = () => {
   const [videoOpen, setVideoOpen] = useState(false);
