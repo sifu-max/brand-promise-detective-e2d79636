@@ -85,9 +85,7 @@ const ClearFaithLanding = () => {
       <nav className="sticky top-0 z-50 bg-[#4C1D95]/95 backdrop-blur-md border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#D4A017] flex items-center justify-center">
-              <span className="text-white font-bold text-lg">✝</span>
-            </div>
+            <img src="/images/clearfaith-og.png" alt="Clear Faith Christian Ministries" className="w-10 h-10 rounded-full object-cover" />
             <div>
               <span className="text-white font-bold text-lg tracking-tight">Clear Faith</span>
               <span className="text-white/60 text-sm block leading-none">Christian Ministries</span>
