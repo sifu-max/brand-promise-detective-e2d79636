@@ -28,7 +28,7 @@ const ClearFaithLanding = () => {
           <div className="hidden md:flex items-center gap-8">
             <button onClick={() => scrollToSection("services")} className="text-white/80 hover:text-white text-sm transition-colors">Services</button>
             <button onClick={() => scrollToSection("about")} className="text-white/80 hover:text-white text-sm transition-colors">About</button>
-            <button onClick={() => scrollToSection("pricing")} className="text-white/80 hover:text-white text-sm transition-colors">Investment</button>
+            <button onClick={() => scrollToSection("pricing")} className="text-white/80 hover:text-white text-sm transition-colors">Enrichment</button>
             <button onClick={() => scrollToSection("contact")} className="text-white/80 hover:text-white text-sm transition-colors">Contact</button>
           </div>
           <Button
