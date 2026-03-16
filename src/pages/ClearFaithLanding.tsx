@@ -31,12 +31,19 @@ const ClearFaithLanding = () => {
             <button onClick={() => scrollToSection("pricing")} className="text-white/80 hover:text-white text-sm transition-colors">Enrichment</button>
             <button onClick={() => scrollToSection("contact")} className="text-white/80 hover:text-white text-sm transition-colors">Contact</button>
           </div>
-          <Button
-            onClick={() => scrollToSection("contact")}
-            className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-semibold text-sm px-5"
-          >
-            Get Started
-          </Button>
+          <div className="flex items-center gap-3">
+            <a href="https://www.paypal.com/donate" target="_blank" rel="noopener noreferrer">
+              <Button className="bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-5 border border-white/20">
+                Donate Now
+              </Button>
+            </a>
+            <Button
+              onClick={() => scrollToSection("contact")}
+              className="bg-[#F59E0B] hover:bg-[#D97706] text-white font-semibold text-sm px-5"
+            >
+              Get Started
+            </Button>
+          </div>
         </div>
       </nav>
 
