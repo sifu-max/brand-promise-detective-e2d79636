@@ -8,6 +8,7 @@ import BrandBuilder from "./pages/BrandBuilder";
 import CRMChains from "./pages/CRMChains";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClearFaithLanding from "./pages/ClearFaithLanding";
+import ClearFaithProposal from "./pages/ClearFaithProposal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/crmchains" element={<CRMChains />} />
           <Route path="/clearfaith" element={<ClearFaithLanding />} />
           <Route path="/clear-faith" element={<ClearFaithLanding />} />
+          <Route path="/clearfaith-proposal" element={<ClearFaithProposal />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
