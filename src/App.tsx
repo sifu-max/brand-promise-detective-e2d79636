@@ -8,6 +8,7 @@ import BrandBuilder from "./pages/BrandBuilder";
 import CRMChains from "./pages/CRMChains";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClearFaithLanding from "./pages/ClearFaithLanding";
+import ClearFaithProposal from "./pages/ClearFaithProposal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
