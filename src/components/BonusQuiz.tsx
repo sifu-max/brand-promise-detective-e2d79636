@@ -66,59 +66,90 @@ const questions = [
       { label: "Nothing usually happens", points: 1 },
     ],
   },
+  {
+    num: 6,
+    title: "Referral Systems",
+    prompt:
+      "Do you have an automated referral or review generation system in place?",
+    options: [
+      { label: "Yes", points: 5 },
+      { label: "No", points: 1 },
+    ],
+  },
+  {
+    num: 7,
+    title: "No-Show Recovery",
+    prompt:
+      "Do you have an automated process to follow up when someone misses a scheduled appointment or booking?",
+    options: [
+      { label: "Yes", points: 5 },
+      { label: "No", points: 1 },
+    ],
+  },
+  {
+    num: 8,
+    title: "Payment Automation",
+    prompt: "How do you collect payments from clients?",
+    options: [
+      { label: "Automated invoicing and payment collection (recurring billing, auto-reminders)", points: 5 },
+      { label: "We send invoices manually but use online payment links", points: 4 },
+      { label: "We send invoices manually and chase payments by email/phone", points: 2 },
+      { label: "We don't have a consistent invoicing process", points: 1 },
+    ],
+  },
 ];
 
 const scoreBands = [
   {
     min: 0,
-    max: 8,
+    max: 12,
     label: "Severe Revenue Leakage",
     color: "text-destructive",
     bg: "bg-destructive/10 border-destructive/30",
     icon: <AlertTriangle className="w-6 h-6" />,
     diagnosis:
-      "Your business is likely missing inbound conversations, responding inconsistently, and losing follow-up opportunities.",
+      "Your business is likely missing conversations, has no automated follow-up, no referral engine, no no-show recovery, and inconsistent payment collection. Revenue is leaking at nearly every stage.",
     recommendation:
-      "Start by fixing the basics: capture every conversation, centralize communication, and install immediate follow-up.",
+      "Start with the fundamentals: capture every conversation, centralize communication, and install automated follow-up, referral, and payment systems.",
     cta: "Book a strategy call to identify your first 1–2 fixes.",
   },
   {
-    min: 9,
-    max: 16,
+    min: 13,
+    max: 24,
     label: "Fragmented Infrastructure",
     color: "text-[hsl(35,90%,50%)]",
     bg: "bg-[hsl(35,90%,50%)]/10 border-[hsl(35,90%,50%)]/30",
     icon: <Target className="w-6 h-6" />,
     diagnosis:
-      "You have some systems in place, but conversations and follow-ups are inconsistent or spread across multiple tools.",
+      "You have some systems in place, but gaps remain in areas like referral generation, no-show recovery, or payment automation. Conversations and follow-ups are inconsistent.",
     recommendation:
-      "Centralize communication channels and automate your most important follow-up paths so leads stop slipping through the cracks.",
+      "Centralize your communication channels, automate your most important follow-up paths, and close the gaps in referrals, missed appointments, and invoicing.",
     cta: "Book a strategy call to map your highest-impact upgrades.",
   },
   {
-    min: 17,
-    max: 21,
+    min: 25,
+    max: 33,
     label: "Strong Communication Systems",
     color: "text-primary",
     bg: "bg-primary/10 border-primary/30",
     icon: <TrendingUp className="w-6 h-6" />,
     diagnosis:
-      "You already have a solid communication foundation, but there is still room to improve conversion and efficiency.",
+      "You have a solid communication and revenue foundation. Most systems are in place, but there's still room to optimize conversion, referrals, or payment workflows.",
     recommendation:
-      "Optimize routing, qualification, and conversion flows so more of your existing demand turns into booked appointments or sales.",
+      "Optimize routing, qualification, conversion flows, and tighten up any remaining gaps in referral engines, no-show recovery, or billing automation.",
     cta: "Book a strategy call to optimize the system you already have.",
   },
   {
-    min: 22,
-    max: 25,
+    min: 34,
+    max: 40,
     label: "Advanced Revenue Infrastructure",
     color: "text-[hsl(145,60%,40%)]",
     bg: "bg-[hsl(145,60%,40%)]/10 border-[hsl(145,60%,40%)]/30",
     icon: <Zap className="w-6 h-6" />,
     diagnosis:
-      "Your communication systems are well structured and already performing at a high level.",
+      "Your revenue communication systems are well structured and performing at a high level across all key areas including referrals, recovery, and payments.",
     recommendation:
-      "Shift from setup to optimization by improving analytics, testing automations, and engineering better revenue performance.",
+      "Shift from setup to optimization — improve analytics, test automations, and engineer better revenue performance across every touchpoint.",
     cta: "Book a strategy call for advanced optimization and scale.",
   },
 ];
@@ -181,8 +212,8 @@ export function BonusQuiz() {
         <h2 className="text-2xl font-bold text-foreground">
           Bonus: Revenue Infrastructure Quick Score
         </h2>
-        <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-          Answer 5 quick questions to see where your revenue systems stand. Takes under 3 minutes.
+        <p className="text-sm text-muted-foreground text-sm max-w-lg mx-auto">
+          Answer 8 quick questions to see where your revenue systems stand. Takes under 3 minutes.
         </p>
       </div>
 
@@ -256,7 +287,7 @@ export function BonusQuiz() {
                 <span className={band.color}>{band.icon}</span>
                 <div>
                   <p className="text-2xl font-bold text-foreground">
-                    Your Score: {totalScore} / 25
+                    Your Score: {totalScore} / 40
                   </p>
                   <p className={`text-sm font-semibold ${band.color}`}>{band.label}</p>
                 </div>
