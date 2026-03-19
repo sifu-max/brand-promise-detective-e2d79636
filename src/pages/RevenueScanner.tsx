@@ -502,7 +502,11 @@ export default function RevenueScanner() {
                       <p className="text-sm text-foreground"><strong>Diagnosis:</strong> {band.diagnosis}</p>
                       <p className="text-sm text-muted-foreground"><strong>Recommendation:</strong> {band.recommendation}</p>
                       <p className="text-sm text-muted-foreground"><strong>Best next step:</strong> {band.nextStep}</p>
-                      <p className="text-xs font-semibold text-primary">CTA: {band.cta}</p>
+                      <Button size="sm" className="w-full gap-2 mt-1" asChild>
+                        <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+                          {band.cta} <ArrowRight className="w-4 h-4" />
+                        </a>
+                      </Button>
                     </CardContent>
                   </Card>
                 ))}
@@ -618,6 +622,11 @@ export default function RevenueScanner() {
                           ))}
                         </div>
                       )}
+                      <Button size="sm" className="w-full gap-2 mt-1" asChild>
+                        <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+                          Book a Strategy Call <ArrowRight className="w-4 h-4" />
+                        </a>
+                      </Button>
                     </CardContent>
                   </Card>
                 ))}
