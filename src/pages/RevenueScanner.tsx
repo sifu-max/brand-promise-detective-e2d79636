@@ -360,11 +360,13 @@ export default function RevenueScanner() {
 
         {/* Tabs: Survey | 3-Min SOP | Full SOP */}
         <Tabs defaultValue="survey" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="survey">Live Scanner</TabsTrigger>
-            <TabsTrigger value="quick">3-Min Quick Scan</TabsTrigger>
-            <TabsTrigger value="full">Full 51-Point Audit</TabsTrigger>
-          </TabsList>
+          {adminMode && (
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="survey">Live Scanner</TabsTrigger>
+              <TabsTrigger value="quick">3-Min Quick Scan</TabsTrigger>
+              <TabsTrigger value="full">Full 51-Point Audit</TabsTrigger>
+            </TabsList>
+          )}
 
           {/* TAB 1: Embedded Survey */}
           <TabsContent value="survey" className="space-y-6">
