@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
-import { useEffect } from "react";
+
 
 const scoreBands3Min = [
   {
