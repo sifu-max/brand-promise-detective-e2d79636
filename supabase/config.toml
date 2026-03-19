@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.ai-visibility]
 verify_jwt = false
+
+[functions.ghl-add-questions]
+verify_jwt = false
