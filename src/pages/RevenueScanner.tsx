@@ -1,10 +1,11 @@
+import { useState, useEffect } from "react";
 import { ArrowRight, Mail, Globe, CheckCircle2, AlertTriangle, TrendingUp, Zap, Target, MessageSquare, Clock, Users, BarChart3, Star, BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
-import { useEffect } from "react";
+
 
 const scoreBands3Min = [
   {
@@ -301,6 +302,8 @@ const fullScoreBands = [
 ];
 
 export default function RevenueScanner() {
+  const [adminMode, setAdminMode] = useState(false);
+
   useEffect(() => {
     // Load GHL form embed script
     const script = document.createElement("script");
@@ -310,6 +313,16 @@ export default function RevenueScanner() {
     return () => {
       document.body.removeChild(script);
     };
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "B") {
+        setAdminMode((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
   return (
@@ -335,7 +348,7 @@ export default function RevenueScanner() {
       <main className="container max-w-5xl py-10 px-4 space-y-10">
         {/* Title */}
         <div className="text-center space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Internal Tool</p>
+          {adminMode && <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Internal Tool</p>}
           <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
             Revenue Health Scanner
           </h1>
@@ -347,11 +360,13 @@ export default function RevenueScanner() {
 
         {/* Tabs: Survey | 3-Min SOP | Full SOP */}
         <Tabs defaultValue="survey" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="survey">Live Scanner</TabsTrigger>
-            <TabsTrigger value="quick">3-Min Quick Scan</TabsTrigger>
-            <TabsTrigger value="full">Full 51-Point Audit</TabsTrigger>
-          </TabsList>
+          {adminMode && (
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="survey">Live Scanner</TabsTrigger>
+              <TabsTrigger value="quick">3-Min Quick Scan</TabsTrigger>
+              <TabsTrigger value="full">Full 51-Point Audit</TabsTrigger>
+            </TabsList>
+          )}
 
           {/* TAB 1: Embedded Survey */}
           <TabsContent value="survey" className="space-y-6">
