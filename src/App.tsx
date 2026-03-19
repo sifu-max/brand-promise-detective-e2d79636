@@ -9,6 +9,7 @@ import CRMChains from "./pages/CRMChains";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClearFaithLanding from "./pages/ClearFaithLanding";
 import ClearFaithProposal from "./pages/ClearFaithProposal";
+import RevenueScanner from "./pages/RevenueScanner";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
