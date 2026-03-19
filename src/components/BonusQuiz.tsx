@@ -78,16 +78,6 @@ const questions = [
   },
   {
     num: 7,
-    title: "No-Show Recovery",
-    prompt:
-      "Do you have an automated process to follow up when someone misses a scheduled appointment or booking?",
-    options: [
-      { label: "Yes", points: 5 },
-      { label: "No", points: 1 },
-    ],
-  },
-  {
-    num: 8,
     title: "Payment Automation",
     prompt: "How do you collect payments from clients?",
     options: [
