@@ -277,7 +277,7 @@ export function BonusQuiz() {
                 <span className={band.color}>{band.icon}</span>
                 <div>
                   <p className="text-2xl font-bold text-foreground">
-                    Your Score: {totalScore} / 40
+                    Your Score: {totalScore} / 35
                   </p>
                   <p className={`text-sm font-semibold ${band.color}`}>{band.label}</p>
                 </div>
