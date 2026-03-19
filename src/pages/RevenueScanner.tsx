@@ -622,6 +622,11 @@ export default function RevenueScanner() {
                           ))}
                         </div>
                       )}
+                      <Button size="sm" className="w-full gap-2 mt-1" asChild>
+                        <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+                          Book a Strategy Call <ArrowRight className="w-4 h-4" />
+                        </a>
+                      </Button>
                     </CardContent>
                   </Card>
                 ))}
