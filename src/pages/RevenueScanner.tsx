@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { ArrowRight, Mail, Globe, CheckCircle2, AlertTriangle, TrendingUp, Zap, Target, MessageSquare, Clock, Users, BarChart3, Star, BookOpen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
