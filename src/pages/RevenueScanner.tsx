@@ -388,9 +388,6 @@ export default function RevenueScanner() {
                 />
               </CardContent>
             </Card>
-
-            {/* Bonus Interactive Quiz */}
-            <BonusQuiz />
           </TabsContent>
 
           {/* TAB 2: 3-Min Quick Scan SOP */}
