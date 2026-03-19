@@ -348,7 +348,7 @@ export default function RevenueScanner() {
       <main className="container max-w-5xl py-10 px-4 space-y-10">
         {/* Title */}
         <div className="text-center space-y-3">
-          <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Internal Tool</p>
+          {adminMode && <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Internal Tool</p>}
           <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
             Revenue Health Scanner
           </h1>
