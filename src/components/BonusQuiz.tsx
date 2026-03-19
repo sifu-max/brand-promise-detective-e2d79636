@@ -66,6 +66,37 @@ const questions = [
       { label: "Nothing usually happens", points: 1 },
     ],
   },
+  {
+    num: 6,
+    title: "Referral Systems",
+    prompt:
+      "Do you have an automated referral or review generation system in place?",
+    options: [
+      { label: "Yes", points: 5 },
+      { label: "No", points: 1 },
+    ],
+  },
+  {
+    num: 7,
+    title: "No-Show Recovery",
+    prompt:
+      "Do you have an automated process to follow up when someone misses a scheduled appointment or booking?",
+    options: [
+      { label: "Yes", points: 5 },
+      { label: "No", points: 1 },
+    ],
+  },
+  {
+    num: 8,
+    title: "Payment Automation",
+    prompt: "How do you collect payments from clients?",
+    options: [
+      { label: "Automated invoicing and payment collection (recurring billing, auto-reminders)", points: 5 },
+      { label: "We send invoices manually but use online payment links", points: 4 },
+      { label: "We send invoices manually and chase payments by email/phone", points: 2 },
+      { label: "We don't have a consistent invoicing process", points: 1 },
+    ],
+  },
 ];
 
 const scoreBands = [
