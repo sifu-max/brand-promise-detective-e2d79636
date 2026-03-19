@@ -78,16 +78,6 @@ const questions = [
   },
   {
     num: 7,
-    title: "No-Show Recovery",
-    prompt:
-      "Do you have an automated process to follow up when someone misses a scheduled appointment or booking?",
-    options: [
-      { label: "Yes", points: 5 },
-      { label: "No", points: 1 },
-    ],
-  },
-  {
-    num: 8,
     title: "Payment Automation",
     prompt: "How do you collect payments from clients?",
     options: [
@@ -102,33 +92,33 @@ const questions = [
 const scoreBands = [
   {
     min: 0,
-    max: 12,
+    max: 10,
     label: "Severe Revenue Leakage",
     color: "text-destructive",
     bg: "bg-destructive/10 border-destructive/30",
     icon: <AlertTriangle className="w-6 h-6" />,
     diagnosis:
-      "Your business is likely missing conversations, has no automated follow-up, no referral engine, no no-show recovery, and inconsistent payment collection. Revenue is leaking at nearly every stage.",
+      "Your business is likely missing conversations, has no automated follow-up, no referral engine, and inconsistent payment collection. Revenue is leaking at nearly every stage.",
     recommendation:
       "Start with the fundamentals: capture every conversation, centralize communication, and install automated follow-up, referral, and payment systems.",
     cta: "Book a strategy call to identify your first 1–2 fixes.",
   },
   {
-    min: 13,
-    max: 24,
+    min: 11,
+    max: 21,
     label: "Fragmented Infrastructure",
     color: "text-[hsl(35,90%,50%)]",
     bg: "bg-[hsl(35,90%,50%)]/10 border-[hsl(35,90%,50%)]/30",
     icon: <Target className="w-6 h-6" />,
     diagnosis:
-      "You have some systems in place, but gaps remain in areas like referral generation, no-show recovery, or payment automation. Conversations and follow-ups are inconsistent.",
+      "You have some systems in place, but gaps remain in areas like referral generation, payment automation, or follow-up consistency.",
     recommendation:
-      "Centralize your communication channels, automate your most important follow-up paths, and close the gaps in referrals, missed appointments, and invoicing.",
+      "Centralize your communication channels, automate your most important follow-up paths, and close the gaps in referrals and invoicing.",
     cta: "Book a strategy call to map your highest-impact upgrades.",
   },
   {
-    min: 25,
-    max: 33,
+    min: 22,
+    max: 29,
     label: "Strong Communication Systems",
     color: "text-primary",
     bg: "bg-primary/10 border-primary/30",
@@ -136,18 +126,18 @@ const scoreBands = [
     diagnosis:
       "You have a solid communication and revenue foundation. Most systems are in place, but there's still room to optimize conversion, referrals, or payment workflows.",
     recommendation:
-      "Optimize routing, qualification, conversion flows, and tighten up any remaining gaps in referral engines, no-show recovery, or billing automation.",
+      "Optimize routing, qualification, conversion flows, and tighten up any remaining gaps in referral engines or billing automation.",
     cta: "Book a strategy call to optimize the system you already have.",
   },
   {
-    min: 34,
-    max: 40,
+    min: 30,
+    max: 35,
     label: "Advanced Revenue Infrastructure",
     color: "text-[hsl(145,60%,40%)]",
     bg: "bg-[hsl(145,60%,40%)]/10 border-[hsl(145,60%,40%)]/30",
     icon: <Zap className="w-6 h-6" />,
     diagnosis:
-      "Your revenue communication systems are well structured and performing at a high level across all key areas including referrals, recovery, and payments.",
+      "Your revenue communication systems are well structured and performing at a high level across all key areas including referrals and payments.",
     recommendation:
       "Shift from setup to optimization — improve analytics, test automations, and engineer better revenue performance across every touchpoint.",
     cta: "Book a strategy call for advanced optimization and scale.",
@@ -213,7 +203,7 @@ export function BonusQuiz() {
           Bonus: Revenue Infrastructure Quick Score
         </h2>
         <p className="text-sm text-muted-foreground text-sm max-w-lg mx-auto">
-          Answer 8 quick questions to see where your revenue systems stand. Takes under 3 minutes.
+          Answer 7 quick questions to see where your revenue systems stand. Takes under 3 minutes.
         </p>
       </div>
 
@@ -287,7 +277,7 @@ export function BonusQuiz() {
                 <span className={band.color}>{band.icon}</span>
                 <div>
                   <p className="text-2xl font-bold text-foreground">
-                    Your Score: {totalScore} / 40
+                    Your Score: {totalScore} / 35
                   </p>
                   <p className={`text-sm font-semibold ${band.color}`}>{band.label}</p>
                 </div>
