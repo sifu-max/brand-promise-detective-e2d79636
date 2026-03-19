@@ -302,6 +302,8 @@ const fullScoreBands = [
 ];
 
 export default function RevenueScanner() {
+  const [adminMode, setAdminMode] = useState(false);
+
   useEffect(() => {
     // Load GHL form embed script
     const script = document.createElement("script");
@@ -311,6 +313,16 @@ export default function RevenueScanner() {
     return () => {
       document.body.removeChild(script);
     };
+  }, []);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "B") {
+        setAdminMode((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
   }, []);
 
   return (
