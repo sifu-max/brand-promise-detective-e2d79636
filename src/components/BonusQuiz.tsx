@@ -203,7 +203,7 @@ export function BonusQuiz() {
           Bonus: Revenue Infrastructure Quick Score
         </h2>
         <p className="text-sm text-muted-foreground text-sm max-w-lg mx-auto">
-          Answer 8 quick questions to see where your revenue systems stand. Takes under 3 minutes.
+          Answer 7 quick questions to see where your revenue systems stand. Takes under 3 minutes.
         </p>
       </div>
 
