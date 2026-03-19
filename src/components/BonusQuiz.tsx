@@ -212,8 +212,8 @@ export function BonusQuiz() {
         <h2 className="text-2xl font-bold text-foreground">
           Bonus: Revenue Infrastructure Quick Score
         </h2>
-        <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-          Answer 5 quick questions to see where your revenue systems stand. Takes under 3 minutes.
+        <p className="text-sm text-muted-foreground text-sm max-w-lg mx-auto">
+          Answer 8 quick questions to see where your revenue systems stand. Takes under 3 minutes.
         </p>
       </div>
 
