@@ -171,7 +171,7 @@ ${cleanedData.ideal_client_niche}
 ${cleanedData.core_client_pain_points.map((pain, i) => `${i + 1}. ${pain}`).join('\n')}
 
 ## Pricing & Investment
-**Core Offer Investment:** ${cleanedData.core_offer_investment}
+**Pricing:** ${cleanedData.core_offer_investment}
 **Client Budget & Timeline:** ${cleanedData.clients_budget_timeline}
 **Offer Structure:** ${cleanedData.offer_structure}
 
@@ -317,7 +317,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="tagline"
                   value={formData.business_tagline}
                   onChange={(e) => updateField("business_tagline", e.target.value)}
-                  placeholder="Your Growth, Powered by Predictable Leads."
+                  placeholder='e.g. "Your Forever Friend, Zero Maintenance."'
                   className="text-base"
                 />
               </div>
@@ -328,7 +328,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="cta"
                   value={formData.primary_call_to_action}
                   onChange={(e) => updateField("primary_call_to_action", e.target.value)}
-                  placeholder="Book a Free Strategy Call"
+                  placeholder='e.g. "Adopt Your Rock Today"'
                   className="text-base"
                 />
               </div>
@@ -377,18 +377,18 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="service"
                   value={formData.core_service_solution}
                   onChange={(e) => updateField("core_service_solution", e.target.value)}
-                  placeholder="Describe what you do to solve the client's urgent problem..."
+                  placeholder='e.g. "Premium companion stones hand-selected from riverbeds. Includes care guide & habitat."'
                   className="min-h-[100px] text-base"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="investment" className="text-base font-medium">Core Offer Investment</Label>
+                <Label htmlFor="investment" className="text-base font-medium">Pricing</Label>
                 <Input
                   id="investment"
                   value={formData.core_offer_investment}
                   onChange={(e) => updateField("core_offer_investment", e.target.value)}
-                  placeholder="$2,000 - $5,000 per month"
+                  placeholder='e.g. "$15 – $75 per rock"'
                   className="text-base"
                 />
               </div>
@@ -425,7 +425,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="niche"
                   value={formData.ideal_client_niche}
                   onChange={(e) => updateField("ideal_client_niche", e.target.value)}
-                  placeholder="Small to mid-sized local home service businesses such as HVAC companies, roofers, and plumbers..."
+                  placeholder='e.g. "Busy professionals who want companionship without commitment"'
                   className="min-h-[80px] text-base"
                 />
               </div>
@@ -436,7 +436,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="budget"
                   value={formData.clients_budget_timeline}
                   onChange={(e) => updateField("clients_budget_timeline", e.target.value)}
-                  placeholder="Most clients invest $2,000-$4,000/month over 90 days..."
+                  placeholder='e.g. "$15 – $75 range · Impulse buy · Ships same day"'
                   className="min-h-[80px] text-base"
                 />
               </div>
@@ -459,7 +459,14 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                     <Input
                       value={pain}
                       onChange={(e) => updatePainPoint(index, e.target.value)}
-                      placeholder={`Pain point ${index + 1}...`}
+                      placeholder={[
+                        'e.g. "Allergies to real pets"',
+                        'e.g. "No time for walks or feeding"',
+                        'e.g. "Lonely desk at work"',
+                        'e.g. "Landlord says no pets"',
+                        'e.g. "Previous pet trauma"',
+                        'e.g. "Travel too often for a real pet"',
+                      ][index] || `Pain point ${index + 1}...`}
                       className="text-base"
                     />
                     <Button

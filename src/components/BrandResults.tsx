@@ -198,7 +198,7 @@ export function BrandResults({ data, effectiveness, visibility, adminMode = fals
 
           {/* Pricing & Timeline */}
           <div className="grid gap-4 md:grid-cols-2">
-            <BrandResultCard icon={<DollarSign className="h-4 w-4" />} title="Core Offer Investment" delay={300}>
+            <BrandResultCard icon={<DollarSign className="h-4 w-4" />} title="Pricing" delay={300}>
               <p className="text-muted-foreground">{data.core_offer_investment}</p>
             </BrandResultCard>
 
