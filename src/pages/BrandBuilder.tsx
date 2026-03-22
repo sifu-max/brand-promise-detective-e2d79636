@@ -328,7 +328,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="cta"
                   value={formData.primary_call_to_action}
                   onChange={(e) => updateField("primary_call_to_action", e.target.value)}
-                  placeholder="Book a Free Strategy Call"
+                  placeholder='e.g. "Adopt Your Rock Today"'
                   className="text-base"
                 />
               </div>
