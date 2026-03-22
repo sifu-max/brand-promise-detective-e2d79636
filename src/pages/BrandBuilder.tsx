@@ -317,7 +317,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="tagline"
                   value={formData.business_tagline}
                   onChange={(e) => updateField("business_tagline", e.target.value)}
-                  placeholder="Your Growth, Powered by Predictable Leads."
+                  placeholder='e.g. "Your Forever Friend, Zero Maintenance."'
                   className="text-base"
                 />
               </div>
