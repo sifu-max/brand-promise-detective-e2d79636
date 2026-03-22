@@ -171,7 +171,7 @@ ${cleanedData.ideal_client_niche}
 ${cleanedData.core_client_pain_points.map((pain, i) => `${i + 1}. ${pain}`).join('\n')}
 
 ## Pricing & Investment
-**Core Offer Investment:** ${cleanedData.core_offer_investment}
+**Pricing:** ${cleanedData.core_offer_investment}
 **Client Budget & Timeline:** ${cleanedData.clients_budget_timeline}
 **Offer Structure:** ${cleanedData.offer_structure}
 
