@@ -615,6 +615,10 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                     <Download className="mr-2 h-4 w-4" />
                     Export JSON File
                   </Button>
+                  <Button onClick={handleSyncToGHL} variant="secondary" size="lg" className="flex-1" disabled={isSyncing}>
+                    <Send className="mr-2 h-4 w-4" />
+                    {isSyncing ? "Syncing…" : "Sync to CRM"}
+                  </Button>
                 </>
               ) : (
                 <>
