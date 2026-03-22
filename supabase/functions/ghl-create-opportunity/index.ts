@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -59,7 +60,7 @@ serve(async (req) => {
       throw new Error("GHL_API_KEY is not configured");
     }
 
-    const { brandData, contactEmail, contactName } = await req.json();
+    const { brandData, contactEmail, contactName, fullExportData } = await req.json();
 
     if (!brandData || typeof brandData !== "object") {
       return new Response(
@@ -138,7 +139,36 @@ serve(async (req) => {
       customFields.push({ key: "inference_notes", field_value: inferenceNotes });
     }
 
-    // 4. Create the opportunity
+    // 4. Upload full export JSON to storage and get public URL
+    let exportUrl = "";
+    if (fullExportData) {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+      const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+      const fileName = `export-${Date.now()}-${crypto.randomUUID().slice(0, 8)}.json`;
+      const { error: uploadError } = await sb.storage
+        .from("brand-exports")
+        .upload(fileName, JSON.stringify(fullExportData, null, 2), {
+          contentType: "application/json",
+          upsert: false,
+        });
+
+      if (uploadError) {
+        console.error("Storage upload error:", uploadError);
+      } else {
+        const { data: urlData } = sb.storage
+          .from("brand-exports")
+          .getPublicUrl(fileName);
+        exportUrl = urlData?.publicUrl || "";
+      }
+    }
+
+    if (exportUrl) {
+      customFields.push({ key: "brand_research_export_link", field_value: exportUrl });
+    }
+
+    // 5. Create the opportunity
     const opportunityBody = {
       pipelineId: PIPELINE_ID,
       pipelineStageId: firstStageId,

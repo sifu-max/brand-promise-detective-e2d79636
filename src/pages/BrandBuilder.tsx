@@ -157,10 +157,22 @@ const BrandBuilder = () => {
 
     setIsSyncing(true);
     try {
+      // Build the full export payload for storage upload
+      const fullExportData = {
+        brand_research: cleanedData,
+        brand_dna: formData.brand_dna,
+        media_assets: {
+          video_url: mediaAssets.video_url,
+          embed_links: mediaAssets.embed_links.filter((l) => l.trim() !== ""),
+        },
+        exported_at: new Date().toISOString(),
+      };
+
       const { data, error } = await supabase.functions.invoke("ghl-create-opportunity", {
         body: {
           brandData: cleanedData,
           contactName: cleanedData.ideal_client_niche || cleanedData.business_tagline,
+          fullExportData,
         },
       });
 
