@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Sparkles, Video, Link, Plus, Printer, Download } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, Video, Link, Plus, Printer, Download, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

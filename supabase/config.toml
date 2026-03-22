@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.ghl-add-questions]
 verify_jwt = false
+
+[functions.ghl-create-opportunity]
+verify_jwt = false
