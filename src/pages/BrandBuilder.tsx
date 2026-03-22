@@ -459,7 +459,14 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                     <Input
                       value={pain}
                       onChange={(e) => updatePainPoint(index, e.target.value)}
-                      placeholder={`Pain point ${index + 1}...`}
+                      placeholder={[
+                        'e.g. "Allergies to real pets"',
+                        'e.g. "No time for walks or feeding"',
+                        'e.g. "Lonely desk at work"',
+                        'e.g. "Landlord says no pets"',
+                        'e.g. "Previous pet trauma"',
+                        'e.g. "Travel too often for a real pet"',
+                      ][index] || `Pain point ${index + 1}...`}
                       className="text-base"
                     />
                     <Button
