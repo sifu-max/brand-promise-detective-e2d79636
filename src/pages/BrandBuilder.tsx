@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Sparkles, Video, Link, Plus, Printer, Download } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, Video, Link, Plus, Printer, Download, Send } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/SiteHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -116,6 +117,8 @@ const BrandBuilder = () => {
     }
   };
 
+  const [isSyncing, setIsSyncing] = useState(false);
+
   const handleSave = () => {
     // Filter out empty pain points
     const cleanedData = {
@@ -130,6 +133,39 @@ const BrandBuilder = () => {
     // Copy to clipboard
     navigator.clipboard.writeText(JSON.stringify(cleanedData, null, 2));
     toast.info("JSON copied to clipboard");
+  };
+
+  const handleSyncToGHL = async () => {
+    const cleanedData = {
+      ...formData,
+      core_client_pain_points: formData.core_client_pain_points.filter((p) => p.trim() !== ""),
+    };
+
+    if (!cleanedData.business_tagline && !cleanedData.source_url) {
+      toast.error("Please fill in at least a tagline or website URL before syncing.");
+      return;
+    }
+
+    setIsSyncing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("ghl-create-opportunity", {
+        body: {
+          brandData: cleanedData,
+          contactName: cleanedData.ideal_client_niche || cleanedData.business_tagline,
+        },
+      });
+
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "Unknown error");
+
+      toast.success("Brand data synced to CRM pipeline!");
+    } catch (err: unknown) {
+      console.error("GHL sync error:", err);
+      const msg = err instanceof Error ? err.message : "Failed to sync";
+      toast.error(`CRM sync failed: ${msg}`);
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const handleExport = () => {
@@ -578,6 +614,10 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   <Button onClick={handleExport} variant="outline" size="lg" className="flex-1">
                     <Download className="mr-2 h-4 w-4" />
                     Export JSON File
+                  </Button>
+                  <Button onClick={handleSyncToGHL} variant="secondary" size="lg" className="flex-1" disabled={isSyncing}>
+                    <Send className="mr-2 h-4 w-4" />
+                    {isSyncing ? "Syncing…" : "Sync to CRM"}
                   </Button>
                 </>
               ) : (
