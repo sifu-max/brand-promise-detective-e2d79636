@@ -377,18 +377,18 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="service"
                   value={formData.core_service_solution}
                   onChange={(e) => updateField("core_service_solution", e.target.value)}
-                  placeholder="Describe what you do to solve the client's urgent problem..."
+                  placeholder='e.g. "Premium companion stones hand-selected from riverbeds. Includes care guide & habitat."'
                   className="min-h-[100px] text-base"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="investment" className="text-base font-medium">Core Offer Investment</Label>
+                <Label htmlFor="investment" className="text-base font-medium">Pricing</Label>
                 <Input
                   id="investment"
                   value={formData.core_offer_investment}
                   onChange={(e) => updateField("core_offer_investment", e.target.value)}
-                  placeholder="$2,000 - $5,000 per month"
+                  placeholder='e.g. "$15 – $75 per rock"'
                   className="text-base"
                 />
               </div>
