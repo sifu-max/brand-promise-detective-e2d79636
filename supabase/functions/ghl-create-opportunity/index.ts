@@ -60,7 +60,7 @@ serve(async (req) => {
       throw new Error("GHL_API_KEY is not configured");
     }
 
-    const { brandData, contactEmail, contactName } = await req.json();
+    const { brandData, contactEmail, contactName, fullExportData } = await req.json();
 
     if (!brandData || typeof brandData !== "object") {
       return new Response(
