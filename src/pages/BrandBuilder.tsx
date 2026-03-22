@@ -425,7 +425,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="niche"
                   value={formData.ideal_client_niche}
                   onChange={(e) => updateField("ideal_client_niche", e.target.value)}
-                  placeholder="Small to mid-sized local home service businesses such as HVAC companies, roofers, and plumbers..."
+                  placeholder='e.g. "Busy professionals who want companionship without commitment"'
                   className="min-h-[80px] text-base"
                 />
               </div>
@@ -436,7 +436,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                   id="budget"
                   value={formData.clients_budget_timeline}
                   onChange={(e) => updateField("clients_budget_timeline", e.target.value)}
-                  placeholder="Most clients invest $2,000-$4,000/month over 90 days..."
+                  placeholder='e.g. "$15 – $75 range · Impulse buy · Ships same day"'
                   className="min-h-[80px] text-base"
                 />
               </div>
