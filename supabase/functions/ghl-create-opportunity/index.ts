@@ -21,6 +21,14 @@ const FIELD_MAP: Record<string, string> = {
   core_offer_investment: "core_offer_investment_ai",
   ideal_client_niche: "ideal_client_niche",
   offer_structure: "offer_structure",
+  source_url: "source_url_ai",
+  brand_primary_color: "brand_primary_color",
+  brand_secondary_color: "brand_secondary_color",
+  brand_accent_color: "brand_accent_color",
+  brand_heading_font: "brand_heading_font",
+  brand_body_font: "brand_body_font",
+  video_url: "brand_video_url",
+  embed_links: "upload_supporting_documents_or_files_eg_pdfs_csvs_etc",
 };
 
 async function ghlFetch(path: string, token: string, options: RequestInit = {}) {

@@ -139,6 +139,15 @@ const BrandBuilder = () => {
     const cleanedData = {
       ...formData,
       core_client_pain_points: formData.core_client_pain_points.filter((p) => p.trim() !== ""),
+      // Flatten brand DNA into top-level keys for GHL mapping
+      brand_primary_color: formData.brand_dna?.primary_color || "",
+      brand_secondary_color: formData.brand_dna?.secondary_color || "",
+      brand_accent_color: formData.brand_dna?.accent_color || "",
+      brand_heading_font: formData.brand_dna?.heading_font || "",
+      brand_body_font: formData.brand_dna?.body_font || "",
+      // Media assets
+      video_url: mediaAssets.video_url || "",
+      embed_links: mediaAssets.embed_links.filter((l) => l.trim() !== ""),
     };
 
     if (!cleanedData.business_tagline && !cleanedData.source_url) {
