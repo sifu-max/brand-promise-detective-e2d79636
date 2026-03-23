@@ -59,6 +59,8 @@ const BrandBuilder = () => {
     brand_dna: defaultBrandDNA,
   });
 
+  const [contactInfo, setContactInfo] = useState({ firstName: "", email: "" });
+
   const [mediaAssets, setMediaAssets] = useState({
     video_url: "",
     embed_links: [""],
@@ -151,7 +153,12 @@ const BrandBuilder = () => {
     };
 
     if (!cleanedData.business_tagline && !cleanedData.source_url) {
-      toast.error("Please fill in at least a tagline or website URL before syncing.");
+      toast.error("Please fill in at least a tagline or website URL.");
+      return;
+    }
+
+    if (!contactInfo.firstName.trim() || !contactInfo.email.trim()) {
+      toast.error("Please provide your first name and email before syncing.");
       return;
     }
 
@@ -171,7 +178,8 @@ const BrandBuilder = () => {
       const { data, error } = await supabase.functions.invoke("ghl-create-opportunity", {
         body: {
           brandData: cleanedData,
-          contactName: cleanedData.ideal_client_niche || cleanedData.business_tagline,
+          contactName: contactInfo.firstName || cleanedData.ideal_client_niche || cleanedData.business_tagline,
+          contactEmail: contactInfo.email || undefined,
           fullExportData,
         },
       });
@@ -361,6 +369,37 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
       {/* Form */}
       <div className="container max-w-4xl py-12">
         <div className="space-y-8">
+          {/* Contact Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Info</CardTitle>
+              <CardDescription>So we can deliver your brand package</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="first-name" className="text-base font-medium">First Name</Label>
+                <Input
+                  id="first-name"
+                  value={contactInfo.firstName}
+                  onChange={(e) => setContactInfo((prev) => ({ ...prev, firstName: e.target.value }))}
+                  placeholder="Jane"
+                  className="text-base"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-base font-medium">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={contactInfo.email}
+                  onChange={(e) => setContactInfo((prev) => ({ ...prev, email: e.target.value }))}
+                  placeholder="jane@company.com"
+                  className="text-base"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Brand Identity */}
           <Card>
             <CardHeader>
@@ -643,7 +682,11 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                 </>
               ) : (
                 <>
-                  <Button onClick={() => window.print()} size="lg" className="flex-1">
+                  <Button onClick={handleSyncToGHL} size="lg" className="flex-1" disabled={isSyncing}>
+                    <Send className="mr-2 h-4 w-4" />
+                    {isSyncing ? "Submitting…" : "Submit Your Brand"}
+                  </Button>
+                  <Button onClick={() => window.print()} variant="outline" size="lg" className="flex-1">
                     <Printer className="mr-2 h-4 w-4" />
                     Print / Save as PDF
                   </Button>
