@@ -325,7 +325,7 @@ const Index = () => {
                 className="text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary/20"
               >
                 <PenLine className="mr-2 h-4 w-4" />
-                Or define your brand manually
+                Or define your brand
               </Button>
             </div>
           </div>
