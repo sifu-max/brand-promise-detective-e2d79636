@@ -682,7 +682,11 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
                 </>
               ) : (
                 <>
-                  <Button onClick={() => window.print()} size="lg" className="flex-1">
+                  <Button onClick={handleSyncToGHL} size="lg" className="flex-1" disabled={isSyncing}>
+                    <Send className="mr-2 h-4 w-4" />
+                    {isSyncing ? "Submitting…" : "Submit Your Brand"}
+                  </Button>
+                  <Button onClick={() => window.print()} variant="outline" size="lg" className="flex-1">
                     <Printer className="mr-2 h-4 w-4" />
                     Print / Save as PDF
                   </Button>
