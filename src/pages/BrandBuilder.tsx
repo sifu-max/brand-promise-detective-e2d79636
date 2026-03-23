@@ -59,6 +59,8 @@ const BrandBuilder = () => {
     brand_dna: defaultBrandDNA,
   });
 
+  const [contactInfo, setContactInfo] = useState({ firstName: "", email: "" });
+
   const [mediaAssets, setMediaAssets] = useState({
     video_url: "",
     embed_links: [""],
