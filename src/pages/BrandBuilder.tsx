@@ -153,7 +153,12 @@ const BrandBuilder = () => {
     };
 
     if (!cleanedData.business_tagline && !cleanedData.source_url) {
-      toast.error("Please fill in at least a tagline or website URL before syncing.");
+      toast.error("Please fill in at least a tagline or website URL.");
+      return;
+    }
+
+    if (!contactInfo.firstName.trim() || !contactInfo.email.trim()) {
+      toast.error("Please provide your first name and email before syncing.");
       return;
     }
 
