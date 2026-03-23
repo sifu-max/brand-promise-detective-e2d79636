@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -87,6 +88,7 @@ const steps = [
 ];
 
 const SocialMedia = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -118,9 +120,9 @@ const SocialMedia = () => {
               variant="outline"
               size="lg"
               className="gap-2 text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
-              onClick={() => window.open("mailto:info@crmchains.com?subject=Social Media Strategy Session", "_blank")}
+              onClick={() => navigate("/brand-builder")}
             >
-              Book a Strategy Session
+              Define your Brand
             </Button>
           </div>
         </div>
