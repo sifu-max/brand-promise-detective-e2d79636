@@ -10,6 +10,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ClearFaithLanding from "./pages/ClearFaithLanding";
 import ClearFaithProposal from "./pages/ClearFaithProposal";
 import RevenueScanner from "./pages/RevenueScanner";
+import SocialMedia from "./pages/SocialMedia";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
