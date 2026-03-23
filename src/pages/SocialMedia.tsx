@@ -119,7 +119,7 @@ const SocialMedia = () => {
             <Button
               variant="outline"
               size="lg"
-              className="gap-2 text-base px-8 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+              className="gap-2 text-base px-8 border-primary-foreground/30 text-primary-foreground bg-transparent hover:bg-primary-foreground/10"
               onClick={() => navigate("/brand-builder")}
             >
               Define your Brand
