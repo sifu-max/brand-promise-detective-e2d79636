@@ -88,6 +88,7 @@ const steps = [
 ];
 
 const SocialMedia = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
