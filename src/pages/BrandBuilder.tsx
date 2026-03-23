@@ -369,6 +369,37 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
       {/* Form */}
       <div className="container max-w-4xl py-12">
         <div className="space-y-8">
+          {/* Contact Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Your Info</CardTitle>
+              <CardDescription>So we can deliver your brand package</CardDescription>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="first-name" className="text-base font-medium">First Name</Label>
+                <Input
+                  id="first-name"
+                  value={contactInfo.firstName}
+                  onChange={(e) => setContactInfo((prev) => ({ ...prev, firstName: e.target.value }))}
+                  placeholder="Jane"
+                  className="text-base"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-base font-medium">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={contactInfo.email}
+                  onChange={(e) => setContactInfo((prev) => ({ ...prev, email: e.target.value }))}
+                  placeholder="jane@company.com"
+                  className="text-base"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Brand Identity */}
           <Card>
             <CardHeader>
