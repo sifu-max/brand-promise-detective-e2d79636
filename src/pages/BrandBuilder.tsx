@@ -178,7 +178,8 @@ const BrandBuilder = () => {
       const { data, error } = await supabase.functions.invoke("ghl-create-opportunity", {
         body: {
           brandData: cleanedData,
-          contactName: cleanedData.ideal_client_niche || cleanedData.business_tagline,
+          contactName: contactInfo.firstName || cleanedData.ideal_client_niche || cleanedData.business_tagline,
+          contactEmail: contactInfo.email || undefined,
           fullExportData,
         },
       });
