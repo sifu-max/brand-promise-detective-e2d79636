@@ -11,6 +11,7 @@ import ClearFaithLanding from "./pages/ClearFaithLanding";
 import ClearFaithProposal from "./pages/ClearFaithProposal";
 import RevenueScanner from "./pages/RevenueScanner";
 import SocialMedia from "./pages/SocialMedia";
+import ConversationQuiz from "./pages/ConversationQuiz";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
