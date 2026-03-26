@@ -184,23 +184,12 @@ serve(async (req) => {
       console.log("Opportunity search failed, will create new:", e);
     }
 
-    // ── 4. Get pipeline stages ─────────────────────────────────────────
-    const pipelineRes = await ghlFetch(
-      `/opportunities/pipelines/${PIPELINE_ID}?locationId=${LOCATION_ID}`,
-      GHL_API_KEY
-    );
-    const stages = pipelineRes?.stages || pipelineRes?.pipeline?.stages || [];
-    if (!stages.length) {
-      throw new Error("No stages found in pipeline");
-    }
-    const firstStageId = stages[0].id;
-
-    // ── 5. Create or update opportunity ────────────────────────────────
+    // ── 4. Create or update opportunity ────────────────────────────────
     let oppResult;
     const oppName = brandData.business_tagline || brandData.source_url || "New Brand Opportunity";
 
     if (existingOppId) {
-      // Update existing opportunity
+      // Update existing opportunity (no pipeline read required)
       oppResult = await ghlFetch(`/opportunities/${existingOppId}`, GHL_API_KEY, {
         method: "PUT",
         body: JSON.stringify({
@@ -212,18 +201,41 @@ serve(async (req) => {
       });
       console.log("Updated existing opportunity:", existingOppId);
     } else {
-      // Create new opportunity
+      // Create new opportunity with stage fallback:
+      // 1) Optional manual override via secret GHL_DEFAULT_STAGE_ID
+      // 2) Auto-fetch first stage from pipeline
+      // 3) Attempt create without stage as last resort
+      let pipelineStageId = Deno.env.get("GHL_DEFAULT_STAGE_ID") || "";
+
+      if (!pipelineStageId) {
+        try {
+          const pipelineRes = await ghlFetch(
+            `/opportunities/pipelines/${PIPELINE_ID}?locationId=${LOCATION_ID}`,
+            GHL_API_KEY
+          );
+          const stages = pipelineRes?.stages || pipelineRes?.pipeline?.stages || [];
+          pipelineStageId = stages[0]?.id || "";
+        } catch (e) {
+          console.warn("Pipeline read failed, attempting create without stage:", e);
+        }
+      }
+
+      const createPayload: Record<string, unknown> = {
+        pipelineId: PIPELINE_ID,
+        locationId: LOCATION_ID,
+        contactId,
+        name: oppName,
+        status: "open",
+        customFields,
+      };
+
+      if (pipelineStageId) {
+        createPayload.pipelineStageId = pipelineStageId;
+      }
+
       oppResult = await ghlFetch("/opportunities/", GHL_API_KEY, {
         method: "POST",
-        body: JSON.stringify({
-          pipelineId: PIPELINE_ID,
-          pipelineStageId: firstStageId,
-          locationId: LOCATION_ID,
-          contactId,
-          name: oppName,
-          status: "open",
-          customFields,
-        }),
+        body: JSON.stringify(createPayload),
       });
       console.log("Created new opportunity");
     }
