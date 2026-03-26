@@ -69,65 +69,31 @@ serve(async (req) => {
       );
     }
 
-    // 1. Upsert contact (so we have a contactId for the opportunity)
+    // ── 1. Upsert contact ──────────────────────────────────────────────
     let contactId: string | null = null;
+    let isExistingContact = false;
 
     if (contactEmail) {
-      // Search for existing contact by email
       const searchRes = await ghlFetch(
         `/contacts/search/duplicate?locationId=${LOCATION_ID}&email=${encodeURIComponent(contactEmail)}`,
         GHL_API_KEY
       );
       contactId = searchRes?.contact?.id ?? null;
+      isExistingContact = !!contactId;
     }
 
-    if (!contactId) {
-      // Create a new contact
-      const contactBody: Record<string, unknown> = {
-        locationId: LOCATION_ID,
-        email: contactEmail || undefined,
-        name: contactName || brandData.source_url || "Brand Builder Lead",
-        source: "Brand Builder",
-        tags: ["brand-builder"],
-      };
-
-      const createRes = await ghlFetch("/contacts/", GHL_API_KEY, {
-        method: "POST",
-        body: JSON.stringify(contactBody),
-      });
-      contactId = createRes?.contact?.id;
-    }
-
-    if (!contactId) {
-      throw new Error("Failed to create or find a GHL contact");
-    }
-
-    // 2. Get pipeline stages to find the first stage
-    const pipelineRes = await ghlFetch(
-      `/opportunities/pipelines/${PIPELINE_ID}?locationId=${LOCATION_ID}`,
-      GHL_API_KEY
-    );
-    const stages = pipelineRes?.stages || pipelineRes?.pipeline?.stages || [];
-    if (!stages.length) {
-      throw new Error("No stages found in pipeline");
-    }
-    const firstStageId = stages[0].id;
-
-    // 3. Build custom fields array
+    // Build custom fields array (shared between contact & opportunity)
     const customFields: Array<{ key: string; field_value: string }> = [];
     for (const [formKey, ghlKey] of Object.entries(FIELD_MAP)) {
       let value = brandData[formKey];
       if (value === undefined || value === null || value === "") continue;
-
-      // Join arrays (pain points)
       if (Array.isArray(value)) {
         value = value.filter((v: string) => v && v.trim()).join(" | ");
       }
-
       customFields.push({ key: ghlKey, field_value: String(value) });
     }
 
-    // Add inference notes from extraction confidence + source
+    // Add inference notes
     const inferenceNotes = [
       brandData.extraction_confidence ? `Confidence: ${brandData.extraction_confidence}` : "",
       brandData.source_url ? `Source: ${brandData.source_url}` : "",
@@ -139,7 +105,7 @@ serve(async (req) => {
       customFields.push({ key: "inference_notes", field_value: inferenceNotes });
     }
 
-    // 4. Upload full export JSON to storage and get public URL
+    // Upload full export JSON to storage
     let exportUrl = "";
     if (fullExportData) {
       const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -168,27 +134,108 @@ serve(async (req) => {
       customFields.push({ key: "brand_research_export_link", field_value: exportUrl });
     }
 
-    // 5. Create the opportunity
-    const opportunityBody = {
-      pipelineId: PIPELINE_ID,
-      pipelineStageId: firstStageId,
-      locationId: LOCATION_ID,
-      contactId,
-      name: brandData.business_tagline || brandData.source_url || "New Brand Opportunity",
-      status: "open",
-      customFields,
-    };
+    // ── 2. Create or update contact with custom fields ─────────────────
+    if (isExistingContact && contactId) {
+      // Update existing contact with latest custom fields
+      await ghlFetch(`/contacts/${contactId}`, GHL_API_KEY, {
+        method: "PUT",
+        body: JSON.stringify({
+          name: contactName || undefined,
+          customFields,
+          tags: ["brand-builder"],
+        }),
+      });
+      console.log("Updated existing contact:", contactId);
+    } else {
+      // Create new contact with custom fields
+      const createRes = await ghlFetch("/contacts/", GHL_API_KEY, {
+        method: "POST",
+        body: JSON.stringify({
+          locationId: LOCATION_ID,
+          email: contactEmail || undefined,
+          name: contactName || brandData.source_url || "Brand Builder Lead",
+          source: "Brand Builder",
+          tags: ["brand-builder"],
+          customFields,
+        }),
+      });
+      contactId = createRes?.contact?.id;
+    }
 
-    const oppRes = await ghlFetch("/opportunities/", GHL_API_KEY, {
-      method: "POST",
-      body: JSON.stringify(opportunityBody),
-    });
+    if (!contactId) {
+      throw new Error("Failed to create or find a GHL contact");
+    }
+
+    // ── 3. Check for existing opportunity on this contact ──────────────
+    let existingOppId: string | null = null;
+
+    try {
+      const searchRes = await ghlFetch(
+        `/opportunities/search?location_id=${LOCATION_ID}&contact_id=${contactId}&pipeline_id=${PIPELINE_ID}`,
+        GHL_API_KEY
+      );
+      const opportunities = searchRes?.opportunities || [];
+      if (opportunities.length > 0) {
+        // Use the most recent open opportunity
+        const openOpp = opportunities.find((o: Record<string, unknown>) => o.status === "open");
+        existingOppId = (openOpp?.id || opportunities[0]?.id) as string;
+      }
+    } catch (e) {
+      console.log("Opportunity search failed, will create new:", e);
+    }
+
+    // ── 4. Get pipeline stages ─────────────────────────────────────────
+    const pipelineRes = await ghlFetch(
+      `/opportunities/pipelines/${PIPELINE_ID}?locationId=${LOCATION_ID}`,
+      GHL_API_KEY
+    );
+    const stages = pipelineRes?.stages || pipelineRes?.pipeline?.stages || [];
+    if (!stages.length) {
+      throw new Error("No stages found in pipeline");
+    }
+    const firstStageId = stages[0].id;
+
+    // ── 5. Create or update opportunity ────────────────────────────────
+    let oppResult;
+    const oppName = brandData.business_tagline || brandData.source_url || "New Brand Opportunity";
+
+    if (existingOppId) {
+      // Update existing opportunity
+      oppResult = await ghlFetch(`/opportunities/${existingOppId}`, GHL_API_KEY, {
+        method: "PUT",
+        body: JSON.stringify({
+          pipelineId: PIPELINE_ID,
+          locationId: LOCATION_ID,
+          name: oppName,
+          customFields,
+        }),
+      });
+      console.log("Updated existing opportunity:", existingOppId);
+    } else {
+      // Create new opportunity
+      oppResult = await ghlFetch("/opportunities/", GHL_API_KEY, {
+        method: "POST",
+        body: JSON.stringify({
+          pipelineId: PIPELINE_ID,
+          pipelineStageId: firstStageId,
+          locationId: LOCATION_ID,
+          contactId,
+          name: oppName,
+          status: "open",
+          customFields,
+        }),
+      });
+      console.log("Created new opportunity");
+    }
+
+    const opportunityId = existingOppId || oppResult?.opportunity?.id || oppResult?.id;
 
     return new Response(
       JSON.stringify({
         success: true,
-        opportunityId: oppRes?.opportunity?.id || oppRes?.id,
+        opportunityId,
         contactId,
+        updated: !!existingOppId,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
