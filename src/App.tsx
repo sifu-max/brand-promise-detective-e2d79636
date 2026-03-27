@@ -9,6 +9,7 @@ import CRMChains from "./pages/CRMChains";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClearFaithLanding from "./pages/ClearFaithLanding";
 import ClearFaithProposal from "./pages/ClearFaithProposal";
+import RevolutionMortgageProposal from "./pages/RevolutionMortgageProposal";
 import RevenueScanner from "./pages/RevenueScanner";
 import SocialMedia from "./pages/SocialMedia";
 import ConversationQuiz from "./pages/ConversationQuiz";
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/clearfaith" element={<ClearFaithLanding />} />
           <Route path="/clear-faith" element={<ClearFaithLanding />} />
           <Route path="/clearfaith-proposal" element={<ClearFaithProposal />} />
+          <Route path="/revolution-mortgage-proposal" element={<RevolutionMortgageProposal />} />
           <Route path="/revenue-scanner" element={<RevenueScanner />} />
           <Route path="/quiz" element={<ConversationQuiz />} />
           <Route path="/social" element={<SocialMedia />} />
