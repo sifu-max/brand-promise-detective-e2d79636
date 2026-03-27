@@ -9,6 +9,7 @@ import CRMChains from "./pages/CRMChains";
 import AdminDashboard from "./pages/AdminDashboard";
 import ClearFaithLanding from "./pages/ClearFaithLanding";
 import ClearFaithProposal from "./pages/ClearFaithProposal";
+import RevolutionMortgageProposal from "./pages/RevolutionMortgageProposal";
 import RevenueScanner from "./pages/RevenueScanner";
 import SocialMedia from "./pages/SocialMedia";
 import ConversationQuiz from "./pages/ConversationQuiz";
