@@ -31,6 +31,7 @@ const App = () => (
           <Route path="/clearfaith" element={<ClearFaithLanding />} />
           <Route path="/clear-faith" element={<ClearFaithLanding />} />
           <Route path="/clearfaith-proposal" element={<ClearFaithProposal />} />
+          <Route path="/revolution-mortgage-proposal" element={<RevolutionMortgageProposal />} />
           <Route path="/revenue-scanner" element={<RevenueScanner />} />
           <Route path="/quiz" element={<ConversationQuiz />} />
           <Route path="/social" element={<SocialMedia />} />
