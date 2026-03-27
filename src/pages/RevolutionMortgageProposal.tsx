@@ -254,7 +254,7 @@ export default function RevolutionMortgageProposal() {
         {/* CTA */}
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-            <span className="text-primary font-mono text-base">III.</span> Next Steps
+            <span className="text-primary font-mono text-base">IV.</span> Next Steps
           </h2>
 
           <Card className="bg-primary/5 border-primary/20">
