@@ -197,6 +197,60 @@ export default function RevolutionMortgageProposal() {
           </div>
         </section>
 
+        {/* Pricing */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <span className="text-primary font-mono text-base">III.</span> Your Investment
+          </h2>
+
+          <Card className="border-primary ring-2 ring-primary/20 overflow-hidden">
+            <div className="bg-primary text-primary-foreground text-center py-3 px-4">
+              <p className="text-xs font-bold uppercase tracking-widest mb-1">CRMChains Unlimited Plan</p>
+              <p className="text-sm opacity-80">Boundless Features, Limitless Potential</p>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-center">
+                <div>
+                  <p className="text-4xl font-bold text-foreground">$297<span className="text-lg font-normal text-muted-foreground">/mo</span></p>
+                  <p className="text-xs text-muted-foreground mt-1">Monthly Platform Fee</p>
+                </div>
+                <span className="text-2xl text-muted-foreground font-light">+</span>
+                <div>
+                  <p className="text-4xl font-bold text-foreground">$997</p>
+                  <p className="text-xs text-muted-foreground mt-1">One-Time Setup Fee</p>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-3">Everything Included:</p>
+                <ul className="grid sm:grid-cols-2 gap-2 text-sm">
+                  {[
+                    "API Access — Integrate With Anything",
+                    "Unlimited Sub-Accounts",
+                    "Branded Desktop App & Custom Domains",
+                    "SaaS Mode — Auto Sub-Account Creation",
+                    "Rebilling Enabled With Custom Markup",
+                    "Rebilling Available on Conversation AI",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                      <span className="text-foreground">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-muted/50 rounded-lg p-4 text-center">
+                <p className="text-xs text-muted-foreground">
+                  All features provided via <span className="font-semibold text-foreground">CRMChains</span> integration
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </section>
+
         {/* CTA */}
         <section className="space-y-4">
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
