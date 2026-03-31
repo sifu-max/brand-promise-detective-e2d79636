@@ -13,6 +13,8 @@ import RevolutionMortgageProposal from "./pages/RevolutionMortgageProposal";
 import RevenueScanner from "./pages/RevenueScanner";
 import SocialMedia from "./pages/SocialMedia";
 import ConversationQuiz from "./pages/ConversationQuiz";
+import ChamberLetter from "./pages/ChamberLetter";
+import StarbucksLetter from "./pages/StarbucksLetter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,8 @@ const App = () => (
           <Route path="/revenue-scanner" element={<RevenueScanner />} />
           <Route path="/quiz" element={<ConversationQuiz />} />
           <Route path="/social" element={<SocialMedia />} />
+          <Route path="/chamber-letter" element={<ChamberLetter />} />
+          <Route path="/starbucks-letter" element={<StarbucksLetter />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
