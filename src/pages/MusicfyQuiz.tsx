@@ -328,6 +328,8 @@ export default function MusicfyQuiz() {
   // ── Result Screen ──
   if (showResult) {
     const rec = getRecommendation();
+    const budgetLabel = getBudgetLabel();
+    const reason = getReasonText(rec.id);
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col">
         <Header />
@@ -350,6 +352,18 @@ export default function MusicfyQuiz() {
                   <h2 className="text-xl font-bold">{rec.title}</h2>
                   <p className="text-amber-400 font-semibold">{rec.price}</p>
                 </div>
+              </div>
+
+              {/* Personalized recommendation reason */}
+              <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 space-y-2">
+                <p className="text-sm text-gray-300">
+                  <span className="text-amber-400 font-semibold">Why this package?</span> Based on your responses, we recommend this because {reason}
+                </p>
+                {budgetLabel && (
+                  <p className="text-sm text-gray-400 italic">
+                    You indicated a budget of <span className="text-amber-400 font-medium not-italic">{budgetLabel}</span>. This package starts at {rec.price}. During your consultation, we'll tailor the scope to align with your investment.
+                  </p>
+                )}
               </div>
 
               <p className="text-gray-300">{rec.description}</p>
