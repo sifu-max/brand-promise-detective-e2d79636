@@ -292,6 +292,27 @@ export default function MusicfyQuiz() {
     return scores;
   };
 
+  const getBudgetLabel = () => {
+    const investmentAnswer = answers["investment"];
+    if (typeof investmentAnswer !== "number") return null;
+    const investmentQ = questions.find((q) => q.id === "investment")!;
+    return investmentQ.options![investmentAnswer].label;
+  };
+
+  const getReasonText = (pkgId: string) => {
+    const reasons: Record<string, string> = {
+      creation:
+        "you're starting from scratch and want the full creative journey — from story extraction through songwriting, production, recording, and distribution.",
+      production:
+        "you already have lyrics or a demo and need professional production, recording, and polishing to bring it to life.",
+      experience:
+        "you're looking for a deeply personal or gift-driven song experience where we craft the emotion and story around your vision.",
+      launch:
+        "your song already exists and just needs the final professional touches — mixing, mastering, cover art, and release strategy.",
+    };
+    return reasons[pkgId] || "";
+  };
+
   const getRecommendation = () => {
     const scores = computeScores();
     const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
