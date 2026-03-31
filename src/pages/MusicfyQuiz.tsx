@@ -178,19 +178,19 @@ const questions: Question[] = [
     options: [
       {
         label: "$800 – $3,000",
-        score: { creation: 0, production: 0, experience: 1, launch: 5 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
       {
         label: "$1,500 – $4,000",
-        score: { creation: 0, production: 1, experience: 5, launch: 3 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
       {
         label: "$2,000 – $6,000",
-        score: { creation: 1, production: 5, experience: 2, launch: 0 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
       {
         label: "$4,000 – $12,000+",
-        score: { creation: 5, production: 2, experience: 0, launch: 0 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
     ],
   },
