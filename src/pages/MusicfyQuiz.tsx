@@ -360,7 +360,7 @@ export default function MusicfyQuiz() {
                 </a>
                 <Button
                   variant="outline"
-                  className="flex-1 border-gray-700 text-gray-300 hover:bg-white/5 py-6"
+                  className="flex-1 border-gray-700 text-gray-300 hover:bg-white/5 bg-transparent py-6"
                   onClick={restart}
                 >
                   Retake Quiz
