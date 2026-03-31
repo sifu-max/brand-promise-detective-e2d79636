@@ -15,6 +15,7 @@ import SocialMedia from "./pages/SocialMedia";
 import ConversationQuiz from "./pages/ConversationQuiz";
 import ChamberLetter from "./pages/ChamberLetter";
 import StarbucksLetter from "./pages/StarbucksLetter";
+import MusicfyQuiz from "./pages/MusicfyQuiz";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
