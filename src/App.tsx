@@ -13,6 +13,8 @@ import RevolutionMortgageProposal from "./pages/RevolutionMortgageProposal";
 import RevenueScanner from "./pages/RevenueScanner";
 import SocialMedia from "./pages/SocialMedia";
 import ConversationQuiz from "./pages/ConversationQuiz";
+import ChamberLetter from "./pages/ChamberLetter";
+import StarbucksLetter from "./pages/StarbucksLetter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
