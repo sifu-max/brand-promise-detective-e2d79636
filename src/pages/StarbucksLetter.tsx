@@ -4,90 +4,113 @@ import SmarterBenefitsTestimonials from "@/components/SmarterBenefitsTestimonial
 export default function StarbucksLetter() {
   return (
     <SmarterBenefitsLetterhead>
-      {/* Page 1 */}
-      <div>
-        <p className="mb-1"><strong>To:</strong> Brian Niccol, CEO</p>
-        <p className="ml-6 mb-4">Starbucks Corporation</p>
-        <p className="font-semibold mb-4">Executive Brief: $207M in Payroll Tax Savings</p>
+      {/* Addressee */}
+      <div className="border-b border-gray-200 pb-5">
+        <p className="text-gray-500 text-sm mb-1">To</p>
+        <p className="font-semibold text-lg">Brian Niccol, CEO</p>
+        <p className="text-gray-600">Starbucks Corporation</p>
       </div>
+
+      <p className="font-bold text-xl text-gray-900">
+        Executive Brief: A $207&thinsp;M Payroll Tax Savings Opportunity
+      </p>
 
       <p>Hello Brian,</p>
       <p>I'll be brief.</p>
 
       <p>
-        I'm Robert Nyberg, Principal of Smarter Benefits Strategy.
-      </p>
-
-      <p>I'm not reaching out to sell insurance.</p>
-
-      <p>
-        I'm reaching out because our financial efficiency model represents a $207M annual earnings opportunity for your organization based on publicly available workforce data.
+        My name is Robert Nyberg. I'm the Principal of Smarter Benefits Strategy — and I'm <strong>not</strong> reaching out to sell insurance.
       </p>
 
       <p>
-        The strategy uses an employee-funded / employer-sponsored supplemental health structure under IRS Section 125.
-      </p>
-
-      <p>It consistently:</p>
-
-      <ul className="list-disc pl-6 space-y-1">
-        <li>Increases employer profitability</li>
-        <li>Increases employee net pay</li>
-        <li>Strengthens existing medical benefits</li>
-      </ul>
-
-      <p>
-        Importantly, it does not replace your current medical plan — it enhances it.
+        I'm reaching out because our financial efficiency model identifies a <strong>$207&thinsp;M annual earnings opportunity</strong> for Starbucks, based on publicly available workforce data.
       </p>
 
       <p>
-        Routine care shifts away from the employer-funded plan into an employee-funded supplemental program called the "Champ Plan," provided through the First Health Network, a division of Aetna, part of CVS Health.
+        The strategy leverages an employee-funded, employer-sponsored supplemental health structure under <strong>IRS Section 125</strong>. It has been in operation for over 12 years and consistently delivers three outcomes:
       </p>
 
-      <p className="text-sky-500 font-bold text-center text-lg uppercase tracking-wide">
-        The Champ Plan Covers Everyday Care — NOT Catastrophic Events
+      <div className="grid sm:grid-cols-3 gap-4 my-6">
+        {[
+          { icon: "📈", label: "Increases employer profitability" },
+          { icon: "💰", label: "Increases employee net pay" },
+          { icon: "🛡️", label: "Strengthens existing medical benefits" },
+        ].map((item) => (
+          <div key={item.label} className="bg-sky-50 border border-sky-100 rounded-lg p-4 text-center">
+            <span className="text-2xl">{item.icon}</span>
+            <p className="text-sm font-semibold text-gray-800 mt-2">{item.label}</p>
+          </div>
+        ))}
+      </div>
+
+      <p>
+        Importantly, this does <strong>not</strong> replace your current medical plan — it <em>enhances</em> it.
       </p>
 
-      {/* Page 2 content */}
+      <p>
+        Routine care shifts away from the employer-funded plan into an employee-funded supplemental program called the <strong>"Champ Plan,"</strong> provided through the First Health Network — a division of Aetna, part of CVS Health.
+      </p>
+
+      <div className="bg-sky-600 text-white text-center py-4 px-6 rounded-lg my-6">
+        <p className="font-bold text-lg uppercase tracking-wider">
+          The Champ Plan Covers Everyday Care — Not Catastrophic Events
+        </p>
+      </div>
+
+      {/* Page 2 */}
       <hr className="my-8 border-sky-200" />
 
       <p>
-        Employers will realize $573.60 in net earnings per employee annually, while employees gain:
+        Employers realize <strong>$573.60 in net earnings per employee, per year</strong> — while employees gain:
       </p>
 
-      <ul className="list-disc pl-6 space-y-1">
-        <li>~$1,500 in additional net pay</li>
-        <li>$0 copays, deductibles, or coinsurance</li>
-        <li>$0 copay prescriptions</li>
-        <li>24/7 access to primary, urgent, and mental health care</li>
-      </ul>
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 my-4 space-y-3">
+        {[
+          "~$1,500 in additional annual net pay",
+          "$0 copays, deductibles, or coinsurance",
+          "$0 copay prescriptions",
+          "24/7 access to primary, urgent, and mental health care",
+        ].map((item) => (
+          <div key={item} className="flex items-start gap-3">
+            <span className="text-sky-500 font-bold text-lg leading-none mt-0.5">✓</span>
+            <p className="text-gray-800 font-medium text-[15px]">{item}</p>
+          </div>
+        ))}
+      </div>
 
       <p>
-        Average employee participation is 95%, with client renewal rates at 91% with a month-to-month contract, no long-term commitments.
+        Average employee participation is <strong>95%</strong>, with client renewal rates at <strong>91%</strong> — on a month-to-month contract with no long-term commitments.
       </p>
 
-      <p>Implementation is turnkey and does not add work for HR.</p>
+      <p>Implementation is fully turnkey and adds <strong>no work for HR</strong>.</p>
 
-      <p>We have operated this model for over 12 years.</p>
+      <div className="bg-sky-50 border border-sky-200 rounded-lg p-6 my-6 text-center">
+        <p className="text-gray-800 text-[15px] leading-relaxed">
+          If reviewing a potential <strong>$207&thinsp;M improvement</strong> is worth 20 minutes of your time, I'd welcome the opportunity to walk you through the assumptions behind the model.
+        </p>
+        <p className="text-gray-600 text-sm mt-3">
+          If the math doesn't hold up, you'll know quickly.
+        </p>
+      </div>
+
+      <p className="font-semibold text-gray-900">
+        Would you be open to a brief Zoom conversation?
+      </p>
 
       <p>
-        If reviewing a potential $207M improvement is worth 20 minutes, I would welcome the opportunity to walk through the assumptions behind the model.
+        Please reach out at:{" "}
+        <a href="mailto:rpnyberg@SmarterBenefitsStrategy.com" className="text-sky-600 font-semibold hover:underline">
+          rpnyberg@SmarterBenefitsStrategy.com
+        </a>
       </p>
 
-      <p>If the math doesn't hold up, you will know quickly.</p>
-
-      <p>Would you be open to a brief Zoom conversation?</p>
-
-      <p>
-        Please email me at: <a href="mailto:rpnyberg@SmarterBenefitsStrategy.com" className="text-sky-600 underline">rpnyberg@SmarterBenefitsStrategy.com</a> with the date and time you are available.
-      </p>
-
-      <p>Respectfully,</p>
-      <p className="font-semibold">Robert Nyberg</p>
+      <div className="mt-6">
+        <p>Respectfully,</p>
+        <p className="font-bold text-gray-900">Robert Nyberg</p>
+      </div>
 
       {/* Page 3 - Testimonials */}
       <hr className="my-8 border-sky-200" />
-
       <SmarterBenefitsTestimonials />
     </SmarterBenefitsLetterhead>
   );
