@@ -178,19 +178,19 @@ const questions: Question[] = [
     options: [
       {
         label: "$800 – $3,000",
-        score: { creation: 0, production: 0, experience: 1, launch: 5 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
       {
         label: "$1,500 – $4,000",
-        score: { creation: 0, production: 1, experience: 5, launch: 3 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
       {
         label: "$2,000 – $6,000",
-        score: { creation: 1, production: 5, experience: 2, launch: 0 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
       {
         label: "$4,000 – $12,000+",
-        score: { creation: 5, production: 2, experience: 0, launch: 0 },
+        score: { creation: 0, production: 0, experience: 0, launch: 0 },
       },
     ],
   },
@@ -292,6 +292,27 @@ export default function MusicfyQuiz() {
     return scores;
   };
 
+  const getBudgetLabel = () => {
+    const investmentAnswer = answers["investment"];
+    if (typeof investmentAnswer !== "number") return null;
+    const investmentQ = questions.find((q) => q.id === "investment")!;
+    return investmentQ.options![investmentAnswer].label;
+  };
+
+  const getReasonText = (pkgId: string) => {
+    const reasons: Record<string, string> = {
+      creation:
+        "you're starting from scratch and want the full creative journey — from story extraction through songwriting, production, recording, and distribution.",
+      production:
+        "you already have lyrics or a demo and need professional production, recording, and polishing to bring it to life.",
+      experience:
+        "you're looking for a deeply personal or gift-driven song experience where we craft the emotion and story around your vision.",
+      launch:
+        "your song already exists and just needs the final professional touches — mixing, mastering, cover art, and release strategy.",
+    };
+    return reasons[pkgId] || "";
+  };
+
   const getRecommendation = () => {
     const scores = computeScores();
     const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
@@ -307,6 +328,8 @@ export default function MusicfyQuiz() {
   // ── Result Screen ──
   if (showResult) {
     const rec = getRecommendation();
+    const budgetLabel = getBudgetLabel();
+    const reason = getReasonText(rec.id);
     return (
       <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col">
         <Header />
@@ -329,6 +352,18 @@ export default function MusicfyQuiz() {
                   <h2 className="text-xl font-bold">{rec.title}</h2>
                   <p className="text-amber-400 font-semibold">{rec.price}</p>
                 </div>
+              </div>
+
+              {/* Personalized recommendation reason */}
+              <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 space-y-2">
+                <p className="text-sm text-gray-300">
+                  <span className="text-amber-400 font-semibold">Why this package?</span> Based on your responses, we recommend this because {reason}
+                </p>
+                {budgetLabel && (
+                  <p className="text-sm text-gray-400 italic">
+                    You indicated a budget of <span className="text-amber-400 font-medium not-italic">{budgetLabel}</span>. This package starts at {rec.price}. During your consultation, we'll tailor the scope to align with your investment.
+                  </p>
+                )}
               </div>
 
               <p className="text-gray-300">{rec.description}</p>
