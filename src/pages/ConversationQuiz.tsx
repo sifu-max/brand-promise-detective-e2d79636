@@ -294,6 +294,61 @@ const scoreBands = [
   },
 ];
 
+/* ─────────────────────────  Branding Intake Screens  ───────────────────────── */
+
+interface BrandingField {
+  key: string;
+  label: string;
+  type: "text" | "textarea" | "select";
+  placeholder?: string;
+  options?: string[];
+  required?: boolean;
+}
+
+const brandingScreens: { title: string; subtitle: string; fields: BrandingField[] }[] = [
+  {
+    title: "Business Foundation",
+    subtitle: "Tell us about your brand voice and core offer.",
+    fields: [
+      { key: "tagline", label: "Business Tagline", type: "text", placeholder: 'e.g. "Your Growth, Our Mission."' },
+      { key: "cta", label: "What is your Primary Call to Action (CTA)?", type: "text", placeholder: "e.g. 'Book a Free Consultation', 'Get a Quote'" },
+      { key: "coreSolution", label: "Core Service/Solution: What do you do to solve the urgent problem?", type: "textarea", placeholder: "Describe your core service..." },
+      { key: "communicationTone", label: "Communication Tone", type: "select", options: ["Professional", "Casual/Friendly", "Urgent/Direct"], required: true },
+    ],
+  },
+  {
+    title: "Offer & Investment",
+    subtitle: "Define your pricing and ideal client profile.",
+    fields: [
+      { key: "clientBudgetTimeline", label: "What is your client's typical budget and timeline for solving this problem?", type: "textarea", placeholder: "e.g. $500–$5,000, within 30 days" },
+      { key: "coreOfferInvestment", label: "What is the price or fee for the customer?", type: "text", placeholder: "e.g. $2,500/mo or $10,000 one-time" },
+      { key: "offerStructure", label: "Offer Structure: What clear options will you offer?", type: "select", options: ["Basic & Premium Options", "Single Price Offer", "Tiered (3+ Options)"] },
+      { key: "idealClient", label: "Ideal Client (Niche): Who is the primary audience you serve?", type: "text", placeholder: "e.g. Families, 35+, Homeowners" },
+      { key: "painPoints", label: "What are the core pain points you solve for your ideal clients?", type: "textarea", placeholder: "List the key problems..." },
+    ],
+  },
+  {
+    title: "Sales & Customer Profiles",
+    subtitle: "Help us understand your customers and sales approach.",
+    fields: [
+      { key: "salesScript", label: "Sales Script Formula: Problem → Solution → Benefits → Investment. Outline your approach.", type: "textarea", placeholder: "Describe your sales flow..." },
+      { key: "customerProfiles", label: "What are your main customer profiles, and which offer should each one be matched with?", type: "textarea", placeholder: "Profile A → Offer X, Profile B → Offer Y..." },
+      { key: "profileGoals", label: "What is each profile trying to solve or accomplish?", type: "textarea", placeholder: "Describe goals per profile..." },
+      { key: "profileTriggers", label: "What makes each profile take action?", type: "textarea", placeholder: "Describe what triggers them to buy..." },
+    ],
+  },
+  {
+    title: "Momentum & Engagement",
+    subtitle: "Map where engagement is happening and where you want more.",
+    fields: [
+      { key: "entryPoint", label: "What asset or entry point do they usually interact with first?", type: "textarea", placeholder: "e.g. Google search, social ad, referral..." },
+      { key: "currentMomentum", label: "Where is momentum already happening?", type: "textarea", placeholder: "Describe what's working..." },
+      { key: "desiredMomentum", label: "Where would you like to create more momentum?", type: "textarea", placeholder: "Describe where you want growth..." },
+      { key: "postEngagement", label: "What should happen after someone engages?", type: "textarea", placeholder: "Describe the ideal next steps..." },
+    ],
+  },
+];
+
 /* ─────────────────────────  Stages (for progress labels)  ───────────────────────── */
 
 const stages = [
