@@ -360,7 +360,7 @@ const stages = [
 
 /* ─────────────────────────  Component  ───────────────────────── */
 
-type Phase = "icp" | "contact" | "quiz" | "results";
+type Phase = "icp" | "contact" | "quiz" | "branding" | "results";
 
 export default function ConversationQuiz() {
   const [phase, setPhase] = useState<Phase>("icp");
