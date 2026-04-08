@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -292,6 +294,61 @@ const scoreBands = [
   },
 ];
 
+/* ─────────────────────────  Branding Intake Screens  ───────────────────────── */
+
+interface BrandingField {
+  key: string;
+  label: string;
+  type: "text" | "textarea" | "select";
+  placeholder?: string;
+  options?: string[];
+  required?: boolean;
+}
+
+const brandingScreens: { title: string; subtitle: string; fields: BrandingField[] }[] = [
+  {
+    title: "Business Foundation",
+    subtitle: "Tell us about your brand voice and core offer.",
+    fields: [
+      { key: "tagline", label: "Business Tagline", type: "text", placeholder: 'e.g. "Your Growth, Our Mission."' },
+      { key: "cta", label: "What is your Primary Call to Action (CTA)?", type: "text", placeholder: "e.g. 'Book a Free Consultation', 'Get a Quote'" },
+      { key: "coreSolution", label: "Core Service/Solution: What do you do to solve the urgent problem?", type: "textarea", placeholder: "Describe your core service..." },
+      { key: "communicationTone", label: "Communication Tone", type: "select", options: ["Professional", "Casual/Friendly", "Urgent/Direct"], required: true },
+    ],
+  },
+  {
+    title: "Offer & Investment",
+    subtitle: "Define your pricing and ideal client profile.",
+    fields: [
+      { key: "clientBudgetTimeline", label: "What is your client's typical budget and timeline for solving this problem?", type: "textarea", placeholder: "e.g. $500–$5,000, within 30 days" },
+      { key: "coreOfferInvestment", label: "What is the price or fee for the customer?", type: "text", placeholder: "e.g. $2,500/mo or $10,000 one-time" },
+      { key: "offerStructure", label: "Offer Structure: What clear options will you offer?", type: "select", options: ["Basic & Premium Options", "Single Price Offer", "Tiered (3+ Options)"] },
+      { key: "idealClient", label: "Ideal Client (Niche): Who is the primary audience you serve?", type: "text", placeholder: "e.g. Families, 35+, Homeowners" },
+      { key: "painPoints", label: "What are the core pain points you solve for your ideal clients?", type: "textarea", placeholder: "List the key problems..." },
+    ],
+  },
+  {
+    title: "Sales & Customer Profiles",
+    subtitle: "Help us understand your customers and sales approach.",
+    fields: [
+      { key: "salesScript", label: "Sales Script Formula: Problem → Solution → Benefits → Investment. Outline your approach.", type: "textarea", placeholder: "Describe your sales flow..." },
+      { key: "customerProfiles", label: "What are your main customer profiles, and which offer should each one be matched with?", type: "textarea", placeholder: "Profile A → Offer X, Profile B → Offer Y..." },
+      { key: "profileGoals", label: "What is each profile trying to solve or accomplish?", type: "textarea", placeholder: "Describe goals per profile..." },
+      { key: "profileTriggers", label: "What makes each profile take action?", type: "textarea", placeholder: "Describe what triggers them to buy..." },
+    ],
+  },
+  {
+    title: "Momentum & Engagement",
+    subtitle: "Map where engagement is happening and where you want more.",
+    fields: [
+      { key: "entryPoint", label: "What asset or entry point do they usually interact with first?", type: "textarea", placeholder: "e.g. Google search, social ad, referral..." },
+      { key: "currentMomentum", label: "Where is momentum already happening?", type: "textarea", placeholder: "Describe what's working..." },
+      { key: "desiredMomentum", label: "Where would you like to create more momentum?", type: "textarea", placeholder: "Describe where you want growth..." },
+      { key: "postEngagement", label: "What should happen after someone engages?", type: "textarea", placeholder: "Describe the ideal next steps..." },
+    ],
+  },
+];
+
 /* ─────────────────────────  Stages (for progress labels)  ───────────────────────── */
 
 const stages = [
@@ -303,7 +360,7 @@ const stages = [
 
 /* ─────────────────────────  Component  ───────────────────────── */
 
-type Phase = "icp" | "contact" | "quiz" | "results";
+type Phase = "icp" | "contact" | "quiz" | "branding" | "results";
 
 export default function ConversationQuiz() {
   const [phase, setPhase] = useState<Phase>("icp");
@@ -312,6 +369,8 @@ export default function ConversationQuiz() {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number | number[]>>({});
   const [multiIndices, setMultiIndices] = useState<Record<string, number[]>>({});
+  const [brandingData, setBrandingData] = useState<Record<string, string>>({});
+  const [brandingScreen, setBrandingScreen] = useState(0);
   const [syncing, setSyncing] = useState(false);
 
   // Load GHL embed script
@@ -324,8 +383,12 @@ export default function ConversationQuiz() {
   }, []);
 
   const question = quizQuestions[currentQ];
+  const totalBrandingScreens = brandingScreens.length;
+  const totalSteps = quizQuestions.length + totalBrandingScreens;
   const progress = phase === "quiz"
-    ? ((currentQ + 1) / quizQuestions.length) * 100
+    ? ((currentQ + 1) / totalSteps) * 100
+    : phase === "branding"
+    ? ((quizQuestions.length + brandingScreen + 1) / totalSteps) * 100
     : phase === "results" ? 100 : 0;
 
   const totalScore = Object.entries(answers).reduce((sum, [key, val]) => {
@@ -352,7 +415,6 @@ export default function ConversationQuiz() {
       const current = prev[qId] || [];
       const has = current.includes(optionIndex);
       const next = has ? current.filter((i) => i !== optionIndex) : [...current, optionIndex];
-      // Sync points
       const nextPoints = next.map((i) => question.options[i].points);
       setAnswers((pa) => ({ ...pa, [qId]: nextPoints }));
       return { ...prev, [qId]: next };
@@ -363,13 +425,36 @@ export default function ConversationQuiz() {
     if (currentQ < quizQuestions.length - 1) {
       setCurrentQ((p) => p + 1);
     } else {
-      setPhase("results");
-      syncToGHL();
+      setPhase("branding");
+      setBrandingScreen(0);
     }
   };
 
   const prev = () => {
     if (currentQ > 0) setCurrentQ((p) => p - 1);
+  };
+
+  const isBrandingScreenValid = () => {
+    const screen = brandingScreens[brandingScreen];
+    return screen.fields.filter((f) => f.required).every((f) => brandingData[f.key]?.trim());
+  };
+
+  const nextBranding = () => {
+    if (brandingScreen < totalBrandingScreens - 1) {
+      setBrandingScreen((p) => p + 1);
+    } else {
+      setPhase("results");
+      syncToGHL();
+    }
+  };
+
+  const prevBranding = () => {
+    if (brandingScreen > 0) {
+      setBrandingScreen((p) => p - 1);
+    } else {
+      setPhase("quiz");
+      setCurrentQ(quizQuestions.length - 1);
+    }
   };
 
   const syncToGHL = async () => {
@@ -395,6 +480,7 @@ export default function ConversationQuiz() {
             recommendation: band.recommendation,
             modules: band.modules,
             questionBreakdown: quizData,
+            brandingIntake: brandingData,
           },
         },
       });
@@ -412,6 +498,8 @@ export default function ConversationQuiz() {
     setCurrentQ(0);
     setAnswers({});
     setMultiIndices({});
+    setBrandingData({});
+    setBrandingScreen(0);
   };
 
   return (
@@ -436,11 +524,18 @@ export default function ConversationQuiz() {
 
       <main className="container max-w-3xl py-8 px-4 space-y-6">
         {/* Progress bar */}
-        {(phase === "quiz" || phase === "results") && (
+        {(phase === "quiz" || phase === "branding" || phase === "results") && (
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{phase === "results" ? "Complete" : `Question ${currentQ + 1} of ${quizQuestions.length}`}</span>
+              <span>
+                {phase === "results"
+                  ? "Complete"
+                  : phase === "branding"
+                  ? `Branding Intake — Step ${brandingScreen + 1} of ${totalBrandingScreens}`
+                  : `Question ${currentQ + 1} of ${quizQuestions.length}`}
+              </span>
               {phase === "quiz" && <span className="font-medium text-primary">{question.stage}</span>}
+              {phase === "branding" && <span className="font-medium text-primary">Branding Intake</span>}
             </div>
             <Progress value={progress} className="h-2" />
           </div>
@@ -645,6 +740,76 @@ export default function ConversationQuiz() {
                 className="gap-2 px-6"
               >
                 {currentQ === quizQuestions.length - 1 ? "See My Results" : "Next"}
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* ── PHASE: Branding Intake ── */}
+        {phase === "branding" && (
+          <div className="space-y-6 animate-in fade-in duration-300" key={`branding-${brandingScreen}`}>
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 text-sm text-primary font-semibold uppercase tracking-wider">
+                <Sparkles className="w-4 h-4" /> Branding Intake
+              </div>
+              <h2 className="text-2xl font-bold text-foreground">{brandingScreens[brandingScreen].title}</h2>
+              <p className="text-muted-foreground">{brandingScreens[brandingScreen].subtitle}</p>
+            </div>
+
+            <Card>
+              <CardContent className="p-6 md:p-8 space-y-5">
+                {brandingScreens[brandingScreen].fields.map((field) => (
+                  <div key={field.key} className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">
+                      {field.label}
+                      {field.required && <span className="text-destructive ml-1">*</span>}
+                    </label>
+                    {field.type === "text" && (
+                      <Input
+                        placeholder={field.placeholder}
+                        value={brandingData[field.key] || ""}
+                        onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
+                      />
+                    )}
+                    {field.type === "textarea" && (
+                      <Textarea
+                        placeholder={field.placeholder}
+                        value={brandingData[field.key] || ""}
+                        onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
+                        rows={3}
+                      />
+                    )}
+                    {field.type === "select" && field.options && (
+                      <Select
+                        value={brandingData[field.key] || ""}
+                        onValueChange={(val) => setBrandingData((p) => ({ ...p, [field.key]: val }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={`Select ${field.label.split(":")[0].toLowerCase()}`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {field.options.map((opt) => (
+                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={prevBranding} className="gap-2">
+                <ArrowLeft className="w-4 h-4" /> Back
+              </Button>
+              <Button
+                onClick={nextBranding}
+                disabled={!isBrandingScreenValid()}
+                className="gap-2 px-6"
+              >
+                {brandingScreen === totalBrandingScreens - 1 ? "See My Results" : "Next"}
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
