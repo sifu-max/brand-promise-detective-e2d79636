@@ -746,6 +746,76 @@ export default function ConversationQuiz() {
           </div>
         )}
 
+        {/* ── PHASE: Branding Intake ── */}
+        {phase === "branding" && (
+          <div className="space-y-6 animate-in fade-in duration-300" key={`branding-${brandingScreen}`}>
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 text-sm text-primary font-semibold uppercase tracking-wider">
+                <Sparkles className="w-4 h-4" /> Branding Intake
+              </div>
+              <h2 className="text-2xl font-bold text-foreground">{brandingScreens[brandingScreen].title}</h2>
+              <p className="text-muted-foreground">{brandingScreens[brandingScreen].subtitle}</p>
+            </div>
+
+            <Card>
+              <CardContent className="p-6 md:p-8 space-y-5">
+                {brandingScreens[brandingScreen].fields.map((field) => (
+                  <div key={field.key} className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">
+                      {field.label}
+                      {field.required && <span className="text-destructive ml-1">*</span>}
+                    </label>
+                    {field.type === "text" && (
+                      <Input
+                        placeholder={field.placeholder}
+                        value={brandingData[field.key] || ""}
+                        onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
+                      />
+                    )}
+                    {field.type === "textarea" && (
+                      <Textarea
+                        placeholder={field.placeholder}
+                        value={brandingData[field.key] || ""}
+                        onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
+                        rows={3}
+                      />
+                    )}
+                    {field.type === "select" && field.options && (
+                      <Select
+                        value={brandingData[field.key] || ""}
+                        onValueChange={(val) => setBrandingData((p) => ({ ...p, [field.key]: val }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={`Select ${field.label.split(":")[0].toLowerCase()}`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {field.options.map((opt) => (
+                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={prevBranding} className="gap-2">
+                <ArrowLeft className="w-4 h-4" /> Back
+              </Button>
+              <Button
+                onClick={nextBranding}
+                disabled={!isBrandingScreenValid()}
+                className="gap-2 px-6"
+              >
+                {brandingScreen === totalBrandingScreens - 1 ? "See My Results" : "Next"}
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* ── PHASE: Results ── */}
         {phase === "results" && (
           <div className="space-y-6 animate-in fade-in duration-500">
