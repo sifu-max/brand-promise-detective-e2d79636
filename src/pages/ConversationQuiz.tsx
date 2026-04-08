@@ -524,11 +524,18 @@ export default function ConversationQuiz() {
 
       <main className="container max-w-3xl py-8 px-4 space-y-6">
         {/* Progress bar */}
-        {(phase === "quiz" || phase === "results") && (
+        {(phase === "quiz" || phase === "branding" || phase === "results") && (
           <div className="space-y-2">
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{phase === "results" ? "Complete" : `Question ${currentQ + 1} of ${quizQuestions.length}`}</span>
+              <span>
+                {phase === "results"
+                  ? "Complete"
+                  : phase === "branding"
+                  ? `Branding Intake — Step ${brandingScreen + 1} of ${totalBrandingScreens}`
+                  : `Question ${currentQ + 1} of ${quizQuestions.length}`}
+              </span>
               {phase === "quiz" && <span className="font-medium text-primary">{question.stage}</span>}
+              {phase === "branding" && <span className="font-medium text-primary">Branding Intake</span>}
             </div>
             <Progress value={progress} className="h-2" />
           </div>
