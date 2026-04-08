@@ -369,6 +369,8 @@ export default function ConversationQuiz() {
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number | number[]>>({});
   const [multiIndices, setMultiIndices] = useState<Record<string, number[]>>({});
+  const [brandingData, setBrandingData] = useState<Record<string, string>>({});
+  const [brandingScreen, setBrandingScreen] = useState(0);
   const [syncing, setSyncing] = useState(false);
 
   // Load GHL embed script
@@ -381,8 +383,12 @@ export default function ConversationQuiz() {
   }, []);
 
   const question = quizQuestions[currentQ];
+  const totalBrandingScreens = brandingScreens.length;
+  const totalSteps = quizQuestions.length + totalBrandingScreens;
   const progress = phase === "quiz"
-    ? ((currentQ + 1) / quizQuestions.length) * 100
+    ? ((currentQ + 1) / totalSteps) * 100
+    : phase === "branding"
+    ? ((quizQuestions.length + brandingScreen + 1) / totalSteps) * 100
     : phase === "results" ? 100 : 0;
 
   const totalScore = Object.entries(answers).reduce((sum, [key, val]) => {
@@ -409,7 +415,6 @@ export default function ConversationQuiz() {
       const current = prev[qId] || [];
       const has = current.includes(optionIndex);
       const next = has ? current.filter((i) => i !== optionIndex) : [...current, optionIndex];
-      // Sync points
       const nextPoints = next.map((i) => question.options[i].points);
       setAnswers((pa) => ({ ...pa, [qId]: nextPoints }));
       return { ...prev, [qId]: next };
@@ -420,13 +425,36 @@ export default function ConversationQuiz() {
     if (currentQ < quizQuestions.length - 1) {
       setCurrentQ((p) => p + 1);
     } else {
-      setPhase("results");
-      syncToGHL();
+      setPhase("branding");
+      setBrandingScreen(0);
     }
   };
 
   const prev = () => {
     if (currentQ > 0) setCurrentQ((p) => p - 1);
+  };
+
+  const isBrandingScreenValid = () => {
+    const screen = brandingScreens[brandingScreen];
+    return screen.fields.filter((f) => f.required).every((f) => brandingData[f.key]?.trim());
+  };
+
+  const nextBranding = () => {
+    if (brandingScreen < totalBrandingScreens - 1) {
+      setBrandingScreen((p) => p + 1);
+    } else {
+      setPhase("results");
+      syncToGHL();
+    }
+  };
+
+  const prevBranding = () => {
+    if (brandingScreen > 0) {
+      setBrandingScreen((p) => p - 1);
+    } else {
+      setPhase("quiz");
+      setCurrentQ(quizQuestions.length - 1);
+    }
   };
 
   const syncToGHL = async () => {
@@ -452,6 +480,7 @@ export default function ConversationQuiz() {
             recommendation: band.recommendation,
             modules: band.modules,
             questionBreakdown: quizData,
+            brandingIntake: brandingData,
           },
         },
       });
@@ -469,6 +498,8 @@ export default function ConversationQuiz() {
     setCurrentQ(0);
     setAnswers({});
     setMultiIndices({});
+    setBrandingData({});
+    setBrandingScreen(0);
   };
 
   return (
