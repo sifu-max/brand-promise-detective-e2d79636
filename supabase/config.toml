@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.ghl-create-opportunity]
 verify_jwt = false
+
+[functions.brand-upload]
+verify_jwt = false

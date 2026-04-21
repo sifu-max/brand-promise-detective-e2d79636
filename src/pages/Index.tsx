@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BrandResearchResult } from "@/types/brand";
 import { BrandEffectivenessResult } from "@/types/brand-effectiveness";
 import { AIVisibilityResult } from "@/types/ai-visibility";
-import { BrandResearchForm, BrandResearchFormRef } from "@/components/BrandResearchForm";
+import { BrandResearchForm, BrandResearchFormRef, UploadSubmission } from "@/components/BrandResearchForm";
 import { BrandResults } from "@/components/BrandResults";
 import { BrandEffectivenessDisplay } from "@/components/BrandEffectivenessDisplay";
 import { BrandEffectivenessComparison } from "@/components/BrandEffectivenessComparison";
@@ -274,6 +274,85 @@ const Index = () => {
     }
   };
 
+  const fileToDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+
+  const handleUpload = async (submission: UploadSubmission, leadInfo?: { firstName?: string; email?: string }) => {
+    setIsLoading(true);
+    setResult(null);
+    setEffectiveness(null);
+    setVisibility(null);
+    setIsComparing(false);
+    setComparisonOriginal(null);
+    setComparisonImproved(null);
+    setComparisonUrls(null);
+
+    const sourceLabel = submission.kind === "pdf" ? "uploaded-pdf" : "uploaded-mood-board";
+    const analysisId = await saveLead(sourceLabel, leadInfo);
+    currentAnalysisIdRef.current = analysisId;
+
+    try {
+      // Upload files to storage (best-effort; analysis still proceeds via data URL if storage fails)
+      toast.info(`Uploading ${submission.files.length} file${submission.files.length > 1 ? "s" : ""}...`);
+      const uploadedPaths: string[] = [];
+      const folder = `brand-uploads/${analysisId || crypto.randomUUID()}`;
+      for (const file of submission.files) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const path = `${folder}/${Date.now()}-${safeName}`;
+        const { error: upErr } = await supabase.storage
+          .from("brand-exports")
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (upErr) {
+          console.error("Storage upload failed:", upErr);
+        } else {
+          uploadedPaths.push(path);
+        }
+      }
+
+      // Convert files to data URLs for AI analysis (multimodal input)
+      toast.info("Analyzing brand assets with AI...");
+      const fileBlobs = await Promise.all(
+        submission.files.map(async (file) => ({
+          url: await fileToDataUrl(file),
+          mimeType: file.type,
+        }))
+      );
+
+      const { data, error } = await supabase.functions.invoke("brand-upload", {
+        body: { files: fileBlobs },
+      });
+
+      if (error) {
+        const msg = typeof error === "object" && "message" in error ? error.message : String(error);
+        toast.error(msg || "Failed to analyze upload");
+        return;
+      }
+      if (data?.error) {
+        toast.error(data.error);
+        return;
+      }
+      if (data?.success && data?.data) {
+        setResult(data.data);
+        updateAnalysis(analysisId, {
+          brand_research: data.data,
+          ...(uploadedPaths.length ? { source_url: uploadedPaths[0] } : {}),
+        });
+        toast.success("Brand analysis complete! Scoring effectiveness...");
+        fetchEffectiveness(data.data, null, analysisId);
+      }
+    } catch (err) {
+      console.error("Upload analysis error:", err);
+      toast.error("Failed to analyze uploaded files");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleReset = () => {
     setResult(null);
     setEffectiveness(null);
@@ -314,7 +393,7 @@ const Index = () => {
 
             {/* Search Form */}
             <div className="mt-8 max-w-2xl mx-auto">
-              <BrandResearchForm ref={formRef} onSubmit={handleAnalyze} onCompare={handleCompare} isLoading={isLoading} adminMode={adminMode} />
+              <BrandResearchForm ref={formRef} onSubmit={handleAnalyze} onCompare={handleCompare} onUpload={handleUpload} isLoading={isLoading} adminMode={adminMode} />
             </div>
 
             {/* Navigation to Brand Builder */}
