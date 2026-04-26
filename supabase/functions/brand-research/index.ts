@@ -262,6 +262,17 @@ serve(async (req) => {
     // Extract style data from raw HTML or Jina HTML fallback
     const htmlSource = rawHtml || jinaHtml;
     let styleContent = "";
+
+    // SPA bundle fetch — for client-rendered sites (Vite/React), the HTML is just <div id="root"></div>.
+    // Fetch the linked CSS bundle to recover design tokens (HSL vars, font-family, @font-face).
+    if (htmlSource) {
+      const cssBundle = await fetchCssBundles(htmlSource, url);
+      if (cssBundle) {
+        console.log("Fetched CSS bundle, length:", cssBundle.length);
+        styleContent += "=== CSS BUNDLE (extracted from linked stylesheet) ===\n" + cssBundle.substring(0, 20000) + "\n\n";
+      }
+    }
+
     if (htmlSource) {
       const headMatch = htmlSource.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
       if (headMatch) {
