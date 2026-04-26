@@ -104,6 +104,7 @@ BRAND DNA - COLOR EXTRACTION (CRITICAL):
 - IMPORTANT: If colors are defined as HSL values (e.g. "222.2 47.4% 11.2%"), you MUST convert them to hex (#RRGGBB) before returning.
 - "heading_font": Font family for headings. Check font-family CSS rules, Google Fonts links, @font-face declarations, and Tailwind fontFamily config.
 - "body_font": Font family for body text. Also check CSS variables like --font-sans, --font-heading.
+- "logo_url": Direct URL to the brand's logo image. Look for: <link rel="icon">, <link rel="apple-touch-icon">, <meta property="og:image">, header <img> tags with "logo" in src/alt/class, or SVG logos in the header. PREFER transparent PNG or SVG. The URL MUST be absolute (https://...). If only a relative path is found, resolve it against the source URL. If a CANDIDATE LOGO URLS section is provided below, pick the best one from that list. If no logo can be found, use "".
 
 If a color or font truly cannot be determined from the HTML, use "Unable to detect".
 
