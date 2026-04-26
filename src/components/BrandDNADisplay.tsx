@@ -1,4 +1,4 @@
-import { Palette, Type } from "lucide-react";
+import { Palette, Type, Image as ImageIcon, ExternalLink } from "lucide-react";
 import { BrandDNA } from "@/types/brand";
 import { BrandResultCard } from "./BrandResultCard";
 import { sanitizeColor, sanitizeFontFamily } from "@/lib/sanitize";
