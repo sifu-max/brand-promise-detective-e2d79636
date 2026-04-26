@@ -212,7 +212,7 @@ async function fetchJinaHtml(url: string): Promise<string | null> {
   }
 }
 
-function extractLogoCandidates(html: string, pageUrl: string): string[] {
+function extractLogoCandidates(htmlSources: string[], pageUrl: string): string[] {
   const candidates: string[] = [];
   const base = (() => { try { return new URL(pageUrl); } catch { return null; } })();
   const resolve = (href: string): string | null => {
@@ -221,45 +221,65 @@ function extractLogoCandidates(html: string, pageUrl: string): string[] {
   };
   const push = (href: string | null | undefined) => {
     const r = href ? resolve(href) : null;
-    if (r && !candidates.includes(r)) candidates.push(r);
+    if (!r) return;
+    // Filter junk
+    if (/^data:/i.test(r)) return;
+    if (/\.(?:mp4|webm|mov|pdf)(\?|$)/i.test(r)) return;
+    if (!candidates.includes(r)) candidates.push(r);
   };
 
-  // <link rel="icon" | "shortcut icon" | "apple-touch-icon" | "mask-icon">
-  const linkRe = /<link[^>]+rel=["']([^"']*(?:icon|apple-touch-icon|mask-icon)[^"']*)["'][^>]*>/gi;
-  let m;
-  while ((m = linkRe.exec(html)) !== null) {
-    const tag = m[0];
-    const hrefMatch = tag.match(/href=["']([^"']+)["']/i);
-    if (hrefMatch) push(hrefMatch[1]);
-  }
+  for (const html of htmlSources) {
+    if (!html) continue;
 
-  // og:image / twitter:image
-  const ogRe = /<meta[^>]+(?:property|name)=["'](?:og:image|og:image:url|twitter:image)["'][^>]+content=["']([^"']+)["']/gi;
-  while ((m = ogRe.exec(html)) !== null) push(m[1]);
+    // <link rel="icon" | "shortcut icon" | "apple-touch-icon" | "mask-icon">
+    const linkRe = /<link[^>]+rel=["']([^"']*(?:icon|apple-touch-icon|mask-icon)[^"']*)["'][^>]*>/gi;
+    let m;
+    while ((m = linkRe.exec(html)) !== null) {
+      const hrefMatch = m[0].match(/href=["']([^"']+)["']/i);
+      if (hrefMatch) push(hrefMatch[1]);
+    }
 
-  // <img> tags with "logo" hint in src/alt/class
-  const imgRe = /<img\b[^>]+>/gi;
-  while ((m = imgRe.exec(html)) !== null) {
-    const tag = m[0];
-    if (/logo/i.test(tag)) {
-      const src = tag.match(/\bsrc=["']([^"']+)["']/i)?.[1] || tag.match(/\bdata-src=["']([^"']+)["']/i)?.[1];
-      if (src) push(src);
+    // og:image / twitter:image
+    const ogRe = /<meta[^>]+(?:property|name)=["'](?:og:image|og:image:url|twitter:image)["'][^>]+content=["']([^"']+)["']/gi;
+    while ((m = ogRe.exec(html)) !== null) push(m[1]);
+
+    // <img> tags with "logo" hint in src/alt/class
+    const imgRe = /<img\b[^>]+>/gi;
+    while ((m = imgRe.exec(html)) !== null) {
+      const tag = m[0];
+      if (/\b(?:logo|brand|wordmark)\b/i.test(tag)) {
+        const src = tag.match(/\bsrc=["']([^"']+)["']/i)?.[1] || tag.match(/\bdata-src=["']([^"']+)["']/i)?.[1] || tag.match(/\bsrcset=["']([^"'\s,]+)/i)?.[1];
+        if (src) push(src);
+      }
+    }
+
+    // Markdown image syntax (Jina text output): ![alt](url)
+    const mdImgRe = /!\[([^\]]*)\]\(([^)\s]+)/g;
+    while ((m = mdImgRe.exec(html)) !== null) {
+      const [, alt, src] = m;
+      if (/\b(?:logo|brand|wordmark)\b/i.test(alt) || /logo/i.test(src)) push(src);
     }
   }
 
-  // Prioritize SVG > apple-touch-icon > og:image > others
+  // Score: real logo signals beat page-screenshot og:images
   return candidates.sort((a, b) => {
     const score = (u: string) => {
       let s = 0;
+      const lower = u.toLowerCase();
+      // Strong logo signals
+      if (/\blogo\b|wordmark|brand[-_]?mark/i.test(u)) s += 200;
       if (/\.svg(\?|$)/i.test(u)) s += 100;
-      if (/logo/i.test(u)) s += 50;
-      if (/apple-touch-icon/i.test(u)) s += 30;
-      if (/og[-_]?image/i.test(u)) s += 10;
-      if (/favicon/i.test(u)) s += 5;
+      if (/apple-touch-icon/i.test(u)) s += 40;
+      if (/favicon/i.test(u)) s += 20;
+      // Penalize Lovable/CDN auto-screenshots used as og:image
+      if (/r2\.dev/i.test(lower)) s -= 150;
+      if (/lovable\.app.*\.png/i.test(lower)) s -= 120;
+      if (/\bog[-_]?image\b|opengraph|social[-_]?card|preview/i.test(lower)) s -= 80;
+      if (/screenshot/i.test(lower)) s -= 100;
       return -s;
     };
     return score(a) - score(b);
-  }).slice(0, 8);
+  }).slice(0, 10);
 }
 
 serve(async (req) => {
@@ -360,7 +380,7 @@ serve(async (req) => {
     let pageContent = "";
 
     // Extract logo candidates from HTML (resolved to absolute URLs)
-    const logoCandidates = htmlSource ? extractLogoCandidates(htmlSource, url) : [];
+    const logoCandidates = extractLogoCandidates([htmlSource || "", jinaHtml || "", jinaText || ""], url);
     if (logoCandidates.length > 0) {
       console.log("Logo candidates found:", logoCandidates);
       pageContent += "=== CANDIDATE LOGO URLS (pick best for brand_dna.logo_url, prefer SVG/transparent PNG) ===\n" + logoCandidates.join("\n") + "\n\n";
