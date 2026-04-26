@@ -147,6 +147,50 @@ async function fetchJinaContent(url: string): Promise<string | null> {
   }
 }
 
+// Detect SPA shell (Vite/React/etc.) and fetch the linked CSS bundle so colors/fonts can be extracted.
+async function fetchCssBundles(html: string, pageUrl: string): Promise<string> {
+  try {
+    const isSpa = /<div\s+id=["']root["']\s*>\s*<\/div>/i.test(html) || /<div\s+id=["']app["']\s*>\s*<\/div>/i.test(html);
+    if (!isSpa) return "";
+
+    const linkRegex = /<link[^>]+rel=["']stylesheet["'][^>]+href=["']([^"']+\.css[^"']*)["']/gi;
+    const hrefs: string[] = [];
+    let m;
+    while ((m = linkRegex.exec(html)) !== null) {
+      hrefs.push(m[1]);
+      if (hrefs.length >= 3) break;
+    }
+    if (hrefs.length === 0) return "";
+
+    const base = new URL(pageUrl);
+    const cssChunks: string[] = [];
+    for (const href of hrefs) {
+      try {
+        const cssUrl = new URL(href, base).toString();
+        const res = await fetch(cssUrl, {
+          headers: { "User-Agent": "Mozilla/5.0 (compatible; BrandResearchBot/1.0)" },
+        });
+        if (!res.ok) continue;
+        const css = await res.text();
+        // Keep only the parts most likely to contain brand tokens
+        const rootVars = css.match(/:root\s*\{[\s\S]*?\}/g)?.join("\n") || "";
+        const darkVars = css.match(/\.dark\s*\{[\s\S]*?\}/g)?.join("\n") || "";
+        const fontFaces = css.match(/@font-face\s*\{[\s\S]*?\}/g)?.slice(0, 10).join("\n") || "";
+        const fontFamilyDecls = css.match(/font-family\s*:\s*[^;}]+/g)?.slice(0, 30).join("\n") || "";
+        const importFonts = css.match(/@import\s+url\([^)]+\)/g)?.join("\n") || "";
+        const chunk = [importFonts, rootVars, darkVars, fontFaces, fontFamilyDecls].filter(Boolean).join("\n\n");
+        if (chunk) cssChunks.push(`/* ${cssUrl} */\n${chunk}`);
+      } catch (e) {
+        console.error("CSS bundle fetch error:", e);
+      }
+    }
+    return cssChunks.join("\n\n");
+  } catch (e) {
+    console.error("fetchCssBundles error:", e);
+    return "";
+  }
+}
+
 async function fetchJinaHtml(url: string): Promise<string | null> {
   try {
     const response = await fetch(`https://r.jina.ai/${url}`, {
