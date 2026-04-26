@@ -329,8 +329,8 @@ serve(async (req) => {
       .replace(/<svg[^>]*>[\s\S]*?<\/svg>/gi, "[svg-graphic]")
       .replace(/url\(data:[^)]+\)/g, "url([inline-image])");
 
-    if (pageContent.length > 25000) {
-      pageContent = pageContent.substring(0, 25000);
+    if (pageContent.length > 45000) {
+      pageContent = pageContent.substring(0, 45000);
     }
 
     console.log("Total content for AI analysis:", pageContent.length, "chars");
