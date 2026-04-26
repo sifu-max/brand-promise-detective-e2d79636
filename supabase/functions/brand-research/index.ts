@@ -359,6 +359,13 @@ serve(async (req) => {
     // Build the content for AI analysis
     let pageContent = "";
 
+    // Extract logo candidates from HTML (resolved to absolute URLs)
+    const logoCandidates = htmlSource ? extractLogoCandidates(htmlSource, url) : [];
+    if (logoCandidates.length > 0) {
+      console.log("Logo candidates found:", logoCandidates);
+      pageContent += "=== CANDIDATE LOGO URLS (pick best for brand_dna.logo_url, prefer SVG/transparent PNG) ===\n" + logoCandidates.join("\n") + "\n\n";
+    }
+
     if (styleContent) {
       pageContent += "=== RAW HTML (styles, colors, fonts) ===\n" + styleContent + "\n\n";
     } else if (htmlSource) {
