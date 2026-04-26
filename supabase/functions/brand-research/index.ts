@@ -68,7 +68,8 @@ You must respond with a SINGLE valid JSON object matching this exact schema and 
     "secondary_color": "",
     "accent_color": "",
     "heading_font": "",
-    "body_font": ""
+    "body_font": "",
+    "logo_url": ""
   }
 }
 
@@ -103,6 +104,7 @@ BRAND DNA - COLOR EXTRACTION (CRITICAL):
 - IMPORTANT: If colors are defined as HSL values (e.g. "222.2 47.4% 11.2%"), you MUST convert them to hex (#RRGGBB) before returning.
 - "heading_font": Font family for headings. Check font-family CSS rules, Google Fonts links, @font-face declarations, and Tailwind fontFamily config.
 - "body_font": Font family for body text. Also check CSS variables like --font-sans, --font-heading.
+- "logo_url": Direct URL to the brand's logo image. Look for: <link rel="icon">, <link rel="apple-touch-icon">, <meta property="og:image">, header <img> tags with "logo" in src/alt/class, or SVG logos in the header. PREFER transparent PNG or SVG. The URL MUST be absolute (https://...). If only a relative path is found, resolve it against the source URL. If a CANDIDATE LOGO URLS section is provided below, pick the best one from that list. If no logo can be found, use "".
 
 If a color or font truly cannot be determined from the HTML, use "Unable to detect".
 
@@ -210,6 +212,56 @@ async function fetchJinaHtml(url: string): Promise<string | null> {
   }
 }
 
+function extractLogoCandidates(html: string, pageUrl: string): string[] {
+  const candidates: string[] = [];
+  const base = (() => { try { return new URL(pageUrl); } catch { return null; } })();
+  const resolve = (href: string): string | null => {
+    if (!href) return null;
+    try { return base ? new URL(href, base).toString() : href; } catch { return null; }
+  };
+  const push = (href: string | null | undefined) => {
+    const r = href ? resolve(href) : null;
+    if (r && !candidates.includes(r)) candidates.push(r);
+  };
+
+  // <link rel="icon" | "shortcut icon" | "apple-touch-icon" | "mask-icon">
+  const linkRe = /<link[^>]+rel=["']([^"']*(?:icon|apple-touch-icon|mask-icon)[^"']*)["'][^>]*>/gi;
+  let m;
+  while ((m = linkRe.exec(html)) !== null) {
+    const tag = m[0];
+    const hrefMatch = tag.match(/href=["']([^"']+)["']/i);
+    if (hrefMatch) push(hrefMatch[1]);
+  }
+
+  // og:image / twitter:image
+  const ogRe = /<meta[^>]+(?:property|name)=["'](?:og:image|og:image:url|twitter:image)["'][^>]+content=["']([^"']+)["']/gi;
+  while ((m = ogRe.exec(html)) !== null) push(m[1]);
+
+  // <img> tags with "logo" hint in src/alt/class
+  const imgRe = /<img\b[^>]+>/gi;
+  while ((m = imgRe.exec(html)) !== null) {
+    const tag = m[0];
+    if (/logo/i.test(tag)) {
+      const src = tag.match(/\bsrc=["']([^"']+)["']/i)?.[1] || tag.match(/\bdata-src=["']([^"']+)["']/i)?.[1];
+      if (src) push(src);
+    }
+  }
+
+  // Prioritize SVG > apple-touch-icon > og:image > others
+  return candidates.sort((a, b) => {
+    const score = (u: string) => {
+      let s = 0;
+      if (/\.svg(\?|$)/i.test(u)) s += 100;
+      if (/logo/i.test(u)) s += 50;
+      if (/apple-touch-icon/i.test(u)) s += 30;
+      if (/og[-_]?image/i.test(u)) s += 10;
+      if (/favicon/i.test(u)) s += 5;
+      return -s;
+    };
+    return score(a) - score(b);
+  }).slice(0, 8);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -306,6 +358,13 @@ serve(async (req) => {
 
     // Build the content for AI analysis
     let pageContent = "";
+
+    // Extract logo candidates from HTML (resolved to absolute URLs)
+    const logoCandidates = htmlSource ? extractLogoCandidates(htmlSource, url) : [];
+    if (logoCandidates.length > 0) {
+      console.log("Logo candidates found:", logoCandidates);
+      pageContent += "=== CANDIDATE LOGO URLS (pick best for brand_dna.logo_url, prefer SVG/transparent PNG) ===\n" + logoCandidates.join("\n") + "\n\n";
+    }
 
     if (styleContent) {
       pageContent += "=== RAW HTML (styles, colors, fonts) ===\n" + styleContent + "\n\n";
@@ -409,6 +468,11 @@ serve(async (req) => {
         JSON.stringify({ error: "Failed to parse brand analysis" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Fallback: if AI didn't return a logo_url, use top candidate
+    if (brandData?.brand_dna && !brandData.brand_dna.logo_url && logoCandidates.length > 0) {
+      brandData.brand_dna.logo_url = logoCandidates[0];
     }
 
     console.log("Brand analysis successful. Colors:", JSON.stringify(brandData.brand_dna));

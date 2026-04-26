@@ -1,4 +1,4 @@
-import { Palette, Type } from "lucide-react";
+import { Palette, Type, Image as ImageIcon, ExternalLink } from "lucide-react";
 import { BrandDNA } from "@/types/brand";
 import { BrandResultCard } from "./BrandResultCard";
 import { sanitizeColor, sanitizeFontFamily } from "@/lib/sanitize";
@@ -58,6 +58,30 @@ export function BrandDNADisplay({ brandDna, delay = 0 }: BrandDNADisplayProps) {
           </div>
         </div>
       </BrandResultCard>
+
+      {/* Logo */}
+      {brandDna.logo_url && (
+        <BrandResultCard icon={<ImageIcon className="h-4 w-4" />} title="Logo" delay={delay + 100}>
+          <div className="flex items-center gap-4">
+            <div className="w-20 h-20 rounded-lg border border-border bg-[conic-gradient(at_50%_50%,_#f3f4f6_25%,_#ffffff_25%_50%,_#f3f4f6_50%_75%,_#ffffff_75%)] bg-[length:16px_16px] flex items-center justify-center overflow-hidden flex-shrink-0">
+              <img
+                src={brandDna.logo_url}
+                alt="Brand logo"
+                className="max-w-full max-h-full object-contain"
+                onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+              />
+            </div>
+            <a
+              href={brandDna.logo_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-primary hover:underline inline-flex items-center gap-1 break-all"
+            >
+              Open logo <ExternalLink className="h-3 w-3 flex-shrink-0" />
+            </a>
+          </div>
+        </BrandResultCard>
+      )}
     </div>
   );
 }

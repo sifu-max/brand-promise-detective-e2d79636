@@ -26,7 +26,8 @@ You will receive one or more files (PDFs and/or images). Extract every brand sig
     "secondary_color": "",
     "accent_color": "",
     "heading_font": "",
-    "body_font": ""
+    "body_font": "",
+    "logo_url": ""
   }
 }
 
@@ -38,6 +39,7 @@ RULES:
 - Colors MUST be hex format #RRGGBB. If you see swatches, sample the dominant hex values.
 - For images/mood boards: extract the dominant color palette and any visible typography.
 - For PDFs: prioritize explicit brand-guide statements (color codes, font names, mission, voice).
+- "logo_url": Leave as "" — the system will use the first uploaded image as the logo reference if appropriate. Do not invent URLs.
 - For missing fields, prefix the value with "Suggested: " and infer from visual style.
 - If a color or font truly cannot be determined, use "Unable to detect".
 

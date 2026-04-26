@@ -4,6 +4,7 @@ export interface BrandDNA {
   accent_color: string;
   heading_font: string;
   body_font: string;
+  logo_url?: string;
 }
 
 export interface BrandResearchResult {
