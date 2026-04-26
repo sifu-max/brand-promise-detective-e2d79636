@@ -209,7 +209,56 @@ async function fetchJinaHtml(url: string): Promise<string | null> {
   } catch (e) {
     console.error("Jina HTML fetch error:", e);
     return null;
+}
+
+function extractLogoCandidates(html: string, pageUrl: string): string[] {
+  const candidates: string[] = [];
+  const base = (() => { try { return new URL(pageUrl); } catch { return null; } })();
+  const resolve = (href: string): string | null => {
+    if (!href) return null;
+    try { return base ? new URL(href, base).toString() : href; } catch { return null; }
+  };
+  const push = (href: string | null | undefined) => {
+    const r = href ? resolve(href) : null;
+    if (r && !candidates.includes(r)) candidates.push(r);
+  };
+
+  // <link rel="icon" | "shortcut icon" | "apple-touch-icon" | "mask-icon">
+  const linkRe = /<link[^>]+rel=["']([^"']*(?:icon|apple-touch-icon|mask-icon)[^"']*)["'][^>]*>/gi;
+  let m;
+  while ((m = linkRe.exec(html)) !== null) {
+    const tag = m[0];
+    const hrefMatch = tag.match(/href=["']([^"']+)["']/i);
+    if (hrefMatch) push(hrefMatch[1]);
   }
+
+  // og:image / twitter:image
+  const ogRe = /<meta[^>]+(?:property|name)=["'](?:og:image|og:image:url|twitter:image)["'][^>]+content=["']([^"']+)["']/gi;
+  while ((m = ogRe.exec(html)) !== null) push(m[1]);
+
+  // <img> tags with "logo" hint in src/alt/class
+  const imgRe = /<img\b[^>]+>/gi;
+  while ((m = imgRe.exec(html)) !== null) {
+    const tag = m[0];
+    if (/logo/i.test(tag)) {
+      const src = tag.match(/\bsrc=["']([^"']+)["']/i)?.[1] || tag.match(/\bdata-src=["']([^"']+)["']/i)?.[1];
+      if (src) push(src);
+    }
+  }
+
+  // Prioritize SVG > apple-touch-icon > og:image > others
+  return candidates.sort((a, b) => {
+    const score = (u: string) => {
+      let s = 0;
+      if (/\.svg(\?|$)/i.test(u)) s += 100;
+      if (/logo/i.test(u)) s += 50;
+      if (/apple-touch-icon/i.test(u)) s += 30;
+      if (/og[-_]?image/i.test(u)) s += 10;
+      if (/favicon/i.test(u)) s += 5;
+      return -s;
+    };
+    return score(a) - score(b);
+  }).slice(0, 8);
 }
 
 serve(async (req) => {
