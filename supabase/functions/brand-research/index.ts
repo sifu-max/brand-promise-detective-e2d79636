@@ -209,6 +209,7 @@ async function fetchJinaHtml(url: string): Promise<string | null> {
   } catch (e) {
     console.error("Jina HTML fetch error:", e);
     return null;
+  }
 }
 
 function extractLogoCandidates(html: string, pageUrl: string): string[] {
