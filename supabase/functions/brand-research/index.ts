@@ -68,7 +68,8 @@ You must respond with a SINGLE valid JSON object matching this exact schema and 
     "secondary_color": "",
     "accent_color": "",
     "heading_font": "",
-    "body_font": ""
+    "body_font": "",
+    "logo_url": ""
   }
 }
 
