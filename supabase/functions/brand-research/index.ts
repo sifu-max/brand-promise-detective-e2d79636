@@ -470,6 +470,11 @@ serve(async (req) => {
       );
     }
 
+    // Fallback: if AI didn't return a logo_url, use top candidate
+    if (brandData?.brand_dna && !brandData.brand_dna.logo_url && logoCandidates.length > 0) {
+      brandData.brand_dna.logo_url = logoCandidates[0];
+    }
+
     console.log("Brand analysis successful. Colors:", JSON.stringify(brandData.brand_dna));
     return new Response(
       JSON.stringify({ success: true, data: brandData }),
