@@ -380,7 +380,7 @@ serve(async (req) => {
     let pageContent = "";
 
     // Extract logo candidates from HTML (resolved to absolute URLs)
-    const logoCandidates = htmlSource ? extractLogoCandidates(htmlSource, url) : [];
+    const logoCandidates = extractLogoCandidates([htmlSource || "", jinaHtml || "", jinaText || ""], url);
     if (logoCandidates.length > 0) {
       console.log("Logo candidates found:", logoCandidates);
       pageContent += "=== CANDIDATE LOGO URLS (pick best for brand_dna.logo_url, prefer SVG/transparent PNG) ===\n" + logoCandidates.join("\n") + "\n\n";
