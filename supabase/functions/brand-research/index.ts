@@ -212,6 +212,27 @@ async function fetchJinaHtml(url: string): Promise<string | null> {
   }
 }
 
+function logoCandidateScore(u: string): number {
+  let s = 0;
+  const lower = u.toLowerCase();
+  const pathname = (() => { try { return new URL(u).pathname.toLowerCase(); } catch { return lower; } })();
+
+  // Strong logo signals
+  if (/\blogo\b|wordmark|brand[-_]?mark/i.test(pathname)) s += 240;
+  if (/\/assets\//i.test(pathname)) s += 30;
+  if (/\.svg(\?|$)/i.test(u)) s += 120;
+  if (/\.png(\?|$)/i.test(u)) s += 35;
+  if (/apple-touch-icon/i.test(u)) s += 40;
+  if (/favicon/i.test(u)) s += 15;
+
+  // Penalize page previews/social screenshots; they are not logos.
+  if (/r2\.dev/i.test(lower)) s -= 180;
+  if (/lovable\.app.*\.png/i.test(lower)) s -= 150;
+  if (/\bog[-_]?image\b|opengraph|social[-_]?card|preview/i.test(lower)) s -= 140;
+  if (/screenshot|screen-shot|thumbnail/i.test(lower)) s -= 120;
+  return s;
+}
+
 function extractLogoCandidates(htmlSources: string[], pageUrl: string): string[] {
   const candidates: string[] = [];
   const base = (() => { try { return new URL(pageUrl); } catch { return null; } })();
@@ -262,24 +283,7 @@ function extractLogoCandidates(htmlSources: string[], pageUrl: string): string[]
   }
 
   // Score: real logo signals beat page-screenshot og:images
-  return candidates.sort((a, b) => {
-    const score = (u: string) => {
-      let s = 0;
-      const lower = u.toLowerCase();
-      // Strong logo signals
-      if (/\blogo\b|wordmark|brand[-_]?mark/i.test(u)) s += 200;
-      if (/\.svg(\?|$)/i.test(u)) s += 100;
-      if (/apple-touch-icon/i.test(u)) s += 40;
-      if (/favicon/i.test(u)) s += 20;
-      // Penalize Lovable/CDN auto-screenshots used as og:image
-      if (/r2\.dev/i.test(lower)) s -= 150;
-      if (/lovable\.app.*\.png/i.test(lower)) s -= 120;
-      if (/\bog[-_]?image\b|opengraph|social[-_]?card|preview/i.test(lower)) s -= 80;
-      if (/screenshot/i.test(lower)) s -= 100;
-      return -s;
-    };
-    return score(a) - score(b);
-  }).slice(0, 10);
+  return candidates.sort((a, b) => logoCandidateScore(b) - logoCandidateScore(a)).slice(0, 10);
 }
 
 serve(async (req) => {
@@ -490,9 +494,17 @@ serve(async (req) => {
       );
     }
 
-    // Fallback: if AI didn't return a logo_url, use top candidate
-    if (brandData?.brand_dna && !brandData.brand_dna.logo_url && logoCandidates.length > 0) {
-      brandData.brand_dna.logo_url = logoCandidates[0];
+    // Deterministic override: do not let the model pick social-preview screenshots over real logo candidates.
+    if (brandData?.brand_dna && logoCandidates.length > 0) {
+      const bestLogo = logoCandidates[0];
+      const aiLogo = String(brandData.brand_dna.logo_url || "");
+      const aiScore = aiLogo ? logoCandidateScore(aiLogo) : Number.NEGATIVE_INFINITY;
+      const bestScore = logoCandidateScore(bestLogo);
+      const aiLooksLikePreview = /r2\.dev|lovable\.app.*\.png|\bog[-_]?image\b|opengraph|social[-_]?card|preview|screenshot|thumbnail/i.test(aiLogo);
+
+      if (!aiLogo || aiLooksLikePreview || bestScore > aiScore) {
+        brandData.brand_dna.logo_url = bestLogo;
+      }
     }
 
     console.log("Brand analysis successful. Colors:", JSON.stringify(brandData.brand_dna));
