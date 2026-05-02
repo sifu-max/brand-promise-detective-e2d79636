@@ -109,7 +109,40 @@ serve(async (req) => {
     }
 
     const hasJsonLd = jsonLdSchemas.length > 0;
-    const schemaTypes = jsonLdSchemas.map(s => s["@type"] || (Array.isArray(s["@graph"]) ? s["@graph"].map((g: any) => g["@type"]).filter(Boolean) : [])).flat();
+
+    // Flatten all schema nodes (handle @graph)
+    const allNodes: any[] = [];
+    for (const s of jsonLdSchemas) {
+      if (Array.isArray(s["@graph"])) allNodes.push(...s["@graph"]);
+      else allNodes.push(s);
+    }
+    const flattenTypes = (t: any): string[] => Array.isArray(t) ? t.flat() : t ? [t] : [];
+    const schemaTypes = allNodes.flatMap(n => flattenTypes(n["@type"])).filter(Boolean);
+
+    // ---- AI Knowledge Graph Markers ----
+    const ORG_TYPES = ["Organization", "Corporation", "NGO", "EducationalOrganization", "GovernmentOrganization"];
+    const LOCAL_BUSINESS_TYPES = [
+      "LocalBusiness", "HealthAndBeautyBusiness", "MedicalBusiness", "ProfessionalService",
+      "Restaurant", "Store", "Dentist", "AutomotiveBusiness", "FinancialService",
+      "HomeAndConstructionBusiness", "LegalService", "LodgingBusiness", "RealEstateAgent",
+      "TravelAgency", "Physician",
+    ];
+    const SERVICE_TYPES = ["Service", "Product", "Offer"];
+
+    const hasOrganization = schemaTypes.some(t => ORG_TYPES.includes(t));
+    const hasLocalBusiness = schemaTypes.some(t => LOCAL_BUSINESS_TYPES.includes(t));
+    const hasService = schemaTypes.some(t => SERVICE_TYPES.includes(t));
+    const hasKnowsAbout = allNodes.some(n => n && n.knowsAbout !== undefined);
+    const hasPotentialAction = allNodes.some(n => n && n.potentialAction !== undefined);
+
+    const aiMarkers = {
+      organization: hasOrganization,
+      local_business: hasLocalBusiness,
+      service: hasService,
+      knows_about: hasKnowsAbout,
+      potential_action: hasPotentialAction,
+    };
+    const aiMarkerCount = Object.values(aiMarkers).filter(Boolean).length;
 
     // 2. Check for Open Graph tags
     const ogTags: Record<string, string> = {};
@@ -172,21 +205,29 @@ serve(async (req) => {
     };
     const trustSignalCount = Object.values(trustSignals).filter(Boolean).length;
 
-    // Determine overall eligibility
+    // Determine overall eligibility — gated on AI Knowledge Graph markers
     const hasSchema = hasJsonLd;
-    const hasMachineIdentity = hasJsonLd && schemaTypes.some(t =>
-      ["Organization", "LocalBusiness", "Person", "Corporation", "ProfessionalService", "WebSite", "WebPage"].includes(t)
-    );
-    const canBeCited = hasMachineIdentity && hasOpenGraph && hasMetaDescription;
+    const hasMachineIdentity = hasOrganization || hasLocalBusiness;
+    const isAIVisible = hasOrganization || hasLocalBusiness || hasService;
+    const canBeCited = hasMachineIdentity && hasService && hasOpenGraph && hasMetaDescription;
 
-    let eligibility: "Eligible" | "Partially Eligible" | "Not Eligible";
-    if (canBeCited && trustSignalCount >= 4) {
+    let eligibility: "Eligible" | "Partially Eligible" | "Not Eligible" | "Critically Ineligible";
+    let eligibilityMessage = "";
+
+    if (!isAIVisible) {
+      eligibility = "Critically Ineligible";
+      eligibilityMessage = "Google sees your code, but AI doesn't see your business identity. You are missing Organization and Service schemas — the markers AI systems use to recognize who you are and what you do.";
+    } else if (canBeCited && aiMarkerCount >= 4 && trustSignalCount >= 4) {
       eligibility = "Eligible";
-    } else if (hasSchema || (hasOpenGraph && hasMetaDescription)) {
+      eligibilityMessage = "Your website has strong AI Knowledge Graph markers. AI systems can identify, understand, and cite your business.";
+    } else if (hasMachineIdentity || hasService) {
       eligibility = "Partially Eligible";
+      eligibilityMessage = "Your website has some AI identity markers, but key Knowledge Graph signals are missing for full AI citation eligibility.";
     } else {
       eligibility = "Not Eligible";
+      eligibilityMessage = "Your website lacks the machine-readable identity AI systems require to recognize, cite, or recommend your business.";
     }
+
 
     const result = {
       eligibility,
