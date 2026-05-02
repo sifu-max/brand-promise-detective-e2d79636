@@ -231,12 +231,7 @@ serve(async (req) => {
 
     const result = {
       eligibility,
-      eligibility_summary:
-        eligibility === "Eligible"
-          ? "Your website has strong machine-readable signals. AI systems can identify, understand, and cite your business."
-          : eligibility === "Partially Eligible"
-          ? "Your website has some machine-readable signals, but key elements are missing for full AI visibility."
-          : "Your website is not machine-readable, which means AI systems cannot reliably recognize, cite, or recommend your business.",
+      eligibility_summary: eligibilityMessage,
       findings: {
         schema_detected: hasJsonLd,
         schema_types: schemaTypes,
@@ -244,7 +239,10 @@ serve(async (req) => {
         ai_citation_eligibility: canBeCited ? "Possible" : "Not possible",
         trust_signal_count: trustSignalCount,
         trust_signal_total: 5,
+        ai_marker_count: aiMarkerCount,
+        ai_marker_total: 5,
       },
+      ai_knowledge_graph_markers: aiMarkers,
       details: {
         json_ld: hasJsonLd,
         json_ld_types: schemaTypes,
