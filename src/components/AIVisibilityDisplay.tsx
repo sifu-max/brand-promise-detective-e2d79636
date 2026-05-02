@@ -60,6 +60,27 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
         </CardContent>
       </Card>
 
+      {/* Verify with Google */}
+      <Card className="border-primary/30 bg-primary/5">
+        <CardContent className="py-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              Verify AI Identity
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              See live in Google's Rich Results Test what AI systems detect on your site.
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shrink-0">
+            <a href={richResultsUrl} target="_blank" rel="noopener noreferrer">
+              Verify AI Identity
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* What We Found */}
       <Card>
         <CardContent className="py-5 space-y-4">
