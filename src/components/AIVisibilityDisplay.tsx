@@ -109,25 +109,32 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
       )}
 
       {/* Verify with Google */}
-      <Card className="border-primary/30 bg-primary/5">
-        <CardContent className="py-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
-          <div className="space-y-1">
-            <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <Shield className="h-4 w-4 text-primary" />
-              Verify AI Identity
-            </h4>
-            <p className="text-xs text-muted-foreground">
-              See live in Google's Rich Results Test what AI systems detect on your site.
-            </p>
-          </div>
-          <Button asChild variant="outline" className="shrink-0">
-            <a href={richResultsUrl} target="_blank" rel="noopener noreferrer">
-              Verify AI Identity
+      <a
+        href={richResultsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+        aria-label="Open Google Rich Results Test prefilled with your URL"
+      >
+        <Card className="border-2 border-primary bg-primary/10 cursor-pointer transition-all hover:bg-primary/15 hover:scale-[1.01] animate-pulse">
+          <CardContent className="py-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Shield className="h-4 w-4 text-primary" />
+                👉 Click Here to Verify with Google (Live)
+              </h4>
+              <p className="text-xs text-muted-foreground">
+                Opens Google's Rich Results Test pre-filled with your URL — see exactly what AI systems detect on your site.
+              </p>
+            </div>
+            <Button variant="default" className="shrink-0 pointer-events-none">
+              Verify Now
               <ExternalLink className="ml-2 h-4 w-4" />
-            </a>
-          </Button>
-        </CardContent>
-      </Card>
+            </Button>
+          </CardContent>
+        </Card>
+      </a>
+
 
       {/* What We Found */}
       <Card>
