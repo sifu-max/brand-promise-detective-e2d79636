@@ -42,8 +42,11 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
     <div className="space-y-4 animate-fade-in">
       <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
         <Eye className="h-5 w-5 text-primary" />
-        AI Visibility Schema Scan
+        Advanced AI Visibility Scan
       </h3>
+      <p className="text-sm text-muted-foreground -mt-2">
+        Our scan doesn't just look for any code; it looks specifically for <span className="font-semibold text-foreground">AI-Citation Eligibility</span>. Basic tools see the old SEO tags — we see the future <span className="font-semibold text-foreground">AI-Identity tags</span>.
+      </p>
 
       {/* Eligibility Banner */}
       <Card className={`${statusBg} border`}>
