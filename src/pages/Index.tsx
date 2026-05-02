@@ -165,6 +165,7 @@ const Index = () => {
 
   const fetchVisibility = async (url: string, analysisId?: string | null) => {
     setIsScanningVisibility(true);
+    setAnalyzedUrl(url);
     try {
       const { data, error } = await supabase.functions.invoke("ai-visibility", {
         body: { url },
