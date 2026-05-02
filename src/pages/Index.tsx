@@ -24,6 +24,7 @@ const Index = () => {
   const [result, setResult] = useState<BrandResearchResult | null>(null);
   const [effectiveness, setEffectiveness] = useState<BrandEffectivenessResult | null>(null);
   const [visibility, setVisibility] = useState<AIVisibilityResult | null>(null);
+  const [analyzedUrl, setAnalyzedUrl] = useState<string | null>(null);
   const formRef = useRef<BrandResearchFormRef>(null);
   const currentAnalysisIdRef = useRef<string | null>(null);
   const [adminMode, setAdminMode] = useState(false);
