@@ -458,7 +458,7 @@ const Index = () => {
               </div>
             )}
             {!isScanningVisibility && visibility && (
-              <AIVisibilityDisplay data={visibility} />
+              <AIVisibilityDisplay data={visibility} analyzedUrl={analyzedUrl ?? undefined} />
             )}
           </div>
         )}
