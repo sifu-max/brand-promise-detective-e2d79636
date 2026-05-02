@@ -93,6 +93,20 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
         </Card>
       )}
 
+      {/* AI Pro Audit explainer — shown for any site that isn't 100% AI-visible */}
+      {(!markers || !(markers.organization && markers.local_business && markers.service && markers.knows_about && markers.potential_action) || data.eligibility !== "Eligible") && (
+        <Card className="border-coral/40 bg-coral/5 print:border-coral print:bg-white">
+          <CardContent className="py-5 space-y-2">
+            <h4 className="text-base font-bold text-foreground flex items-center gap-2">
+              <Shield className="h-4 w-4 text-coral" />
+              Why This Matters: Structural Eligibility vs. Basic Code
+            </h4>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              While basic tools like Google Rich Results only verify that <em>code exists</em>, our AI Pro audit checks for <span className="font-semibold text-foreground">Structural Eligibility</span>. Most websites contain <span className="font-mono text-xs">Breadcrumb</span> or <span className="font-mono text-xs">SiteSearch</span> code that triggers a green light, but they lack the <span className="font-semibold text-foreground">Organization</span> and <span className="font-semibold text-foreground">Service</span> Schema required for AI models to cite your business as a primary authority.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Verify with Google */}
       <Card className="border-primary/30 bg-primary/5">
