@@ -109,11 +109,14 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
       )}
 
       {/* Verify with Google */}
-      <a
-        href={richResultsUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
+      <button
+        type="button"
+        onClick={() => {
+          const win = window.open(richResultsUrl, "_blank", "noopener,noreferrer");
+          if (win) win.opener = null;
+          else window.top!.location.href = richResultsUrl;
+        }}
+        className="block w-full text-left group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg"
         aria-label="Open Google Rich Results Test prefilled with your URL"
       >
         <Card className="border-2 border-primary bg-primary/10 cursor-pointer transition-all hover:bg-primary/15 hover:scale-[1.01] animate-pulse">
@@ -133,7 +136,7 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
             </Button>
           </CardContent>
         </Card>
-      </a>
+      </button>
 
 
       {/* What We Found */}
