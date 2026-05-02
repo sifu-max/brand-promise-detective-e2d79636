@@ -7,7 +7,8 @@ import {
   ArrowRight,
   Shield,
   Eye,
-  FileSearch
+  FileSearch,
+  ExternalLink
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,13 @@ import { AIVisibilityResult } from "@/types/ai-visibility";
 
 interface AIVisibilityDisplayProps {
   data: AIVisibilityResult;
+  analyzedUrl?: string;
 }
 
-export function AIVisibilityDisplay({ data }: AIVisibilityDisplayProps) {
+export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayProps) {
+  const richResultsUrl = analyzedUrl
+    ? `https://search.google.com/test/rich-results?url=${encodeURIComponent(analyzedUrl)}`
+    : `https://search.google.com/test/rich-results`;
   const isEligible = data.eligibility === "Eligible";
   const isPartial = data.eligibility === "Partially Eligible";
 
@@ -52,6 +57,27 @@ export function AIVisibilityDisplay({ data }: AIVisibilityDisplayProps) {
               {data.eligibility_summary}
             </p>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Verify with Google */}
+      <Card className="border-primary/30 bg-primary/5">
+        <CardContent className="py-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <div className="space-y-1">
+            <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              Verify AI Identity
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              See live in Google's Rich Results Test what AI systems detect on your site.
+            </p>
+          </div>
+          <Button asChild variant="outline" className="shrink-0">
+            <a href={richResultsUrl} target="_blank" rel="noopener noreferrer">
+              Verify AI Identity
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </a>
+          </Button>
         </CardContent>
       </Card>
 

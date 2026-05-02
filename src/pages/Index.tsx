@@ -24,6 +24,7 @@ const Index = () => {
   const [result, setResult] = useState<BrandResearchResult | null>(null);
   const [effectiveness, setEffectiveness] = useState<BrandEffectivenessResult | null>(null);
   const [visibility, setVisibility] = useState<AIVisibilityResult | null>(null);
+  const [analyzedUrl, setAnalyzedUrl] = useState<string | null>(null);
   const formRef = useRef<BrandResearchFormRef>(null);
   const currentAnalysisIdRef = useRef<string | null>(null);
   const [adminMode, setAdminMode] = useState(false);
@@ -164,6 +165,7 @@ const Index = () => {
 
   const fetchVisibility = async (url: string, analysisId?: string | null) => {
     setIsScanningVisibility(true);
+    setAnalyzedUrl(url);
     try {
       const { data, error } = await supabase.functions.invoke("ai-visibility", {
         body: { url },
@@ -456,7 +458,7 @@ const Index = () => {
               </div>
             )}
             {!isScanningVisibility && visibility && (
-              <AIVisibilityDisplay data={visibility} />
+              <AIVisibilityDisplay data={visibility} analyzedUrl={analyzedUrl ?? undefined} />
             )}
           </div>
         )}
