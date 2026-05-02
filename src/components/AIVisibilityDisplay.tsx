@@ -7,7 +7,8 @@ import {
   ArrowRight,
   Shield,
   Eye,
-  FileSearch
+  FileSearch,
+  ExternalLink
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,9 +16,13 @@ import { AIVisibilityResult } from "@/types/ai-visibility";
 
 interface AIVisibilityDisplayProps {
   data: AIVisibilityResult;
+  analyzedUrl?: string;
 }
 
-export function AIVisibilityDisplay({ data }: AIVisibilityDisplayProps) {
+export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayProps) {
+  const richResultsUrl = analyzedUrl
+    ? `https://search.google.com/test/rich-results?url=${encodeURIComponent(analyzedUrl)}`
+    : `https://search.google.com/test/rich-results`;
   const isEligible = data.eligibility === "Eligible";
   const isPartial = data.eligibility === "Partially Eligible";
 
