@@ -1,5 +1,5 @@
 export interface AIVisibilityResult {
-  eligibility: "Eligible" | "Partially Eligible" | "Not Eligible";
+  eligibility: "Eligible" | "Partially Eligible" | "Not Eligible" | "Critically Ineligible";
   eligibility_summary: string;
   findings: {
     schema_detected: boolean;
@@ -8,6 +8,15 @@ export interface AIVisibilityResult {
     ai_citation_eligibility: "Possible" | "Not possible";
     trust_signal_count: number;
     trust_signal_total: number;
+    ai_marker_count?: number;
+    ai_marker_total?: number;
+  };
+  ai_knowledge_graph_markers?: {
+    organization: boolean;
+    local_business: boolean;
+    service: boolean;
+    knows_about: boolean;
+    potential_action: boolean;
   };
   details: {
     json_ld: boolean;
@@ -31,3 +40,4 @@ export interface AIVisibilityResult {
   };
   source_url: string;
 }
+
