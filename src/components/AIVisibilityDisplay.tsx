@@ -25,6 +25,7 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
     : `https://search.google.com/test/rich-results`;
   const isEligible = data.eligibility === "Eligible";
   const isPartial = data.eligibility === "Partially Eligible";
+  const isCritical = data.eligibility === "Critically Ineligible";
 
   const StatusIcon = isEligible ? CheckCircle2 : isPartial ? AlertTriangle : XCircle;
   const statusColor = isEligible 
@@ -37,6 +38,13 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
     : isPartial
     ? "bg-yellow-500/10 border-yellow-500/20"
     : "bg-destructive/10 border-destructive/20";
+
+  const statusLabel =
+    data.eligibility === "Critically Ineligible" ? "✕ Critically Ineligible" :
+    data.eligibility === "Not Eligible" ? "✕ Not Eligible" :
+    data.eligibility === "Partially Eligible" ? "⚠ Partially Eligible" : "✓ Eligible";
+
+  const markers = data.ai_knowledge_graph_markers;
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -54,7 +62,7 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
           <StatusIcon className={`h-8 w-8 ${statusColor} shrink-0 mt-0.5`} />
           <div>
             <h4 className={`text-lg font-bold ${statusColor}`}>
-              {data.eligibility === "Not Eligible" ? "✕ Not Eligible" : data.eligibility === "Partially Eligible" ? "⚠ Partially Eligible" : "✓ Eligible"}
+              {statusLabel}
             </h4>
             <p className="text-sm text-muted-foreground mt-1">
               {data.eligibility_summary}
@@ -62,6 +70,29 @@ export function AIVisibilityDisplay({ data, analyzedUrl }: AIVisibilityDisplayPr
           </div>
         </CardContent>
       </Card>
+
+      {/* AI Knowledge Graph Markers */}
+      {markers && (
+        <Card>
+          <CardContent className="py-5 space-y-3">
+            <h4 className="text-base font-bold text-foreground flex items-center gap-2">
+              <FileSearch className="h-4 w-4 text-primary" />
+              AI Knowledge Graph Markers
+            </h4>
+            <p className="text-xs text-muted-foreground">
+              The specific schema types AI systems use to recognize your business identity, location, expertise, and lead-capture intent.
+            </p>
+            <ul className="space-y-2 mt-2">
+              <FindingRow found={markers.organization} label="@type: Organization" value={markers.organization ? "Detected" : "Missing — No Identity"} highlight={!markers.organization} />
+              <FindingRow found={markers.local_business} label="@type: LocalBusiness" value={markers.local_business ? "Detected" : "Missing — No Location/Niche"} highlight={!markers.local_business} />
+              <FindingRow found={markers.service} label="@type: Service" value={markers.service ? "Detected" : "Missing — No Offer Definition"} highlight={!markers.service} />
+              <FindingRow found={markers.knows_about} label="knowsAbout" value={markers.knows_about ? "Detected" : "Missing — No Authority/Expertise"} highlight={!markers.knows_about} />
+              <FindingRow found={markers.potential_action} label="potentialAction" value={markers.potential_action ? "Detected" : "Missing — No Lead Capture for AI"} highlight={!markers.potential_action} />
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
 
       {/* Verify with Google */}
       <Card className="border-primary/30 bg-primary/5">
