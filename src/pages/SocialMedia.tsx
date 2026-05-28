@@ -112,7 +112,7 @@ const SocialMedia = () => {
             <Button
               size="lg"
               className="gap-2 text-base px-8 bg-coral hover:bg-coral/90 text-primary-foreground"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/lab")}
             >
               <Globe className="w-5 h-5" /> Analyze Your Brand Free
             </Button>

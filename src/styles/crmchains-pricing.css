@@ -1,0 +1,37 @@
+/* Scoped to #pricing on the CRMChains landing page */
+#pricing .pricing-card {
+  display: flex;
+  flex-direction: column;
+}
+
+#pricing .pricing-card ul {
+  flex-grow: 1;
+}
+
+#pricing .pricing-card a {
+  margin-top: auto;
+}
+
+#pricing .pricing-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.75rem;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+
+#pricing .pricing-cta:hover {
+  opacity: 0.9;
+}
+
+#pricing .pricing-card:has(.absolute) {
+  padding-top: 2rem;
+}

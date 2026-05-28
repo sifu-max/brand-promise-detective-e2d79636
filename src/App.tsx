@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import BrandBuilder from "./pages/BrandBuilder";
 import CRMChains from "./pages/CRMChains";
@@ -20,17 +20,22 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const routerBasename =
+  import.meta.env.BASE_URL === "/" ? undefined : import.meta.env.BASE_URL.replace(/\/$/, "");
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={routerBasename}>
         <Routes>
-          <Route path="/" element={<Index />} />
+          {/* Matches https://branding.crmchains.com/crmchains */}
+          <Route path="/" element={<CRMChains />} />
+          <Route path="/lab" element={<Index />} />
           <Route path="/brand-builder" element={<BrandBuilder />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/crmchains" element={<CRMChains />} />
+          <Route path="/crmchains" element={<Navigate to="/" replace />} />
           <Route path="/clearfaith" element={<ClearFaithLanding />} />
           <Route path="/clear-faith" element={<ClearFaithLanding />} />
           <Route path="/clearfaith-proposal" element={<ClearFaithProposal />} />

@@ -99,7 +99,7 @@ const AdminDashboard = () => {
             <p className="text-sm text-muted-foreground">
               Use the admin shortcut to unlock this dashboard.
             </p>
-            <Button variant="outline" onClick={() => navigate("/")}>
+            <Button variant="outline" onClick={() => navigate("/lab")}>
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
@@ -115,7 +115,7 @@ const AdminDashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate("/lab")}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>

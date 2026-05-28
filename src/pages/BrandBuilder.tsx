@@ -341,7 +341,7 @@ Please create a landing page with: hero section featuring the tagline and CTA, p
         <div className="container max-w-4xl py-12">
           <Button
             variant="ghost"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/lab")}
             className="mb-6 text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary/20"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
