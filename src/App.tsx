@@ -20,15 +20,15 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const routerBasename =
-  import.meta.env.BASE_URL === "/" ? undefined : import.meta.env.BASE_URL.replace(/\/$/, "");
+// Lovable serves assets at /assets/ but the app lives under /crmchains
+const ROUTER_BASENAME = "/crmchains";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename={routerBasename}>
+      <BrowserRouter basename={ROUTER_BASENAME}>
         <Routes>
           {/* https://branding.crmchains.com/crmchains */}
           <Route path="/" element={<CRMChains />} />

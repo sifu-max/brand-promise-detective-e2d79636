@@ -5,8 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // Matches Lovable deploy: https://branding.crmchains.com/crmchains/
-  base: "/crmchains/",
+  // Assets deploy to /assets/ on Lovable; routes use React Router basename /crmchains
   server: {
     host: "::",
     port: 8080,
