@@ -1,5 +1,5 @@
 # CRMChains
-> CRM, bilingual VAs, AI agents, and branded ecosystems for insurance and real estate agencies.
+> CRM, bilingual human VAs, AI agents, and branded ecosystems for insurance and real estate agencies.
 > Serves US, Colombia, and Mexico. English and Spanish.
 
 ## Primary pages
@@ -10,8 +10,8 @@
 - [Contact](https://branding.crmchains.com/crmchains#contact): Phoenix office, phone, and email
 
 ## Offer
-- Branded CRM deployment (7-day go-live)
-- AI agent workflows (14-day ship)
-- Bilingual virtual assistants (en/es)
+- Branded CRM (same-day for insurance, real estate, mortgage after payment)
+- AI agent + human VA workflows (typically days 3–5 for existing industries)
+- Bilingual human virtual assistants (en/es)
 - Insurance + real estate + mortgage verticals
 - AI Basic Suite and AI Pro Suite pricing

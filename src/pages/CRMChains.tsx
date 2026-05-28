@@ -73,9 +73,9 @@ const services = [
   },
   {
     icon: <Phone className="h-6 w-6" />,
-    title: "Bilingual Virtual Assistants",
+    title: "Bilingual Human Virtual Assistants",
     description:
-      "Dedicated VAs handling calling campaigns at 100+ calls/hour with daily performance reports. Technical and administrative support included.",
+      "Real human VAs — not AI — handling calling campaigns at 100+ calls/hour with daily performance reports. Technical and administrative support included.",
   },
   {
     icon: <Users className="h-6 w-6" />,
@@ -112,21 +112,24 @@ const verticals = [
 const howItWorksSteps = [
   {
     step: "1",
-    title: "Strategy call & brand setup",
-    description: "We map your agency workflow, branding, and pipeline goals.",
+    title: "Kickoff & CRM access",
+    description:
+      "For insurance, real estate, and mortgage — your CRM workspace is provisioned right after payment. We map workflows and branding on your kickoff call.",
     timing: "Day 1",
   },
   {
     step: "2",
-    title: "CRM & automations go live",
-    description: "Your branded CRM, follow-up, and speed-to-lead systems are configured.",
-    timing: "Day 7",
+    title: "Automations & branded assets",
+    description:
+      "Pipelines, follow-up, speed-to-lead, and agent-branded sites are configured for your vertical.",
+    timing: "Days 1–3",
   },
   {
     step: "3",
-    title: "AI agents & VAs activated",
-    description: "Custom AI calling workflows and bilingual VAs join your team.",
-    timing: "Day 14",
+    title: "AI agents + human VAs live",
+    description:
+      "AI calling workflows and bilingual human VAs join your team. Existing industries are typically live within a few days.",
+    timing: "Days 3–5",
   },
 ];
 
@@ -248,7 +251,7 @@ const CRMChains = () => {
                 </h2>
 
                 <p className="text-base md:text-lg text-primary-foreground/80 max-w-lg">
-                  CRMChains gives your agency the CRM, AI agents, bilingual VAs, and automated
+                  CRMChains gives your agency the CRM, AI agents, bilingual human VAs, and automated
                   websites your team needs — so every new agent is productive from day one.
                 </p>
 
@@ -311,7 +314,7 @@ const CRMChains = () => {
             <div className="text-center mb-12 space-y-3">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">How It Works</h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                From strategy call to live AI agents in as little as 14 days.
+                CRM access right after payment for existing industries — full stack in days, not weeks.
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
@@ -331,6 +334,12 @@ const CRMChains = () => {
                 </div>
               ))}
             </div>
+            <p className="text-sm text-muted-foreground text-center max-w-2xl mx-auto mt-8">
+              Need SMS at scale?{" "}
+              <span className="text-foreground font-medium">A2P registration</span> is usually the
+              longest step and runs in parallel. New or custom industries may take up to two weeks
+              for tailored workflows.
+            </p>
           </div>
         </section>
 

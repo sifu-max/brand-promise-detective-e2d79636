@@ -3,7 +3,7 @@ export const CRMCHAINS_OG_IMAGE = "https://branding.crmchains.com/og-image.png";
 export const CRMCHAINS_LOGO = "https://branding.crmchains.com/logo.jpg";
 
 export const CRMCHAINS_META_DESCRIPTION =
-  "CRM, bilingual VAs, AI agents, and branded ecosystems for insurance and real estate agencies. Deploy in 7 days.";
+  "CRM, bilingual human VAs, AI agents, and branded ecosystems for insurance and real estate agencies. CRM live right after payment for existing industries.";
 
 export const CRMCHAINS_H1 =
   "CRMChains — CRM, AI Agents & Branded Ecosystems for Agencies";
@@ -33,7 +33,7 @@ export const crmchainsFaqs = [
   {
     question: "What does CRMChains do?",
     answer:
-      "CRMChains builds branded CRM ecosystems with AI agents and bilingual VAs for agencies.",
+      "CRMChains builds branded CRM ecosystems with AI agents and bilingual human VAs for agencies.",
   },
   {
     question: "Which industries do you serve?",
@@ -45,7 +45,8 @@ export const crmchainsFaqs = [
   },
   {
     question: "How fast can a workspace go live?",
-    answer: "Branded CRMs go live in 7 days; custom AI workflows in 14.",
+    answer:
+      "For insurance, real estate, and mortgage, your CRM is provisioned right after payment. AI agents and human VAs typically follow within a few days. A2P registration for SMS is the longest step when required. New industries may take up to two weeks for custom workflows.",
   },
 ] as const;
 
@@ -58,7 +59,7 @@ export const organizationSchema = {
   url: "https://crmchains.com",
   logo: CRMCHAINS_LOGO,
   description:
-    "CRM, bilingual VAs, AI agents, and branded ecosystems for insurance and real estate agencies.",
+    "CRM, bilingual human VAs, AI agents, and branded ecosystems for insurance and real estate agencies.",
   foundingDate: "2023",
   areaServed: ["US", "CO", "MX"],
   knowsAbout: [
@@ -66,7 +67,7 @@ export const organizationSchema = {
     "AI Agents",
     "Insurance Agencies",
     "Real Estate Agencies",
-    "Bilingual Virtual Assistants",
+    "Bilingual Human Virtual Assistants",
     "Lead Generation",
   ],
   sameAs: [
