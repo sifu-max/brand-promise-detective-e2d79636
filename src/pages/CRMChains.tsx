@@ -11,8 +11,11 @@ import {
   Zap,
   CheckCircle2,
   Building2,
+  Home,
   Mail,
   MapPin,
+  Star,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,6 +31,7 @@ import {
   CRMCHAINS_PHONE_DISPLAY,
   crmchainsFaqs,
 } from "@/lib/crmchains-seo";
+import { CRMCHAINS_CALENDAR_URL, CRMCHAINS_SHOWCASE_URL } from "@/lib/crmchains-constants";
 import "@/styles/crmchains-pricing.css";
 
 const VIDEO_SRC =
@@ -102,7 +106,54 @@ const services = [
 const verticals = [
   { name: "Insurance Agencies", icon: <Shield className="h-5 w-5" /> },
   { name: "Real Estate Teams", icon: <Building2 className="h-5 w-5" /> },
+  { name: "Mortgage", icon: <Home className="h-5 w-5" /> },
 ];
+
+const howItWorksSteps = [
+  {
+    step: "1",
+    title: "Strategy call & brand setup",
+    description: "We map your agency workflow, branding, and pipeline goals.",
+    timing: "Day 1",
+  },
+  {
+    step: "2",
+    title: "CRM & automations go live",
+    description: "Your branded CRM, follow-up, and speed-to-lead systems are configured.",
+    timing: "Day 7",
+  },
+  {
+    step: "3",
+    title: "AI agents & VAs activated",
+    description: "Custom AI calling workflows and bilingual VAs join your team.",
+    timing: "Day 14",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "CRMChains replaced five tools we were duct-taping together. Our agents onboard faster and follow-up actually happens.",
+    author: "Agency Principal",
+    vertical: "Insurance",
+  },
+  {
+    quote:
+      "The bilingual VAs and AI agents let us scale outreach without scaling payroll the same way.",
+    author: "Operations Director",
+    vertical: "Real Estate",
+  },
+  {
+    quote:
+      "We went from scattered spreadsheets to one CRM with branded sites for every loan officer.",
+    author: "Branch Manager",
+    vertical: "Mortgage",
+  },
+];
+
+function yearlySavings(monthly: number, yearly: number) {
+  return monthly * 12 - yearly;
+}
 
 const painPoints = [
   "Agents stuck using 5+ disconnected tools",
@@ -160,106 +211,141 @@ const CRMChains = () => {
     <SiteLayout>
       <CRMChainsSeo />
       <article>
-        <section className="border-b border-border bg-background py-8 md:py-10">
-          <div className="container max-w-6xl px-4 text-center md:text-left">
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
-              {CRMCHAINS_H1}
-            </h1>
-            <p className="mt-3 text-lg text-muted-foreground max-w-3xl">{CRMCHAINS_INTRO}</p>
+        {/* Video */}
+        <section className="video-section w-full bg-muted/40 py-10 md:py-14">
+          <div className="container max-w-6xl px-4">
+            <video
+              controls
+              className="w-full max-w-4xl mx-auto block rounded-xl shadow-lg border border-border"
+              playsInline
+              preload="metadata"
+            >
+              <source src={VIDEO_SRC} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </section>
 
-        {/* Video */}
-        <section className="video-section w-full bg-muted/40 py-10 md:py-14">
-        <div className="container max-w-6xl px-4">
-          <video
-            controls
-            className="w-full max-w-4xl mx-auto block rounded-xl shadow-lg border border-border"
-            playsInline
-            preload="metadata"
-          >
-            <source src={VIDEO_SRC} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      </section>
+        {/* Hero */}
+        <section className="gradient-hero text-primary-foreground">
+          <div className="container max-w-6xl py-16 md:py-24 px-4">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="space-y-8">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 text-sm font-medium">
+                  <Zap className="h-4 w-4" />
+                  Built for Insurance, Real Estate & Mortgage Agencies
+                </div>
 
-      {/* Hero */}
-      <section className="gradient-hero text-primary-foreground">
-        <div className="container max-w-6xl py-20 md:py-32">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/20 text-sm font-medium">
-                <Zap className="h-4 w-4" />
-                Built for Insurance & Real Estate Agencies
-              </div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.15]">
+                  {CRMCHAINS_H1}
+                </h1>
 
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
-                Stop Losing Agents to
-                <span className="block text-coral mt-2">Broken Systems</span>
-              </h2>
+                <p className="text-lg text-primary-foreground/85 max-w-lg">{CRMCHAINS_INTRO}</p>
 
-              <p className="text-lg md:text-xl text-primary-foreground/80 max-w-lg">
-                CRMChains gives your agency the CRM, AI agents, bilingual VAs, and automated
-                websites your team needs — so every new agent is productive from day one.
-              </p>
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight leading-[1.1] text-coral-light">
+                  Stop Losing Agents to
+                  <span className="block text-coral mt-1">Broken Systems</span>
+                </h2>
 
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" className="bg-coral hover:bg-coral/90 text-primary-foreground" asChild>
-                  <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
-                    Book a Strategy Call <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-coral/50 text-coral-light hover:bg-coral/10"
-                  asChild
-                >
-                  <a href="#services">See How It Works</a>
-                </Button>
-              </div>
+                <p className="text-base md:text-lg text-primary-foreground/80 max-w-lg">
+                  CRMChains gives your agency the CRM, AI agents, bilingual VAs, and automated
+                  websites your team needs — so every new agent is productive from day one.
+                </p>
 
-              <div className="flex items-center gap-6 pt-2">
-                {verticals.map((v) => (
-                  <div
-                    key={v.name}
-                    className="flex items-center gap-2 text-sm text-primary-foreground/70"
+                <div className="flex flex-wrap gap-4">
+                  <Button
+                    size="lg"
+                    className="bg-coral hover:bg-coral/90 text-primary-foreground"
+                    asChild
                   >
-                    {v.icon}
-                    <span>{v.name}</span>
+                    <a
+                      href={CRMCHAINS_CALENDAR_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Book a Strategy Call <ArrowRight className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-coral/50 text-coral-light hover:bg-coral/10"
+                    asChild
+                  >
+                    <a href="#how-it-works">See How It Works</a>
+                  </Button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4 md:gap-6 pt-2">
+                  {verticals.map((v) => (
+                    <div
+                      key={v.name}
+                      className="flex items-center gap-2 text-sm text-primary-foreground/70"
+                    >
+                      {v.icon}
+                      <span>{v.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-2xl p-8 space-y-5 backdrop-blur-sm">
+                <h3 className="text-lg font-semibold text-primary-foreground/90">Sound familiar?</h3>
+                {painPoints.map((point) => (
+                  <div key={point} className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-coral shrink-0 mt-0.5" />
+                    <p className="text-primary-foreground/80 text-sm leading-relaxed">{point}</p>
                   </div>
                 ))}
+                <p className="text-xs text-primary-foreground/50 pt-2">
+                  If you checked even two — you need CRMChains.
+                </p>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="bg-primary-foreground/5 border border-primary-foreground/10 rounded-2xl p-8 space-y-5 backdrop-blur-sm">
-              <h3 className="text-lg font-semibold text-primary-foreground/90">Sound familiar?</h3>
-              {painPoints.map((point) => (
-                <div key={point} className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-coral shrink-0 mt-0.5" />
-                  <p className="text-primary-foreground/80 text-sm leading-relaxed">{point}</p>
-                </div>
-              ))}
-              <p className="text-xs text-primary-foreground/50 pt-2">
-                If you checked even two — you need CRMChains.
+        {/* How it works */}
+        <section id="how-it-works" className="py-16 md:py-20 bg-background">
+          <div className="container max-w-6xl px-4">
+            <div className="text-center mb-12 space-y-3">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground">How It Works</h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                From strategy call to live AI agents in as little as 14 days.
               </p>
             </div>
+            <div className="grid md:grid-cols-3 gap-8">
+              {howItWorksSteps.map((item) => (
+                <div
+                  key={item.step}
+                  className="rounded-xl border border-border bg-card p-6 shadow-sm text-center md:text-left"
+                >
+                  <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary text-primary-foreground font-bold text-lg mb-4">
+                    {item.step}
+                  </span>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">
+                    {item.timing}
+                  </p>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{item.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* AI Calling Agents */}
-      <section id="agents" className="agents-section py-16 md:py-20 bg-background">
-        <div className="container max-w-6xl px-4">
-          <div className="text-center mb-12 space-y-3">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Meet Some Sample AI Calling Agents
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Industry-specialized agents ready to handle inbound and outbound calls for your team.
-            </p>
-          </div>
+        {/* AI Calling Agents */}
+        <section id="agents" className="agents-section py-16 md:py-20 bg-muted/30">
+          <div className="container max-w-6xl px-4">
+            <div className="text-center mb-12 space-y-3">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                Meet Sample AI Calling Agents
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Examples of industry-specialized agents we deploy — your agency gets custom agents
+                tailored to your vertical and scripts.
+              </p>
+            </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {agents.map((agent) => (
@@ -287,18 +373,22 @@ const CRMChains = () => {
         </div>
       </section>
 
-      {/* Brand Promise */}
-      <section className="py-16 bg-muted/50">
-        <div className="container max-w-4xl text-center space-y-4 px-4">
-          <p className="text-2xl md:text-3xl font-semibold text-foreground leading-relaxed">
-            "A defined brand promise attracts your ideal client.
-            <br />
-            <span className="text-primary">
-              CRMChains nurtures them into solutions orchestrated by your team."
-            </span>
-          </p>
-        </div>
-      </section>
+        {/* Brand Promise */}
+        <section className="py-16 bg-muted/50">
+          <div className="container max-w-4xl text-center space-y-6 px-4">
+            <p className="text-2xl md:text-3xl font-semibold text-foreground leading-relaxed">
+              "A defined brand promise attracts your ideal client.
+              <br />
+              <span className="text-primary">
+                CRMChains nurtures them into solutions orchestrated by your team."
+              </span>
+            </p>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Secure, agency-grade infrastructure · Bilingual support (EN/ES) · Serving the US,
+              Colombia & Mexico
+            </p>
+          </div>
+        </section>
 
       {/* Services */}
       <section id="services" className="py-20">
@@ -341,13 +431,14 @@ const CRMChains = () => {
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold">Built for Agencies That Scale Agents</h2>
               <p className="text-primary-foreground/80 text-lg leading-relaxed">
-                Whether you run an insurance agency or a real estate brokerage, your challenge is the
-                same: onboard agents fast, give them the right tools, and keep the pipeline moving.
+                Whether you run an insurance agency, real estate brokerage, or mortgage team, your
+                challenge is the same: onboard agents fast, give them the right tools, and keep the
+                pipeline moving.
               </p>
               <p className="text-primary-foreground/80 text-lg leading-relaxed">
                 CRMChains was born from serving insurance agencies — then we saw the same pain in real
-                estate. The agency model is universal. Our platform adapts the copy, branding, and
-                workflows for your vertical.
+                estate and mortgage. The agency model is universal. Our platform adapts the copy,
+                branding, and workflows for your vertical.
               </p>
             </div>
 
@@ -378,14 +469,58 @@ const CRMChains = () => {
             </div>
           </div>
         </div>
-      </section>
+        </section>
 
-      {/* Pricing */}
-      <section
-        id="pricing"
-        className="crmchains-pricing py-16 md:py-24 bg-muted/30"
-        data-billing={billingPeriod}
-      >
+        {/* Social proof */}
+        <section id="clients" className="py-16 md:py-20 bg-background">
+          <div className="container max-w-6xl px-4">
+            <div className="text-center mb-10 space-y-3">
+              <div className="inline-flex items-center gap-1 text-primary">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} className="h-4 w-4 fill-current" />
+                ))}
+                <span className="ml-2 text-sm font-semibold text-foreground">4.9 · 27 partners</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+                Trusted by Growing Agencies
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                See full client work and vertical-specific builds on our showcase.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-10">
+              {testimonials.map((t) => (
+                <blockquote
+                  key={t.author}
+                  className="rounded-xl border border-border bg-card p-6 shadow-sm"
+                >
+                  <p className="text-foreground text-sm leading-relaxed italic">"{t.quote}"</p>
+                  <footer className="mt-4 text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">{t.author}</span>
+                    <span className="text-primary"> · {t.vertical}</span>
+                  </footer>
+                </blockquote>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <Button size="lg" variant="outline" asChild>
+                <a href={CRMCHAINS_SHOWCASE_URL} target="_blank" rel="noopener noreferrer">
+                  View Client Showcase
+                  <ExternalLink className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing */}
+        <section
+          id="pricing"
+          className="crmchains-pricing py-16 md:py-24 bg-muted/30"
+          data-billing={billingPeriod}
+        >
         <div className="container max-w-6xl px-4">
           <div className="text-center mb-10 space-y-4">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">Choose Your Suite</h2>
@@ -424,7 +559,9 @@ const CRMChains = () => {
               </button>
             </div>
             {billingPeriod === "yearly" && (
-              <p className="text-sm text-primary font-medium">Save with annual billing</p>
+              <p className="text-sm text-primary font-medium">
+                Save up to $394/yr on AI Pro with annual billing
+              </p>
             )}
           </div>
 
@@ -433,6 +570,9 @@ const CRMChains = () => {
               const price = billingPeriod === "monthly" ? plan.monthlyPrice : plan.yearlyPrice;
               const periodLabel = billingPeriod === "monthly" ? "/mo" : "/yr";
               const checkoutUrl = billingPeriod === "monthly" ? plan.monthlyUrl : plan.yearlyUrl;
+              const savings = yearlySavings(plan.monthlyPrice, plan.yearlyPrice);
+              const ctaHref = plan.featured ? CRMCHAINS_CALENDAR_URL : checkoutUrl;
+              const ctaLabel = plan.featured ? "Book a Strategy Call" : "Get Started";
 
               return (
                 <div
@@ -450,10 +590,16 @@ const CRMChains = () => {
                   )}
                   <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
                   <p className="text-muted-foreground text-sm mt-2">{plan.description}</p>
-                  <div className="pricing-amount mt-6 mb-6">
+                  <div className="pricing-amount mt-6 mb-2">
                     <span className="text-4xl font-bold text-foreground">${price}</span>
                     <span className="text-muted-foreground ml-1">{periodLabel}</span>
                   </div>
+                  {billingPeriod === "yearly" && (
+                    <p className="text-sm text-primary font-medium mb-4">
+                      Save ${savings}/year vs monthly
+                    </p>
+                  )}
+                  {billingPeriod === "monthly" && <div className="mb-4" />}
                   <ul className="pricing-features space-y-3 text-sm text-foreground/90">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2">
@@ -463,12 +609,12 @@ const CRMChains = () => {
                     ))}
                   </ul>
                   <a
-                    href={checkoutUrl}
+                    href={ctaHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="pricing-cta"
                   >
-                    Get Started
+                    {ctaLabel}
                   </a>
                 </div>
               );
@@ -550,7 +696,7 @@ const CRMChains = () => {
               className="bg-coral hover:bg-coral/90 text-primary-foreground px-10 py-6 text-lg"
               asChild
             >
-              <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+              <a href={CRMCHAINS_CALENDAR_URL} target="_blank" rel="noopener noreferrer">
                 Book Your Strategy Call <ArrowRight className="ml-2 h-5 w-5" />
               </a>
             </Button>

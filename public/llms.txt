@@ -4,9 +4,10 @@
 
 ## Primary pages
 - [Homepage](https://branding.crmchains.com/crmchains): What CRMChains is and who it serves
-- [Brand Builder](https://branding.crmchains.com/brand-builder): Brand research and DNA tools
-- [Brand Lab](https://branding.crmchains.com/lab): AI brand effectiveness scanner
-- [Contact](https://crmchains.com/#section-4rhM9e5ju9): Sales and onboarding
+- [Client Showcase](https://showcase.crmchains.com/): Agencies and clients we have served
+- [Brand Builder](https://branding.crmchains.com/crmchains/brand-builder): Brand research and DNA tools
+- [Brand Lab](https://branding.crmchains.com/crmchains/lab): AI brand effectiveness scanner
+- [Contact](https://branding.crmchains.com/crmchains#contact): Phoenix office, phone, and email
 
 ## Offer
 - Branded CRM deployment (7-day go-live)

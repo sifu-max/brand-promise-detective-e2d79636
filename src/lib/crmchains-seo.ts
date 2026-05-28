@@ -1,5 +1,5 @@
 export const CRMCHAINS_CANONICAL = "https://branding.crmchains.com/crmchains";
-export const CRMCHAINS_OG_IMAGE = "https://branding.crmchains.com/og-image.jpg";
+export const CRMCHAINS_OG_IMAGE = "https://branding.crmchains.com/og-image.png";
 export const CRMCHAINS_LOGO = "https://branding.crmchains.com/logo.jpg";
 
 export const CRMCHAINS_META_DESCRIPTION =

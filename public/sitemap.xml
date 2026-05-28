@@ -6,6 +6,11 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://showcase.crmchains.com/</loc>
+    <priority>0.85</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://branding.crmchains.com/crmchains#faq</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>

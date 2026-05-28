@@ -20,17 +20,19 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const routerBasename =
+  import.meta.env.BASE_URL === "/" ? undefined : import.meta.env.BASE_URL.replace(/\/$/, "");
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={routerBasename}>
         <Routes>
           {/* https://branding.crmchains.com/crmchains */}
-          <Route path="/crmchains" element={<CRMChains />} />
+          <Route path="/" element={<CRMChains />} />
           <Route path="/lab" element={<Index />} />
-          <Route path="/" element={<Index />} />
           <Route path="/brand-builder" element={<BrandBuilder />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/clearfaith" element={<ClearFaithLanding />} />
