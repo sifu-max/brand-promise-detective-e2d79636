@@ -5,8 +5,6 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  // Deployed at https://branding.crmchains.com/crmchains/
-  base: "/crmchains/",
   server: {
     host: "::",
     port: 8080,

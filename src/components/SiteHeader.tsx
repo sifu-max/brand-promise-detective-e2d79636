@@ -17,7 +17,7 @@ export function SiteHeader() {
   return (
     <nav className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="container max-w-6xl flex items-center justify-between h-16">
-        <Link to="/">
+        <Link to="/crmchains">
           <img src={crmchainsLogo} alt="CRMChains" className="h-10 w-auto" />
         </Link>
 
