@@ -7,7 +7,7 @@ const navLinks = [
   { label: "Home", href: "https://crmchains.com/home-2433", external: true },
   { label: "About", href: "https://branding.crmchains.com/crmchains", external: true },
   { label: "Service", href: "https://crmchains.com/#view", external: true },
-  { label: "FAQ", href: "/crmchains#faq", external: false },
+  { label: "FAQ", href: "https://branding.crmchains.com/crmchains#faq", external: true },
   { label: "Contact", href: "https://crmchains.com/#section-4rhM9e5ju9", external: true },
   { label: "Branding", href: "/brand-builder", external: false },
   { label: "Brand Lab", href: "/lab", external: false },

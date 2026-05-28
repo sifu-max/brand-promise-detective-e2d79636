@@ -11,12 +11,23 @@ import {
   Zap,
   CheckCircle2,
   Building2,
+  Mail,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CRMChainsSeo } from "@/components/CRMChainsSeo";
 import { SiteLayout } from "@/components/SiteLayout";
-import { CRMCHAINS_H1, CRMCHAINS_INTRO, crmchainsFaqs } from "@/lib/crmchains-seo";
+import {
+  CRMCHAINS_ADDRESS_DISPLAY,
+  CRMCHAINS_EMAIL,
+  CRMCHAINS_H1,
+  CRMCHAINS_INTRO,
+  CRMCHAINS_MAPS_URL,
+  CRMCHAINS_PHONE,
+  CRMCHAINS_PHONE_DISPLAY,
+  crmchainsFaqs,
+} from "@/lib/crmchains-seo";
 import "@/styles/crmchains-pricing.css";
 
 const VIDEO_SRC =
@@ -466,8 +477,43 @@ const CRMChains = () => {
         </div>
       </section>
 
+        {/* Contact */}
+        <section id="contact" className="py-16 md:py-20 bg-background border-t border-border">
+          <div className="container max-w-3xl px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Contact CRMChains</h2>
+            <p className="text-muted-foreground mb-8">
+              Visit us, call, or email — we serve agencies across the US, Colombia, and Mexico.
+            </p>
+            <address className="not-italic inline-flex flex-col gap-4 text-left mx-auto text-foreground">
+              <a
+                href={CRMCHAINS_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 hover:text-primary transition-colors"
+              >
+                <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
+                <span>{CRMCHAINS_ADDRESS_DISPLAY}</span>
+              </a>
+              <a
+                href={`tel:${CRMCHAINS_PHONE}`}
+                className="flex items-center gap-3 hover:text-primary transition-colors"
+              >
+                <PhoneCall className="h-5 w-5 text-primary shrink-0" aria-hidden />
+                <span>{CRMCHAINS_PHONE_DISPLAY}</span>
+              </a>
+              <a
+                href={`mailto:${CRMCHAINS_EMAIL}`}
+                className="flex items-center gap-3 hover:text-primary transition-colors"
+              >
+                <Mail className="h-5 w-5 text-primary shrink-0" aria-hidden />
+                <span>{CRMCHAINS_EMAIL}</span>
+              </a>
+            </address>
+          </div>
+        </section>
+
         {/* FAQ */}
-        <section id="faq" className="py-16 md:py-20 bg-background">
+        <section id="faq" className="py-16 md:py-20 bg-muted/30">
           <div className="container max-w-3xl px-4">
             <div className="text-center mb-10 space-y-3">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground">Frequently Asked Questions</h2>
