@@ -230,7 +230,7 @@ const CRMChains = () => {
         <div className="container max-w-6xl px-4">
           <div className="text-center mb-12 space-y-3">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              Meet Your AI Calling Agents
+              Meet Some Sample AI Calling Agents
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Industry-specialized agents ready to handle inbound and outbound calls for your team.
