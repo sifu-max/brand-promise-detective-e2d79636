@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CRMChainsSeo } from "@/components/CRMChainsSeo";
 import { SiteLayout } from "@/components/SiteLayout";
+import { CRMCHAINS_H1, CRMCHAINS_INTRO, crmchainsFaqs } from "@/lib/crmchains-seo";
 import "@/styles/crmchains-pricing.css";
 
 const VIDEO_SRC =
@@ -145,8 +147,19 @@ const CRMChains = () => {
 
   return (
     <SiteLayout>
-      {/* Video */}
-      <section className="video-section w-full bg-muted/40 py-10 md:py-14">
+      <CRMChainsSeo />
+      <article>
+        <section className="border-b border-border bg-background py-8 md:py-10">
+          <div className="container max-w-6xl px-4 text-center md:text-left">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+              {CRMCHAINS_H1}
+            </h1>
+            <p className="mt-3 text-lg text-muted-foreground max-w-3xl">{CRMCHAINS_INTRO}</p>
+          </div>
+        </section>
+
+        {/* Video */}
+        <section className="video-section w-full bg-muted/40 py-10 md:py-14">
         <div className="container max-w-6xl px-4">
           <video
             controls
@@ -170,10 +183,10 @@ const CRMChains = () => {
                 Built for Insurance & Real Estate Agencies
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
                 Stop Losing Agents to
                 <span className="block text-coral mt-2">Broken Systems</span>
-              </h1>
+              </h2>
 
               <p className="text-lg md:text-xl text-primary-foreground/80 max-w-lg">
                 CRMChains gives your agency the CRM, AI agents, bilingual VAs, and automated
@@ -453,27 +466,51 @@ const CRMChains = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20">
-        <div className="container max-w-3xl text-center space-y-8 px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-            Ready to Give Your Agency an Unfair Advantage?
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Book a 30-minute strategy call. We'll show you exactly how CRMChains replaces your
-            disconnected tools with one system built for growth.
-          </p>
-          <Button
-            size="lg"
-            className="bg-coral hover:bg-coral/90 text-primary-foreground px-10 py-6 text-lg"
-            asChild
-          >
-            <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
-              Book Your Strategy Call <ArrowRight className="ml-2 h-5 w-5" />
-            </a>
-          </Button>
-        </div>
-      </section>
+        {/* FAQ */}
+        <section id="faq" className="py-16 md:py-20 bg-background">
+          <div className="container max-w-3xl px-4">
+            <div className="text-center mb-10 space-y-3">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground">Frequently Asked Questions</h2>
+              <p className="text-muted-foreground">
+                Quick answers for agencies evaluating CRMChains.
+              </p>
+            </div>
+            <dl className="space-y-6">
+              {crmchainsFaqs.map((faq) => (
+                <div
+                  key={faq.question}
+                  className="rounded-xl border border-border bg-card p-6 shadow-sm"
+                >
+                  <dt className="text-lg font-semibold text-foreground">{faq.question}</dt>
+                  <dd className="mt-2 text-muted-foreground leading-relaxed">{faq.answer}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-20">
+          <div className="container max-w-3xl text-center space-y-8 px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              Ready to Give Your Agency an Unfair Advantage?
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+              Book a 30-minute strategy call. We'll show you exactly how CRMChains replaces your
+              disconnected tools with one system built for growth.
+            </p>
+            <Button
+              size="lg"
+              className="bg-coral hover:bg-coral/90 text-primary-foreground px-10 py-6 text-lg"
+              asChild
+            >
+              <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
+                Book Your Strategy Call <ArrowRight className="ml-2 h-5 w-5" />
+              </a>
+            </Button>
+          </div>
+        </section>
+      </article>
     </SiteLayout>
   );
 };

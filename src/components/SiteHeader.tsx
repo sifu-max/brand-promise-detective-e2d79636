@@ -7,6 +7,7 @@ const navLinks = [
   { label: "Home", href: "https://crmchains.com/home-2433", external: true },
   { label: "About", href: "https://branding.crmchains.com/crmchains", external: true },
   { label: "Service", href: "https://crmchains.com/#view", external: true },
+  { label: "FAQ", href: "/crmchains#faq", external: false },
   { label: "Contact", href: "https://crmchains.com/#section-4rhM9e5ju9", external: true },
   { label: "Branding", href: "/brand-builder", external: false },
   { label: "Brand Lab", href: "/lab", external: false },
@@ -15,8 +16,11 @@ const navLinks = [
 
 export function SiteHeader() {
   return (
-    <nav className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container max-w-6xl flex items-center justify-between h-16">
+    <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+      <nav
+        className="container max-w-6xl flex items-center justify-between h-16"
+        aria-label="Primary"
+      >
         <Link to="/crmchains">
           <img src={crmchainsLogo} alt="CRMChains" className="h-10 w-auto" />
         </Link>
@@ -68,7 +72,7 @@ export function SiteHeader() {
             </a>
           </Button>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }

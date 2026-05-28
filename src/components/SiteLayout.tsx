@@ -11,7 +11,7 @@ export function SiteLayout({ children }: SiteLayoutProps) {
     <div className="min-h-screen bg-background flex flex-col">
       <SiteHeader />
       <main className="flex-1">{children}</main>
-      <footer className="border-t border-border py-12 mt-auto">
+      <footer className="border-t border-border py-12 mt-auto" role="contentinfo">
         <div className="container max-w-6xl">
           <div className="flex flex-col items-center gap-6 text-center">
             <a
