@@ -22,9 +22,9 @@ export const CRMCHAINS_BUSINESS_ADDRESS = {
 export const CRMCHAINS_ADDRESS_DISPLAY =
   "3015 East Weldon Avenue, Phoenix, AZ 85016";
 
-export const CRMCHAINS_PHONE = "+1-408-858-5737";
-export const CRMCHAINS_PHONE_DISPLAY = "+1 (408) 858-5737";
-export const CRMCHAINS_EMAIL = "hello@crmchains.com";
+export const CRMCHAINS_PHONE = "+13235437110";
+export const CRMCHAINS_PHONE_DISPLAY = "+1 (323) 543-7110";
+export const CRMCHAINS_EMAIL = "info@crmchains.com";
 
 export const CRMCHAINS_MAPS_URL =
   "https://www.google.com/maps/search/?api=1&query=3015+East+Weldon+Avenue,+Phoenix,+AZ+85016";
