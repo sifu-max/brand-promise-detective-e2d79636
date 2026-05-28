@@ -5,7 +5,6 @@ import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import {
   CRMCHAINS_ADDRESS_DISPLAY,
   CRMCHAINS_EMAIL,
-  CRMCHAINS_MAPS_URL,
   CRMCHAINS_PHONE,
   CRMCHAINS_PHONE_DISPLAY,
 } from "@/lib/crmchains-seo";
@@ -38,14 +37,7 @@ export function SiteLayout({ children }: SiteLayoutProps) {
             <address className="not-italic text-sm text-muted-foreground space-y-2 max-w-md">
               <div className="flex items-start justify-center gap-2">
                 <MapPin className="h-4 w-4 text-primary shrink-0 mt-0.5" aria-hidden />
-                <a
-                  href={CRMCHAINS_MAPS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-primary transition-colors text-left"
-                >
-                  {CRMCHAINS_ADDRESS_DISPLAY}
-                </a>
+                <span className="text-left">{CRMCHAINS_ADDRESS_DISPLAY}</span>
               </div>
               <div className="flex items-center justify-center gap-2">
                 <Phone className="h-4 w-4 text-primary shrink-0" aria-hidden />

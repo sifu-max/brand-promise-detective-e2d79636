@@ -26,7 +26,6 @@ import {
   CRMCHAINS_EMAIL,
   CRMCHAINS_H1,
   CRMCHAINS_INTRO,
-  CRMCHAINS_MAPS_URL,
   CRMCHAINS_PHONE,
   CRMCHAINS_PHONE_DISPLAY,
   crmchainsFaqs,
@@ -637,18 +636,13 @@ const CRMChains = () => {
           <div className="container max-w-3xl px-4 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Contact CRMChains</h2>
             <p className="text-muted-foreground mb-8">
-              Visit us, call, or email — we serve agencies across the US, Colombia, and Mexico.
+              Call or email — we serve agencies across the US, Colombia, and Mexico.
             </p>
             <address className="not-italic inline-flex flex-col gap-4 text-left mx-auto text-foreground">
-              <a
-                href={CRMCHAINS_MAPS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start gap-3 hover:text-primary transition-colors"
-              >
+              <div className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden />
                 <span>{CRMCHAINS_ADDRESS_DISPLAY}</span>
-              </a>
+              </div>
               <a
                 href={`tel:${CRMCHAINS_PHONE}`}
                 className="flex items-center gap-3 hover:text-primary transition-colors"

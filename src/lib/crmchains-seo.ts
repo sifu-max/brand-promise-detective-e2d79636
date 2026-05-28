@@ -12,22 +12,16 @@ export const CRMCHAINS_INTRO =
   "Bilingual CRM and AI-agent ecosystems for insurance and real estate teams.";
 
 export const CRMCHAINS_BUSINESS_ADDRESS = {
-  streetAddress: "3015 East Weldon Avenue",
   addressLocality: "Phoenix",
   addressRegion: "AZ",
-  postalCode: "85016",
   addressCountry: "US",
 } as const;
 
-export const CRMCHAINS_ADDRESS_DISPLAY =
-  "3015 East Weldon Avenue, Phoenix, AZ 85016";
+export const CRMCHAINS_ADDRESS_DISPLAY = "Phoenix, AZ · United States (virtual office)";
 
 export const CRMCHAINS_PHONE = "+13235437110";
 export const CRMCHAINS_PHONE_DISPLAY = "+1 (323) 543-7110";
 export const CRMCHAINS_EMAIL = "info@crmchains.com";
-
-export const CRMCHAINS_MAPS_URL =
-  "https://www.google.com/maps/search/?api=1&query=3015+East+Weldon+Avenue,+Phoenix,+AZ+85016";
 
 export const crmchainsFaqs = [
   {

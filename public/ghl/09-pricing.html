@@ -1,0 +1,89 @@
+<!-- BLOCK 9: Pricing (paste as one custom HTML block) -->
+<div class="cc-root" id="cc-pricing" style="padding:4rem 0;background:#f4f2f8;">
+  <div class="cc-container" style="text-align:center;">
+    <h2 class="cc-section-title">Choose Your Suite</h2>
+    <p class="cc-section-lead">Flexible plans for agencies ready to automate outreach and grow their pipeline.</p>
+    <div role="group" aria-label="Billing period" style="display:inline-flex;border:1px solid #e8e4ef;border-radius:999px;padding:4px;background:#fff;margin-bottom:0.5rem;">
+      <button type="button" id="cc-bill-monthly" style="padding:0.5rem 1.25rem;border:none;border-radius:999px;font-weight:600;cursor:pointer;background:#7c3aed;color:#fff;">Monthly</button>
+      <button type="button" id="cc-bill-yearly" style="padding:0.5rem 1.25rem;border:none;border-radius:999px;font-weight:600;cursor:pointer;background:transparent;color:#6b6280;">Yearly</button>
+    </div>
+    <p id="cc-bill-hint" style="font-size:0.875rem;color:#7c3aed;font-weight:600;min-height:1.25rem;margin:0 0 2rem;"></p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:56rem;margin:0 auto;text-align:left;">
+      <div class="cc-pricing-card" style="display:flex;flex-direction:column;border:1px solid #e8e4ef;border-radius:1rem;padding:2rem;background:#fff;box-shadow:0 4px 20px rgba(30,22,51,0.06);">
+        <h3 style="margin:0 0 0.5rem;">AI Basic Suite</h3>
+        <p style="margin:0 0 1rem;color:#6b6280;font-size:0.875rem;">Core CRM, automations, and follow-up systems to keep your pipeline moving.</p>
+        <p class="cc-price" data-monthly="97" data-yearly="970" style="font-size:2.25rem;font-weight:700;margin:0 0 0.25rem;">$97<span style="font-size:1rem;font-weight:400;color:#6b6280;">/mo</span></p>
+        <p class="cc-save" style="font-size:0.875rem;color:#7c3aed;font-weight:600;min-height:1.25rem;margin:0 0 1rem;"></p>
+        <ul class="cc-features" style="flex-grow:1;list-style:none;padding:0;margin:0 0 1.5rem;font-size:0.9rem;color:#1e1633;">
+          <li style="margin-bottom:0.5rem;">✓ CRM &amp; pipeline management</li>
+          <li style="margin-bottom:0.5rem;">✓ Automated email &amp; SMS follow-up</li>
+          <li style="margin-bottom:0.5rem;">✓ Contact &amp; lead management</li>
+          <li style="margin-bottom:0.5rem;">✓ Workflow automations</li>
+          <li>✓ Speed-to-lead systems</li>
+        </ul>
+        <a class="cc-cta" data-monthly="https://crmchains.com/ai-basic-suite-97" data-yearly="https://crmchains.com/ai-basic-suite-970" href="https://crmchains.com/ai-basic-suite-97" style="margin-top:auto;display:block;text-align:center;padding:0.875rem 1.5rem;border-radius:0.75rem;background:#7c3aed;color:#fff;font-weight:600;text-decoration:none;">Get Started</a>
+      </div>
+      <div class="cc-pricing-card" style="display:flex;flex-direction:column;border:2px solid #7c3aed;border-radius:1rem;padding:2rem 2rem 2rem;background:#fff;box-shadow:0 4px 24px rgba(124,58,237,0.15);position:relative;">
+        <span style="position:absolute;top:-0.75rem;left:50%;transform:translateX(-50%);background:#e85a4f;color:#fff;font-size:0.7rem;font-weight:700;padding:0.25rem 0.75rem;border-radius:999px;">RECOMMENDED</span>
+        <h3 style="margin:0 0 0.5rem;">AI Pro Suite</h3>
+        <p style="margin:0 0 1rem;color:#6b6280;font-size:0.875rem;">Full communication infrastructure with AI agents and advanced outreach.</p>
+        <p class="cc-price" data-monthly="197" data-yearly="1970" style="font-size:2.25rem;font-weight:700;margin:0 0 0.25rem;">$197<span style="font-size:1rem;font-weight:400;color:#6b6280;">/mo</span></p>
+        <p class="cc-save" style="font-size:0.875rem;color:#7c3aed;font-weight:600;min-height:1.25rem;margin:0 0 1rem;"></p>
+        <ul class="cc-features" style="flex-grow:1;list-style:none;padding:0;margin:0 0 1.5rem;font-size:0.9rem;color:#1e1633;">
+          <li style="margin-bottom:0.5rem;">✓ Everything in AI Basic Suite</li>
+          <li style="margin-bottom:0.5rem;">✓ AI calling agents (inbound &amp; outbound)</li>
+          <li style="margin-bottom:0.5rem;">✓ Automated visitor follow-up</li>
+          <li style="margin-bottom:0.5rem;">✓ Branded website &amp; funnel ecosystem</li>
+          <li style="margin-bottom:0.5rem;">✓ Broadcast messaging &amp; campaigns</li>
+          <li style="margin-bottom:0.5rem;">✓ Member / team database (CRM)</li>
+          <li>✓ Priority support</li>
+        </ul>
+        <a class="cc-cta cc-cta-pro" data-monthly="https://crmchains.com/ai-pro-suite-197" data-yearly="https://crmchains.com/ai-pro-suite-1970" data-calendar="https://crmchains.com/calendar" href="https://crmchains.com/calendar" style="margin-top:auto;display:block;text-align:center;padding:0.875rem 1.5rem;border-radius:0.75rem;background:#7c3aed;color:#fff;font-weight:600;text-decoration:none;">Book a Strategy Call</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function () {
+  var root = document.getElementById("cc-pricing");
+  if (!root || root.dataset.ccPricingInit) return;
+  root.dataset.ccPricingInit = "1";
+  var period = "monthly";
+  var btnM = document.getElementById("cc-bill-monthly");
+  var btnY = document.getElementById("cc-bill-yearly");
+  var hint = document.getElementById("cc-bill-hint");
+  function setActive(btnOn, btnOff) {
+    btnOn.style.background = "#7c3aed";
+    btnOn.style.color = "#fff";
+    btnOff.style.background = "transparent";
+    btnOff.style.color = "#6b6280";
+  }
+  function update() {
+    var yearly = period === "yearly";
+    hint.textContent = yearly ? "Save up to $394/yr on AI Pro with annual billing" : "";
+    root.querySelectorAll(".cc-price").forEach(function (el) {
+      var m = +el.dataset.monthly, y = +el.dataset.yearly;
+      var v = yearly ? y : m;
+      el.innerHTML = "$" + v + '<span style="font-size:1rem;font-weight:400;color:#6b6280;">' + (yearly ? "/yr" : "/mo") + "</span>";
+    });
+    root.querySelectorAll(".cc-save").forEach(function (el) {
+      var card = el.closest(".cc-pricing-card");
+      var price = card.querySelector(".cc-price");
+      var m = +price.dataset.monthly, y = +price.dataset.yearly;
+      el.textContent = yearly ? "Save $" + (m * 12 - y) + "/year vs monthly" : "";
+    });
+    root.querySelectorAll(".cc-cta").forEach(function (a) {
+      if (a.classList.contains("cc-cta-pro")) {
+        a.href = a.getAttribute("data-calendar");
+        a.textContent = "Book a Strategy Call";
+      } else {
+        a.href = yearly ? a.dataset.yearly : a.dataset.monthly;
+        a.textContent = "Get Started";
+      }
+    });
+  }
+  btnM.addEventListener("click", function () { period = "monthly"; setActive(btnM, btnY); update(); });
+  btnY.addEventListener("click", function () { period = "yearly"; setActive(btnY, btnM); update(); });
+  update();
+})();
+</script>
