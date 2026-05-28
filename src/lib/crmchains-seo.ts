@@ -75,14 +75,16 @@ export const localBusinessSchema = {
   priceRange: "$$",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "San Jose",
-    addressRegion: "CA",
+    streetAddress: "3015 East Weldon Avenue",
+    addressLocality: "Phoenix",
+    addressRegion: "AZ",
+    postalCode: "85016",
     addressCountry: "US",
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: 37.3382,
-    longitude: -121.8863,
+    latitude: 33.4877,
+    longitude: -112.016,
   },
   openingHoursSpecification: [
     {
