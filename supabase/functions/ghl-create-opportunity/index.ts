@@ -102,10 +102,20 @@ serve(async (req) => {
       isExistingContact = !!contactId;
     }
 
+    // Flatten nested brandingIntake (from Conversation Quiz) into top-level
+    const flatBrandData: Record<string, unknown> = { ...brandData };
+    if (brandData.brandingIntake && typeof brandData.brandingIntake === "object") {
+      for (const [k, v] of Object.entries(brandData.brandingIntake as Record<string, unknown>)) {
+        if (flatBrandData[k] === undefined || flatBrandData[k] === "") {
+          flatBrandData[k] = v;
+        }
+      }
+    }
+
     // Build custom fields array (shared between contact & opportunity)
     const customFields: Array<{ key: string; field_value: string }> = [];
     for (const [formKey, ghlKey] of Object.entries(FIELD_MAP)) {
-      let value = brandData[formKey];
+      let value = flatBrandData[formKey];
       if (value === undefined || value === null || value === "") continue;
       if (Array.isArray(value)) {
         value = value.filter((v: string) => v && v.trim()).join(" | ");
@@ -113,10 +123,16 @@ serve(async (req) => {
       customFields.push({ key: ghlKey, field_value: String(value) });
     }
 
-    // Add inference notes
+    // Add inference notes (includes quiz meta when present)
     const inferenceNotes = [
-      brandData.extraction_confidence ? `Confidence: ${brandData.extraction_confidence}` : "",
-      brandData.source_url ? `Source: ${brandData.source_url}` : "",
+      flatBrandData.extraction_confidence ? `Confidence: ${flatBrandData.extraction_confidence}` : "",
+      flatBrandData.source_url ? `Source: ${flatBrandData.source_url}` : "",
+      flatBrandData.quizType ? `Quiz: ${flatBrandData.quizType}` : "",
+      flatBrandData.icp ? `ICP: ${flatBrandData.icp}` : "",
+      flatBrandData.tier ? `Tier: ${flatBrandData.tier}` : "",
+      flatBrandData.totalScore !== undefined
+        ? `Score: ${flatBrandData.totalScore}/${flatBrandData.maxScore ?? "?"}`
+        : "",
     ]
       .filter(Boolean)
       .join(" — ");
