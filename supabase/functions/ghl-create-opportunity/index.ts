@@ -159,10 +159,10 @@ serve(async (req) => {
       if (uploadError) {
         console.error("Storage upload error:", uploadError);
       } else {
-        const { data: urlData } = sb.storage
+        const { data: signed } = await sb.storage
           .from("brand-exports")
-          .getPublicUrl(fileName);
-        exportUrl = urlData?.publicUrl || "";
+          .createSignedUrl(fileName, 60 * 60 * 24 * 365);
+        exportUrl = signed?.signedUrl || "";
       }
     }
 
