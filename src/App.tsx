@@ -12,8 +12,7 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Lovable serves assets at /assets/ but the app lives under /crmchains
-const ROUTER_BASENAME = "/crmchains";
+const ROUTER_BASENAME = "/";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -22,7 +21,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter basename={ROUTER_BASENAME}>
         <Routes>
-          <Route path="/" element={<Navigate to="/brand-builder" replace />} />
+          <Route path="/" element={<Navigate to="/quiz" replace />} />
+          {/* Legacy /crmchains/* redirects */}
+          <Route path="/crmchains" element={<Navigate to="/quiz" replace />} />
+          <Route path="/crmchains/quiz" element={<Navigate to="/quiz" replace />} />
+          <Route path="/crmchains/brand-builder" element={<Navigate to="/brand-builder" replace />} />
+          <Route path="/crmchains/revenue-scanner" element={<Navigate to="/revenue-scanner" replace />} />
+          <Route path="/crmchains/admin" element={<Navigate to="/admin" replace />} />
+          <Route path="/crmchains/revolution-mortgage-proposal" element={<Navigate to="/revolution-mortgage-proposal" replace />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/brand-builder" element={<BrandBuilder />} />
           <Route path="/quiz" element={<ConversationQuiz />} />
