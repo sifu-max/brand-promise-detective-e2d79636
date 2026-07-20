@@ -365,6 +365,7 @@ type Phase = "icp" | "contact" | "quiz" | "branding" | "results";
 
 export default function ConversationQuiz() {
   const [phase, setPhase] = useState<Phase>("icp");
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedIcp, setSelectedIcp] = useState<string | null>(null);
   const [contactInfo, setContactInfo] = useState({ firstName: "", email: "" });
   const [currentQ, setCurrentQ] = useState(0);
