@@ -19,6 +19,16 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@crmchains" />
     <meta name="twitter:image" content="https://branding.crmchains.com/og-image.png" />
+    <script>
+      // Redirect legacy root paths to the /crmchains SPA basename
+      (function () {
+        var redirects = { '/quiz': '/crmchains/quiz', '/brand-builder': '/crmchains/brand-builder' };
+        var target = redirects[window.location.pathname];
+        if (target && window.location.pathname !== target) {
+          window.location.replace(target + window.location.search + window.location.hash);
+        }
+      })();
+    </script>
   </head>
 
   <body>
