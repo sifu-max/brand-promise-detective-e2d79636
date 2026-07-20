@@ -13,6 +13,7 @@ const PIPELINE_ID = "ENR2pj52LUpUIXrnefVy";
 
 // Map brand form fields → GHL custom field keys
 const FIELD_MAP: Record<string, string> = {
+  // Brand Builder (AI research) top-level keys
   business_tagline: "business_tagline_ai",
   primary_call_to_action: "primary_call_to_action_ai",
   core_service_solution: "core_service_solution_ai",
@@ -30,6 +31,25 @@ const FIELD_MAP: Record<string, string> = {
   brand_body_font: "brand_body_font",
   video_url: "brand_video_url",
   embed_links: "upload_supporting_documents_or_files_eg_pdfs_csvs_etc",
+
+  // Quiz brandingIntake keys (flattened from brandData.brandingIntake)
+  tagline: "business_tagline_ai",
+  cta: "primary_call_to_action_ai",
+  coreSolution: "core_service_solution_ai",
+  communicationTone: "communication_tone_ai",
+  clientBudgetTimeline: "clients_budget_timeline_ai",
+  coreOfferInvestment: "core_offer_investment_ai",
+  offerStructure: "offer_structure",
+  idealClient: "ideal_client_niche",
+  painPoints: "core_client_pain_points_ai",
+  salesScript: "sales_script_formula",
+  customerProfiles: "customer_profiles",
+  profileGoals: "profile_goals",
+  profileTriggers: "profile_triggers",
+  entryPoint: "entry_point",
+  currentMomentum: "current_momentum",
+  desiredMomentum: "desired_momentum",
+  postEngagement: "postengagement_followup",
 };
 
 async function ghlFetch(path: string, token: string, options: RequestInit = {}) {
