@@ -935,6 +935,20 @@ export default function ConversationQuiz() {
           </div>
         )}
       </main>
+
+      <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
+        <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6 pb-2">
+            <DialogTitle>Book Your Strategy Call</DialogTitle>
+          </DialogHeader>
+          <iframe
+            src="https://link.crmchains.com/widget/booking/oZ01xEOkfEvyRVf1Mb7M"
+            className="w-full h-full border-0"
+            scrolling="no"
+            title="Book a strategy call"
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
