@@ -50,6 +50,8 @@ const FIELD_MAP: Record<string, string> = {
   currentMomentum: "current_momentum",
   desiredMomentum: "desired_momentum",
   postEngagement: "postengagement_followup",
+  hurtingArea: "which_of_these_areas_is_hurting_your_business_the_most_right_now",
+
 };
 
 async function ghlFetch(path: string, token: string, options: RequestInit = {}) {
