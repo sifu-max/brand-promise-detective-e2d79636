@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -364,6 +365,7 @@ type Phase = "icp" | "contact" | "quiz" | "branding" | "results";
 
 export default function ConversationQuiz() {
   const [phase, setPhase] = useState<Phase>("icp");
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [selectedIcp, setSelectedIcp] = useState<string | null>(null);
   const [contactInfo, setContactInfo] = useState({ firstName: "", email: "" });
   const [currentQ, setCurrentQ] = useState(0);
@@ -917,10 +919,8 @@ export default function ConversationQuiz() {
                 <Separator />
 
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Button size="lg" className="gap-2 flex-1" asChild>
-                    <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
-                      {band.cta} <ArrowRight className="w-4 h-4" />
-                    </a>
+                  <Button size="lg" className="gap-2 flex-1" onClick={() => setBookingOpen(true)}>
+                    {band.cta} <ArrowRight className="w-4 h-4" />
                   </Button>
                   <Button size="lg" variant="outline" className="gap-2" onClick={reset}>
                     <RotateCcw className="w-4 h-4" /> Retake
@@ -935,6 +935,20 @@ export default function ConversationQuiz() {
           </div>
         )}
       </main>
+
+      <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
+        <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6 pb-2">
+            <DialogTitle>Book Your Strategy Call</DialogTitle>
+          </DialogHeader>
+          <iframe
+            src="https://link.crmchains.com/widget/booking/oZ01xEOkfEvyRVf1Mb7M"
+            className="w-full h-full border-0"
+            scrolling="no"
+            title="Book a strategy call"
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
