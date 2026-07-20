@@ -13,6 +13,7 @@ const PIPELINE_ID = "ENR2pj52LUpUIXrnefVy";
 
 // Map brand form fields → GHL custom field keys
 const FIELD_MAP: Record<string, string> = {
+  // Brand Builder (AI research) top-level keys
   business_tagline: "business_tagline_ai",
   primary_call_to_action: "primary_call_to_action_ai",
   core_service_solution: "core_service_solution_ai",
@@ -30,6 +31,25 @@ const FIELD_MAP: Record<string, string> = {
   brand_body_font: "brand_body_font",
   video_url: "brand_video_url",
   embed_links: "upload_supporting_documents_or_files_eg_pdfs_csvs_etc",
+
+  // Quiz brandingIntake keys (flattened from brandData.brandingIntake)
+  tagline: "business_tagline_ai",
+  cta: "primary_call_to_action_ai",
+  coreSolution: "core_service_solution_ai",
+  communicationTone: "communication_tone_ai",
+  clientBudgetTimeline: "clients_budget_timeline_ai",
+  coreOfferInvestment: "core_offer_investment_ai",
+  offerStructure: "offer_structure",
+  idealClient: "ideal_client_niche",
+  painPoints: "core_client_pain_points_ai",
+  salesScript: "sales_script_formula",
+  customerProfiles: "customer_profiles",
+  profileGoals: "profile_goals",
+  profileTriggers: "profile_triggers",
+  entryPoint: "entry_point",
+  currentMomentum: "current_momentum",
+  desiredMomentum: "desired_momentum",
+  postEngagement: "postengagement_followup",
 };
 
 async function ghlFetch(path: string, token: string, options: RequestInit = {}) {
@@ -82,10 +102,20 @@ serve(async (req) => {
       isExistingContact = !!contactId;
     }
 
+    // Flatten nested brandingIntake (from Conversation Quiz) into top-level
+    const flatBrandData: Record<string, unknown> = { ...brandData };
+    if (brandData.brandingIntake && typeof brandData.brandingIntake === "object") {
+      for (const [k, v] of Object.entries(brandData.brandingIntake as Record<string, unknown>)) {
+        if (flatBrandData[k] === undefined || flatBrandData[k] === "") {
+          flatBrandData[k] = v;
+        }
+      }
+    }
+
     // Build custom fields array (shared between contact & opportunity)
     const customFields: Array<{ key: string; field_value: string }> = [];
     for (const [formKey, ghlKey] of Object.entries(FIELD_MAP)) {
-      let value = brandData[formKey];
+      let value = flatBrandData[formKey];
       if (value === undefined || value === null || value === "") continue;
       if (Array.isArray(value)) {
         value = value.filter((v: string) => v && v.trim()).join(" | ");
@@ -93,10 +123,16 @@ serve(async (req) => {
       customFields.push({ key: ghlKey, field_value: String(value) });
     }
 
-    // Add inference notes
+    // Add inference notes (includes quiz meta when present)
     const inferenceNotes = [
-      brandData.extraction_confidence ? `Confidence: ${brandData.extraction_confidence}` : "",
-      brandData.source_url ? `Source: ${brandData.source_url}` : "",
+      flatBrandData.extraction_confidence ? `Confidence: ${flatBrandData.extraction_confidence}` : "",
+      flatBrandData.source_url ? `Source: ${flatBrandData.source_url}` : "",
+      flatBrandData.quizType ? `Quiz: ${flatBrandData.quizType}` : "",
+      flatBrandData.icp ? `ICP: ${flatBrandData.icp}` : "",
+      flatBrandData.tier ? `Tier: ${flatBrandData.tier}` : "",
+      flatBrandData.totalScore !== undefined
+        ? `Score: ${flatBrandData.totalScore}/${flatBrandData.maxScore ?? "?"}`
+        : "",
     ]
       .filter(Boolean)
       .join(" — ");
