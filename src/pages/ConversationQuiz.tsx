@@ -316,7 +316,24 @@ const brandingScreens: { title: string; subtitle: string; fields: BrandingField[
       { key: "cta", label: "What is your Primary Call to Action (CTA)?", type: "text", placeholder: "e.g. 'Book a Free Consultation', 'Get a Quote'" },
       { key: "coreSolution", label: "Core Service/Solution: What do you do to solve the urgent problem?", type: "textarea", placeholder: "Describe your core service..." },
       { key: "communicationTone", label: "Communication Tone", type: "select", options: ["Professional", "Casual/Friendly", "Urgent/Direct"], required: true },
+      {
+        key: "hurtingArea",
+        label: "Which of these areas is hurting your business the most right now?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "speedtolead_gap_response_and_notification_speed", label: "Speed-to-lead gap (response and notification speed)" },
+          { value: "missed_calls__afterhours_leakage", label: "Missed calls / after-hours leakage" },
+          { value: "rising_cpl__low_roas_cost_per_lead_return_on_ad_spend", label: "Rising CPL / low ROAS (cost per lead / return on ad spend)" },
+          { value: "noshow_drain", label: "No-show drain" },
+          { value: "support_cost__agent_burnout", label: "Support cost / agent burnout" },
+          { value: "fragmented_data_silos", label: "Fragmented data silos" },
+          { value: "content_bottleneck", label: "Content bottleneck" },
+          { value: "dormantlead_reactivation", label: "Dormant-lead reactivation" },
+        ],
+      },
     ],
+
   },
   {
     title: "Offer & Investment",
