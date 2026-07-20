@@ -302,9 +302,10 @@ interface BrandingField {
   label: string;
   type: "text" | "textarea" | "select";
   placeholder?: string;
-  options?: string[];
+  options?: Array<string | { value: string; label: string }>;
   required?: boolean;
 }
+
 
 const brandingScreens: { title: string; subtitle: string; fields: BrandingField[] }[] = [
   {
