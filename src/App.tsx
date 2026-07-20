@@ -2,20 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import BrandBuilder from "./pages/BrandBuilder";
-import CRMChains from "./pages/CRMChains";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AdminDashboard from "./pages/AdminDashboard";
-import ClearFaithLanding from "./pages/ClearFaithLanding";
-import ClearFaithProposal from "./pages/ClearFaithProposal";
+import BrandBuilder from "./pages/BrandBuilder";
+import ConversationQuiz from "./pages/ConversationQuiz";
 import RevolutionMortgageProposal from "./pages/RevolutionMortgageProposal";
 import RevenueScanner from "./pages/RevenueScanner";
-import SocialMedia from "./pages/SocialMedia";
-import ConversationQuiz from "./pages/ConversationQuiz";
-import ChamberLetter from "./pages/ChamberLetter";
-import StarbucksLetter from "./pages/StarbucksLetter";
-import MusicfyQuiz from "./pages/MusicfyQuiz";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,21 +22,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter basename={ROUTER_BASENAME}>
         <Routes>
-          {/* https://branding.crmchains.com/crmchains */}
-          <Route path="/" element={<CRMChains />} />
-          <Route path="/lab" element={<Index />} />
-          <Route path="/brand-builder" element={<BrandBuilder />} />
+          <Route path="/" element={<Navigate to="/brand-builder" replace />} />
           <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/clearfaith" element={<ClearFaithLanding />} />
-          <Route path="/clear-faith" element={<ClearFaithLanding />} />
-          <Route path="/clearfaith-proposal" element={<ClearFaithProposal />} />
-          <Route path="/revolution-mortgage-proposal" element={<RevolutionMortgageProposal />} />
-          <Route path="/revenue-scanner" element={<RevenueScanner />} />
+          <Route path="/brand-builder" element={<BrandBuilder />} />
           <Route path="/quiz" element={<ConversationQuiz />} />
-          <Route path="/social" element={<SocialMedia />} />
-          <Route path="/chamber-letter" element={<ChamberLetter />} />
-          <Route path="/starbucks-letter" element={<StarbucksLetter />} />
-          <Route path="/musicfy" element={<MusicfyQuiz />} />
+          <Route path="/revenue-scanner" element={<RevenueScanner />} />
+          <Route path="/revolution-mortgage-proposal" element={<RevolutionMortgageProposal />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
