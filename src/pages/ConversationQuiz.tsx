@@ -792,9 +792,12 @@ export default function ConversationQuiz() {
                           <SelectValue placeholder={`Select ${field.label.split(":")[0].toLowerCase()}`} />
                         </SelectTrigger>
                         <SelectContent>
-                          {field.options.map((opt) => (
-                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                          ))}
+                          {field.options.map((opt) => {
+                            const val = typeof opt === "string" ? opt : opt.value;
+                            const label = typeof opt === "string" ? opt : opt.label;
+                            return <SelectItem key={val} value={val}>{label}</SelectItem>;
+                          })}
+
                         </SelectContent>
                       </Select>
                     )}
