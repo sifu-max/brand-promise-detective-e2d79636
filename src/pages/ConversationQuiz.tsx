@@ -918,10 +918,8 @@ export default function ConversationQuiz() {
                 <Separator />
 
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <Button size="lg" className="gap-2 flex-1" asChild>
-                    <a href="https://crmchains.com/calendar" target="_blank" rel="noopener noreferrer">
-                      {band.cta} <ArrowRight className="w-4 h-4" />
-                    </a>
+                  <Button size="lg" className="gap-2 flex-1" onClick={() => setBookingOpen(true)}>
+                    {band.cta} <ArrowRight className="w-4 h-4" />
                   </Button>
                   <Button size="lg" variant="outline" className="gap-2" onClick={reset}>
                     <RotateCcw className="w-4 h-4" /> Retake
