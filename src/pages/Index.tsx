@@ -46,24 +46,22 @@ const Index = () => {
   const [comparisonImproved, setComparisonImproved] = useState<BrandEffectivenessResult | null>(null);
   const [comparisonUrls, setComparisonUrls] = useState<{ original: string; improved: string } | null>(null);
 
-  // Store lead + create analysis record, return analysis id
+  // Store lead + create analysis record via edge function (service-role writes only)
   const saveLead = async (url: string, leadInfo?: { firstName?: string; email?: string }) => {
     try {
-      let leadId: string | null = null;
-      if (leadInfo?.firstName || leadInfo?.email) {
-        const { data: lead } = await supabase
-          .from("leads")
-          .insert({ first_name: leadInfo.firstName || null, email: leadInfo.email || null })
-          .select("id")
-          .single();
-        leadId = lead?.id || null;
+      const { data, error } = await supabase.functions.invoke("save-analysis", {
+        body: {
+          action: "create",
+          url,
+          firstName: leadInfo?.firstName || null,
+          email: leadInfo?.email || null,
+        },
+      });
+      if (error) {
+        console.error("Failed to save lead:", error);
+        return null;
       }
-      const { data: analysis } = await supabase
-        .from("brand_analyses")
-        .insert({ lead_id: leadId, source_url: url })
-        .select("id")
-        .single();
-      return analysis?.id || null;
+      return (data as { analysisId?: string | null })?.analysisId || null;
     } catch (err) {
       console.error("Failed to save lead:", err);
       return null;
@@ -73,7 +71,9 @@ const Index = () => {
   const updateAnalysis = async (analysisId: string | null, updates: Record<string, any>) => {
     if (!analysisId) return;
     try {
-      await supabase.from("brand_analyses").update(updates).eq("id", analysisId);
+      await supabase.functions.invoke("save-analysis", {
+        body: { action: "update", analysisId, updates },
+      });
     } catch (err) {
       console.error("Failed to update analysis:", err);
     }
