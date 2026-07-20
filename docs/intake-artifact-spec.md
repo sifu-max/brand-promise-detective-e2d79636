@@ -4,7 +4,7 @@ This artifact is for internal use only. It is not meant to be shown to the clien
 
 ## Purpose
 
-Generate one structured intake snapshot per submission so the frontend, GHL, and swarm can all validate the same source-of-truth payload. Each intake also becomes a reusable client solution-library entry that can be grouped and searched by client over time.
+Generate one structured intake snapshot per submission so the frontend, GHL, and swarm can all validate the same source-of-truth payload.
 
 ## Recommended storage
 
@@ -13,8 +13,6 @@ Generate one structured intake snapshot per submission so the frontend, GHL, and
 - Keep the Markdown version for admin review, Google Drive export, or operator handoff.
 
 ## JSON schema
-
-The artifact now includes a client-library section so each intake can be organized as a reusable solution entry by client:
 
 ```json
 {
@@ -31,8 +29,7 @@ The artifact now includes a client-library section so each intake can be organiz
     "quiz",
     "brandBuilder",
     "inference",
-    "audit",
-    "clientLibrary"
+    "audit"
   ],
   "properties": {
     "schemaVersion": {
@@ -136,16 +133,6 @@ The artifact now includes a client-library section so each intake can be organiz
         "swarmSyncStatus": { "type": "string" }
       },
       "additionalProperties": false
-    },
-    "clientLibrary": {
-      "type": "object",
-      "properties": {
-        "key": { "type": "string" },
-        "entryType": { "type": "string" },
-        "clientRef": { "type": ["string", "null"] },
-        "summary": { "type": ["string", "null"] }
-      },
-      "additionalProperties": false
     }
   },
   "additionalProperties": false
@@ -206,4 +193,4 @@ The artifact now includes a client-library section so each intake can be organiz
 
 ## Implementation note
 
-This artifact should be generated server-side or in an admin workflow, not rendered to the client as a primary experience. Each submission becomes a reusable library entry keyed by client so future work can be grouped and referenced by client over time. The resulting JSON can be stored in GHL custom fields such as `intake_artifact_json` and `intake_artifact_markdown`.
+This artifact should be generated server-side or in an admin workflow, not rendered to the client as a primary experience. The resulting JSON can be stored in a GHL custom field such as `intake_artifact_json`.

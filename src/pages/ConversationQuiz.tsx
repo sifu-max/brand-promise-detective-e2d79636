@@ -13,7 +13,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
-import { buildInferenceNotes, flattenBrandData } from "@/lib/intakeMapping";
 
 /* ─────────────────────────  ICP Definitions  ───────────────────────── */
 
@@ -61,7 +60,6 @@ interface QuizQuestion {
   purpose: string;
   options: QuizOption[];
   multiSelect?: boolean;
-  inputType?: "radio" | "list";
 }
 
 const quizQuestions: QuizQuestion[] = [
@@ -90,7 +88,6 @@ const quizQuestions: QuizQuestion[] = [
     beliefAfter: "We're spread too thin — or missing channels entirely.",
     purpose: "Map channel complexity & gaps",
     multiSelect: true,
-    inputType: "list",
     options: [
       { label: "Phone calls", points: 1 },
       { label: "SMS / text", points: 1 },
@@ -300,16 +297,15 @@ const scoreBands = [
 
 /* ─────────────────────────  Branding Intake Screens  ───────────────────────── */
 
-type BrandingFieldType = "text" | "textarea" | "select" | "radio" | "list";
-
 interface BrandingField {
   key: string;
   label: string;
-  type: BrandingFieldType;
+  type: "text" | "textarea" | "select";
   placeholder?: string;
-  options?: string[];
+  options?: Array<string | { value: string; label: string }>;
   required?: boolean;
 }
+
 
 const brandingScreens: { title: string; subtitle: string; fields: BrandingField[] }[] = [
   {
@@ -320,7 +316,24 @@ const brandingScreens: { title: string; subtitle: string; fields: BrandingField[
       { key: "cta", label: "What is your Primary Call to Action (CTA)?", type: "text", placeholder: "e.g. 'Book a Free Consultation', 'Get a Quote'" },
       { key: "coreSolution", label: "Core Service/Solution: What do you do to solve the urgent problem?", type: "textarea", placeholder: "Describe your core service..." },
       { key: "communicationTone", label: "Communication Tone", type: "select", options: ["Professional", "Casual/Friendly", "Urgent/Direct"], required: true },
+      {
+        key: "hurtingArea",
+        label: "Which of these areas is hurting your business the most right now?",
+        type: "select",
+        required: true,
+        options: [
+          { value: "speedtolead_gap_response_and_notification_speed", label: "Speed-to-lead gap (response and notification speed)" },
+          { value: "missed_calls__afterhours_leakage", label: "Missed calls / after-hours leakage" },
+          { value: "rising_cpl__low_roas_cost_per_lead_return_on_ad_spend", label: "Rising CPL / low ROAS (cost per lead / return on ad spend)" },
+          { value: "noshow_drain", label: "No-show drain" },
+          { value: "support_cost__agent_burnout", label: "Support cost / agent burnout" },
+          { value: "fragmented_data_silos", label: "Fragmented data silos" },
+          { value: "content_bottleneck", label: "Content bottleneck" },
+          { value: "dormantlead_reactivation", label: "Dormant-lead reactivation" },
+        ],
+      },
     ],
+
   },
   {
     title: "Offer & Investment",
@@ -330,7 +343,7 @@ const brandingScreens: { title: string; subtitle: string; fields: BrandingField[
       { key: "coreOfferInvestment", label: "What is the price or fee for the customer?", type: "text", placeholder: "e.g. $2,500/mo or $10,000 one-time" },
       { key: "offerStructure", label: "Offer Structure: What clear options will you offer?", type: "select", options: ["Basic & Premium Options", "Single Price Offer", "Tiered (3+ Options)"] },
       { key: "idealClient", label: "Ideal Client (Niche): Who is the primary audience you serve?", type: "text", placeholder: "e.g. Families, 35+, Homeowners" },
-      { key: "painPoints", label: "What are the core pain points you solve for your ideal clients?", type: "list", placeholder: "List the key problems..." },
+      { key: "painPoints", label: "What are the core pain points you solve for your ideal clients?", type: "textarea", placeholder: "List the key problems..." },
     ],
   },
   {
@@ -338,16 +351,16 @@ const brandingScreens: { title: string; subtitle: string; fields: BrandingField[
     subtitle: "Help us understand your customers and sales approach.",
     fields: [
       { key: "salesScript", label: "Sales Script Formula: Problem → Solution → Benefits → Investment. Outline your approach.", type: "textarea", placeholder: "Describe your sales flow..." },
-      { key: "customerProfiles", label: "What are your main customer profiles, and which offer should each one be matched with?", type: "list", placeholder: "Profile A → Offer X, Profile B → Offer Y..." },
-      { key: "profileGoals", label: "What is each profile trying to solve or accomplish?", type: "list", placeholder: "Describe goals per profile..." },
-      { key: "profileTriggers", label: "What makes each profile take action?", type: "list", placeholder: "Describe what triggers them to buy..." },
+      { key: "customerProfiles", label: "What are your main customer profiles, and which offer should each one be matched with?", type: "textarea", placeholder: "Profile A → Offer X, Profile B → Offer Y..." },
+      { key: "profileGoals", label: "What is each profile trying to solve or accomplish?", type: "textarea", placeholder: "Describe goals per profile..." },
+      { key: "profileTriggers", label: "What makes each profile take action?", type: "textarea", placeholder: "Describe what triggers them to buy..." },
     ],
   },
   {
     title: "Momentum & Engagement",
     subtitle: "Map where engagement is happening and where you want more.",
     fields: [
-      { key: "entryPoint", label: "What asset or entry point do they usually interact with first?", type: "select", options: ["Google Search", "Social Ad", "Referral", "Direct Outreach", "Existing Client", "Other"], placeholder: "e.g. Google search, social ad, referral..." },
+      { key: "entryPoint", label: "What asset or entry point do they usually interact with first?", type: "textarea", placeholder: "e.g. Google search, social ad, referral..." },
       { key: "currentMomentum", label: "Where is momentum already happening?", type: "textarea", placeholder: "Describe what's working..." },
       { key: "desiredMomentum", label: "Where would you like to create more momentum?", type: "textarea", placeholder: "Describe where you want growth..." },
       { key: "postEngagement", label: "What should happen after someone engages?", type: "textarea", placeholder: "Describe the ideal next steps..." },
@@ -391,17 +404,12 @@ export default function ConversationQuiz() {
 
   const question = quizQuestions[currentQ];
   const totalBrandingScreens = brandingScreens.length;
-  const brandingFieldCount = brandingScreens.reduce((sum, screen) => sum + screen.fields.length, 0);
-  const totalIntakeQuestions = 1 + 2 + quizQuestions.length + brandingFieldCount;
-  const progress = phase === "icp"
-    ? 0
-    : phase === "contact"
-    ? (1 / totalIntakeQuestions) * 100
-    : phase === "quiz"
-    ? ((2 + currentQ + 1) / totalIntakeQuestions) * 100
+  const totalSteps = quizQuestions.length + totalBrandingScreens;
+  const progress = phase === "quiz"
+    ? ((currentQ + 1) / totalSteps) * 100
     : phase === "branding"
-    ? ((2 + quizQuestions.length + brandingScreen + 1) / totalIntakeQuestions) * 100
-    : 100;
+    ? ((quizQuestions.length + brandingScreen + 1) / totalSteps) * 100
+    : phase === "results" ? 100 : 0;
 
   const totalScore = Object.entries(answers).reduce((sum, [key, val]) => {
     if (key.endsWith("_indices")) return sum;
@@ -478,30 +486,24 @@ export default function ConversationQuiz() {
         return { questionId: q.id, title: q.title, stage: q.stage, score, maxScore: 5 };
       });
 
-      const payload = {
-        quizType: "conversation-map",
-        icp: selectedIcp,
-        totalScore,
-        maxScore: maxPossible,
-        tier: band.label,
-        diagnosis: band.diagnosis,
-        recommendation: band.recommendation,
-        modules: band.modules,
-        questionBreakdown: quizData,
-        brandingIntake: brandingData,
-      };
-
       await supabase.functions.invoke("ghl-create-opportunity", {
         body: {
           contactName: contactInfo.firstName,
           contactEmail: contactInfo.email,
-          brandData: payload,
+          brandData: {
+            quizType: "conversation-map",
+            icp: selectedIcp,
+            totalScore,
+            maxScore: maxPossible,
+            tier: band.label,
+            diagnosis: band.diagnosis,
+            recommendation: band.recommendation,
+            modules: band.modules,
+            questionBreakdown: quizData,
+            brandingIntake: brandingData,
+          },
         },
       });
-
-      const flattened = flattenBrandData(payload);
-      const inferenceNotes = buildInferenceNotes(flattened);
-      console.debug("Intake mapping summary", { inferenceNotes, flattened });
     } catch (err) {
       console.error("GHL sync error:", err);
     } finally {
@@ -570,11 +572,8 @@ export default function ConversationQuiz() {
                 Is Your Business Leaking Revenue?
               </h1>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Answer 30 intake questions to uncover exactly where your leads, follow-ups, and revenue are falling through the cracks — and what to fix first.
+                Answer 10 quick questions to uncover exactly where your leads, follow-ups, and revenue are falling through the cracks — and what to fix first.
               </p>
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
-                30 intake questions • radio • dropdown • text box • list
-              </div>
             </div>
 
             <Separator />
@@ -698,14 +697,9 @@ export default function ConversationQuiz() {
             <Card>
               <CardContent className="p-6 md:p-8 space-y-6">
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                      {question.title}
-                    </p>
-                    <span className="rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 text-[11px] uppercase tracking-wide text-primary">
-                      {question.inputType === "list" ? "List" : "Radio"}
-                    </span>
-                  </div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-primary">
+                    {question.title}
+                  </p>
                   <h3 className="text-lg md:text-xl font-bold text-foreground leading-snug">
                     {question.prompt}
                   </h3>
@@ -785,79 +779,47 @@ export default function ConversationQuiz() {
 
             <Card>
               <CardContent className="p-6 md:p-8 space-y-5">
-                {brandingScreens[brandingScreen].fields.map((field) => {
-                  const fieldValue = brandingData[field.key] || "";
+                {brandingScreens[brandingScreen].fields.map((field) => (
+                  <div key={field.key} className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">
+                      {field.label}
+                      {field.required && <span className="text-destructive ml-1">*</span>}
+                    </label>
+                    {field.type === "text" && (
+                      <Input
+                        placeholder={field.placeholder}
+                        value={brandingData[field.key] || ""}
+                        onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
+                      />
+                    )}
+                    {field.type === "textarea" && (
+                      <Textarea
+                        placeholder={field.placeholder}
+                        value={brandingData[field.key] || ""}
+                        onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
+                        rows={3}
+                      />
+                    )}
+                    {field.type === "select" && field.options && (
+                      <Select
+                        value={brandingData[field.key] || ""}
+                        onValueChange={(val) => setBrandingData((p) => ({ ...p, [field.key]: val }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={`Select ${field.label.split(":")[0].toLowerCase()}`} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {field.options.map((opt) => {
+                            const val = typeof opt === "string" ? opt : opt.value;
+                            const label = typeof opt === "string" ? opt : opt.label;
+                            return <SelectItem key={val} value={val}>{label}</SelectItem>;
+                          })}
 
-                  return (
-                    <div key={field.key} className="space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <label className="text-sm font-medium text-foreground">
-                          {field.label}
-                          {field.required && <span className="text-destructive ml-1">*</span>}
-                        </label>
-                        <span className="rounded-full border border-border bg-muted/60 px-2.5 py-1 text-[11px] uppercase tracking-wide text-muted-foreground">
-                          {field.type === "select" ? "Dropdown" : field.type === "radio" ? "Radio" : field.type === "list" ? "List" : "Text box"}
-                        </span>
-                      </div>
-                      {field.type === "text" && (
-                        <Input
-                          placeholder={field.placeholder}
-                          value={fieldValue}
-                          onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
-                        />
-                      )}
-                      {field.type === "textarea" && (
-                        <Textarea
-                          placeholder={field.placeholder}
-                          value={fieldValue}
-                          onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
-                          rows={3}
-                        />
-                      )}
-                      {field.type === "select" && field.options && (
-                        <Select
-                          value={fieldValue}
-                          onValueChange={(val) => setBrandingData((p) => ({ ...p, [field.key]: val }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={`Select ${field.label.split(":")[0].toLowerCase()}`} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {field.options.map((opt) => (
-                              <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                      {field.type === "radio" && field.options && (
-                        <div className="grid gap-2 sm:grid-cols-2">
-                          {field.options.map((opt) => (
-                            <button
-                              key={opt}
-                              type="button"
-                              onClick={() => setBrandingData((p) => ({ ...p, [field.key]: opt }))}
-                              className={`rounded-lg border px-3 py-2 text-left text-sm transition-all ${
-                                fieldValue === opt
-                                  ? "border-primary bg-primary/5 text-foreground"
-                                  : "border-border bg-card hover:border-primary/40"
-                              }`}
-                            >
-                              {opt}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      {field.type === "list" && (
-                        <Textarea
-                          placeholder={field.placeholder || "Separate items with commas or line breaks"}
-                          value={fieldValue}
-                          onChange={(e) => setBrandingData((p) => ({ ...p, [field.key]: e.target.value }))}
-                          rows={3}
-                        />
-                      )}
-                    </div>
-                  );
-                })}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                ))}
               </CardContent>
             </Card>
 
