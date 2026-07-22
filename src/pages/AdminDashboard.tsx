@@ -300,22 +300,41 @@ const AdminDashboard = () => {
                                       </p>
                                     </div>
                                   )}
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      const blob = new Blob([JSON.stringify(analysis, null, 2)], { type: "application/json" });
-                                      const url = URL.createObjectURL(blob);
-                                      const a = document.createElement("a");
-                                      a.href = url;
-                                      a.download = `analysis-${analysis.source_url.replace(/https?:\/\//, "").replace(/\//g, "-")}.json`;
-                                      a.click();
-                                      URL.revokeObjectURL(url);
-                                    }}
-                                  >
-                                    Download Full JSON
-                                  </Button>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const blob = new Blob([JSON.stringify(analysis, null, 2)], { type: "application/json" });
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement("a");
+                                        a.href = url;
+                                        a.download = `analysis-${analysis.source_url.replace(/https?:\/\//, "").replace(/\//g, "-")}.json`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                      }}
+                                    >
+                                      Download JSON
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        const md = analysisToMarkdown(analysis, lead);
+                                        const blob = new Blob([md], { type: "text/markdown" });
+                                        const url = URL.createObjectURL(blob);
+                                        const a = document.createElement("a");
+                                        a.href = url;
+                                        a.download = `analysis-${analysis.source_url.replace(/https?:\/\//, "").replace(/\//g, "-")}.md`;
+                                        a.click();
+                                        URL.revokeObjectURL(url);
+                                      }}
+                                    >
+                                      Download Markdown
+                                    </Button>
+                                  </div>
                                 </div>
                               </TableCell>
                             </TableRow>
