@@ -26,6 +26,52 @@ interface AnalysisRow {
   leads?: LeadRow | null;
 }
 
+function analysisToMarkdown(a: AnalysisRow, lead: LeadRow | null): string {
+  const br = a.brand_research || {};
+  const ef = a.effectiveness || {};
+  const av = a.ai_visibility || {};
+  const lines: string[] = [];
+  lines.push(`# Brand Analysis — ${a.source_url}`);
+  lines.push("");
+  lines.push(`- **Date:** ${new Date(a.created_at).toLocaleString()}`);
+  lines.push(`- **Analysis ID:** ${a.id}`);
+  if (lead) {
+    lines.push(`- **Lead:** ${lead.first_name ?? "—"} <${lead.email ?? "—"}>`);
+  }
+  lines.push("");
+
+  if (a.brand_research) {
+    lines.push("## Brand Research");
+    for (const [k, v] of Object.entries(br)) {
+      if (v == null || v === "") continue;
+      const val = Array.isArray(v)
+        ? "\n" + v.map((x) => `  - ${typeof x === "object" ? JSON.stringify(x) : x}`).join("\n")
+        : typeof v === "object"
+        ? "\n\n```json\n" + JSON.stringify(v, null, 2) + "\n```"
+        : ` ${v}`;
+      lines.push(`- **${k}:**${val}`);
+    }
+    lines.push("");
+  }
+
+  if (a.effectiveness) {
+    lines.push("## Effectiveness");
+    if (ef.overall_score !== undefined) lines.push(`- **Overall:** ${ef.overall_grade ?? ""} (${ef.overall_score})`);
+    if (Array.isArray(ef.categories)) {
+      lines.push("", "| Category | Score | Label |", "|---|---|---|");
+      for (const c of ef.categories) lines.push(`| ${c.category} | ${c.score} | ${c.label ?? ""} |`);
+    }
+    lines.push("");
+  }
+
+  if (a.ai_visibility) {
+    lines.push("## AI Visibility");
+    lines.push("```json", JSON.stringify(av, null, 2), "```", "");
+  }
+
+  return lines.join("\n");
+}
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [adminVerified, setAdminVerified] = useState(false);
