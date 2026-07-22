@@ -958,16 +958,17 @@ export default function ConversationQuiz() {
       </main>
 
       <Dialog open={bookingOpen} onOpenChange={setBookingOpen}>
-        <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden">
-          <DialogHeader className="px-6 pt-6 pb-2">
+        <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden flex flex-col">
+          <DialogHeader className="px-6 pt-6 pb-2 shrink-0">
             <DialogTitle>Book Your Strategy Call</DialogTitle>
           </DialogHeader>
-          <iframe
-            src="https://link.crmchains.com/widget/booking/oZ01xEOkfEvyRVf1Mb7M"
-            className="w-full h-full border-0"
-            scrolling="no"
-            title="Book a strategy call"
-          />
+          <div className="flex-1 min-h-0 overflow-auto">
+            <iframe
+              src="https://link.crmchains.com/widget/booking/oZ01xEOkfEvyRVf1Mb7M"
+              className="w-full h-full border-0 block"
+              title="Book a strategy call"
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>
