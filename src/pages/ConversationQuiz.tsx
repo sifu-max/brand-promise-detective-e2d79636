@@ -517,10 +517,9 @@ export default function ConversationQuiz() {
     }
   };
 
-  const submitDynamic = () => {
-    setBrandingData((prev) => ({ ...prev, ...dynamicData }));
+  const handleDynamicSuccess = (answers: Record<string, string>) => {
+    setBrandingData((prev) => ({ ...prev, ...answers }));
     setPhase("results");
-    // Fire GHL sync with merged data
     setTimeout(() => syncToGHL(), 0);
   };
 
