@@ -233,6 +233,53 @@ export default function ConversationQuiz() {
 
   const progress = ((currentQ + 1) / seedQuestions.length) * 100;
 
+  const buildArtifact = (): QuizArtifact => ({
+    schemaVersion: "1.0",
+    submissionId: `local-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    source: "conversation-map-quiz",
+    contact: { firstName: contactInfo.firstName || null, email: contactInfo.email || null },
+    quiz: {
+      quizType: "conversation-map",
+      totalScore: totalSeedScore,
+      maxScore: 15,
+      tier: band.label,
+      diagnosis: band.diagnosis,
+      recommendation: band.recommendation,
+      modules: [],
+      questionBreakdown: seedQuestions.map((q) => ({
+        questionId: q.id,
+        title: q.title,
+        stage: q.stage,
+        score: seedAnswers[q.id]?.points ?? 0,
+        maxScore: Math.max(...q.options.map((o) => o.points)),
+      })),
+    },
+    brandBuilder: { seedAnswers, dynamicAnswers },
+    inference: { icp: selectedIcp },
+  });
+
+  const downloadFile = (content: string, filename: string, mime: string) => {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopyJson = async () => {
+    await navigator.clipboard.writeText(JSON.stringify(buildArtifact(), null, 2));
+    toast.success("JSON copied");
+  };
+  const handleDownloadJson = () => {
+    downloadFile(JSON.stringify(buildArtifact(), null, 2), `quiz-${Date.now()}.json`, "application/json");
+  };
+  const handleDownloadMd = () => {
+    downloadFile(quizArtifactToMarkdown(buildArtifact()), `quiz-${Date.now()}.md`, "text/markdown");
+  };
+
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
