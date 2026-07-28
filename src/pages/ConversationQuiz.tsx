@@ -177,8 +177,11 @@ export default function ConversationQuiz() {
 
       const result = await response.json();
 
-      if (Array.isArray(result?.missing_high_value_fields) && result.missing_high_value_fields.length > 0) {
-        const fields: DynamicField[] = result.missing_high_value_fields.map((f: DynamicField | string) =>
+      const isPartial = result?.normalization_status === "partial";
+      const missing = Array.isArray(result?.missing_high_value_fields) ? result.missing_high_value_fields : [];
+
+      if (isPartial && missing.length > 0) {
+        const fields: DynamicField[] = missing.map((f: DynamicField | string) =>
           typeof f === "string"
             ? { key: f, label: f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") }
             : f
