@@ -383,14 +383,6 @@ const stages = [
 
 type Phase = "icp" | "contact" | "quiz" | "branding" | "dynamic" | "results";
 
-type DynamicField = {
-  key: string;
-  label: string;
-  type?: "text" | "textarea" | "select";
-  options?: string[];
-  helpText?: string;
-};
-
 export default function ConversationQuiz() {
   const [phase, setPhase] = useState<Phase>("icp");
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -403,7 +395,6 @@ export default function ConversationQuiz() {
   const [brandingScreen, setBrandingScreen] = useState(0);
   const [syncing, setSyncing] = useState(false);
   const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([]);
-  const [dynamicData, setDynamicData] = useState<Record<string, string>>({});
   const [isLoadingSwarm, setIsLoadingSwarm] = useState(false);
 
   // Load GHL embed script
