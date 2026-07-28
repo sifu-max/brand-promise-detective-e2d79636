@@ -1,7 +1,19 @@
 import { useState, useEffect } from "react";
 import {
-  ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Target,
-  TrendingUp, Zap, Mail, Sparkles, Shield, Loader2, Copy, Download, FileText,
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle2,
+  AlertTriangle,
+  Target,
+  TrendingUp,
+  Zap,
+  Mail,
+  Sparkles,
+  Shield,
+  Loader2,
+  Copy,
+  Download,
+  FileText,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,23 +31,53 @@ import { toast } from "sonner";
 /* ───────────────────────── ICP Definitions ───────────────────────── */
 
 const icpProfiles = [
-  { id: "service-local", label: "Local Service Business", description: "Plumbers, HVAC, roofers, clinics — relying on local calls & leads", icon: "🏠" },
-  { id: "agency", label: "Agency / Brokerage", description: "Insurance, real estate, staffing — managing sub-agents & funnels", icon: "🏢" },
-  { id: "coach-consultant", label: "Coach / Consultant", description: "Selling high-ticket expertise needing booked calls to close", icon: "🎯" },
-  { id: "ecommerce-saas", label: "E-Commerce / SaaS", description: "Online sales with automated support & retention needs", icon: "🛒" },
+  {
+    id: "service-local",
+    label: "Local Service Business",
+    description: "Plumbers, HVAC, roofers, clinics — relying on local calls & leads",
+    icon: "🏠",
+  },
+  {
+    id: "agency",
+    label: "Agency / Brokerage",
+    description: "Insurance, real estate, staffing — managing sub-agents & funnels",
+    icon: "🏢",
+  },
+  {
+    id: "coach-consultant",
+    label: "Coach / Consultant",
+    description: "Selling high-ticket expertise needing booked calls to close",
+    icon: "🎯",
+  },
+  {
+    id: "ecommerce-saas",
+    label: "E-Commerce / SaaS",
+    description: "Online sales with automated support & retention needs",
+    icon: "🛒",
+  },
 ];
 
 /* ───────────────────────── Lean Seed Quiz ───────────────────────── */
 
-interface QuizOption { label: string; points: number; }
-interface QuizQuestion { id: string; stage: string; title: string; prompt: string; options: QuizOption[]; }
+interface QuizOption {
+  label: string;
+  points: number;
+}
+interface QuizQuestion {
+  id: string;
+  stage: string;
+  title: string;
+  prompt: string;
+  options: QuizOption[];
+}
 
 const seedQuestions: QuizQuestion[] = [
   {
     id: "capture",
     stage: "Lead Capture",
     title: "Are you catching every lead?",
-    prompt: "How confident are you that your business catches every incoming conversation — calls, texts, DMs, and web forms?",
+    prompt:
+      "How confident are you that your business catches every incoming conversation — calls, texts, DMs, and web forms?",
     options: [
       { label: "We capture and track everything automatically", points: 5 },
       { label: "Most conversations are captured", points: 3 },
@@ -75,8 +117,11 @@ const seedQuestions: QuizQuestion[] = [
 
 const scoreBands = [
   {
-    min: 0, max: 6, label: "Severe Revenue Leakage",
-    color: "text-destructive", bg: "bg-destructive/10 border-destructive/30",
+    min: 0,
+    max: 6,
+    label: "Severe Revenue Leakage",
+    color: "text-destructive",
+    bg: "bg-destructive/10 border-destructive/30",
     icon: <AlertTriangle className="w-8 h-8 text-destructive" />,
     headline: "Critical gaps identified in lead response & tracking.",
     diagnosis: "Your intake infrastructure is missing high-intent conversations and lacks automated follow-up.",
@@ -84,8 +129,11 @@ const scoreBands = [
     cta: "Book a strategy call to patch your revenue leaks",
   },
   {
-    min: 7, max: 11, label: "Fragmented Infrastructure",
-    color: "text-[hsl(35,90%,50%)]", bg: "bg-[hsl(35,90%,50%)]/10 border-[hsl(35,90%,50%)]/30",
+    min: 7,
+    max: 11,
+    label: "Fragmented Infrastructure",
+    color: "text-[hsl(35,90%,50%)]",
+    bg: "bg-[hsl(35,90%,50%)]/10 border-[hsl(35,90%,50%)]/30",
     icon: <Zap className="w-8 h-8 text-[hsl(35,90%,50%)]" />,
     headline: "Core systems exist, but key execution gaps remain.",
     diagnosis: "You capture leads reasonably well, but manual friction or after-hours gaps cost you deals.",
@@ -93,11 +141,15 @@ const scoreBands = [
     cta: "Book a strategy call to optimize your response stack",
   },
   {
-    min: 12, max: 15, label: "Advanced Revenue Architecture",
-    color: "text-primary", bg: "bg-primary/10 border-primary/30",
+    min: 12,
+    max: 15,
+    label: "Advanced Revenue Architecture",
+    color: "text-primary",
+    bg: "bg-primary/10 border-primary/30",
     icon: <TrendingUp className="w-8 h-8 text-primary" />,
     headline: "High-performing baseline ready for scale.",
-    diagnosis: "Your initial capture and speed are strong. Primary upside lies in conversion optimization and AI orchestration.",
+    diagnosis:
+      "Your initial capture and speed are strong. Primary upside lies in conversion optimization and AI orchestration.",
     recommendation: "Fine-tune lead routing, dynamic CRM fields, and automated retention.",
     cta: "Book a strategy call to scale your architecture",
   },
@@ -150,65 +202,17 @@ export default function ConversationQuiz() {
     }
   };
 
-const triggerSwarmEvaluation = async () => {
-  setPhase("evaluating");
-  const swarmUrl = import.meta.env.VITE_N8N_SWARM_INTAKE_URL;
+  const triggerSwarmEvaluation = async () => {
+    setPhase("evaluating");
+    const swarmUrl = import.meta.env.VITE_N8N_SWARM_INTAKE_URL;
 
-  if (!swarmUrl) {
-    toast.error("Swarm webhook URL not configured");
-    setPhase("results");
-    syncToGHL({});
-    return;
-  }
-
-  try {
-    const response = await fetch(swarmUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contactName: contactInfo.firstName,
-        contactEmail: contactInfo.email,
-        brandData: {
-          icp: selectedIcp,
-          lead_capture_status: seedAnswers["capture"]?.label,
-          speed_to_lead_status: seedAnswers["speed"]?.label,
-          hurtingArea: seedAnswers["hurting_area"]?.label,
-        },
-      }),
-    });
-
-    const result = await response.json();
-
-    // Safely parse n8n response body
-    const payload = result.json || result.body || result;
-    const isPartial = payload?.normalization_status === "partial";
-    const missing = Array.isArray(payload?.missing_high_value_fields) ? payload.missing_high_value_fields : [];
-
-    if (isPartial && missing.length > 0) {
-      // Map to exact DynamicField schema expected by DynamicFieldsForm
-      const fields: DynamicField[] = missing.map((f: any) => ({
-        key: typeof f === "string" ? f : f.key,
-        label: typeof f === "string" 
-          ? f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") 
-          : (f.label || f.key),
-        type: f.type || "text",
-        required: f.required ?? false,
-      }));
-
-      if (payload?.intake_id) setIntakeId(payload.intake_id);
-      setDynamicFields(fields);
-      setPhase("dynamic_quiz"); // Moves UI to Phase 5
-    } else {
+    if (!swarmUrl) {
+      toast.error("Swarm webhook URL not configured");
       setPhase("results");
       syncToGHL({});
+      return;
     }
-  } catch (error) {
-    console.error("Swarm evaluation error:", error);
-    toast.error("Swarm evaluation bypassed. Advancing to results.");
-    setPhase("results");
-    syncToGHL({});
-  }
-};
+
     try {
       const response = await fetch(swarmUrl, {
         method: "POST",
@@ -225,41 +229,31 @@ const triggerSwarmEvaluation = async () => {
         }),
       });
 
-const result = await response.json();
+      const result = await response.json();
 
-// Unwrap n8n wrapper safely:
-const payload = result.json || result.body || result;
+      // Unwrap n8n wrapper safely:
+      const payload = result.json || result.body || result;
 
-const isPartial = payload?.normalization_status === "partial";
-const missing = Array.isArray(payload?.missing_high_value_fields) ? payload.missing_high_value_fields : [];
-
-if (isPartial && missing.length > 0) {
-  const fields: DynamicField[] = missing.map((f: any) => ({
-    key: typeof f === "string" ? f : f.key,
-    label: typeof f === "string" 
-      ? f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") 
-      : (f.label || f.key),
-    type: f.type || "text",
-    required: f.required ?? false,
-  }));
-
-  if (payload?.intake_id) setIntakeId(payload.intake_id);
-  setDynamicFields(fields);
-  setPhase("dynamic_quiz"); // <-- THIS MOVES THE UI TO PAGE 2
-} else {
-  setPhase("results");
-  syncToGHL({});
-}
+      const isPartial = payload?.normalization_status === "partial";
+      const missing = Array.isArray(payload?.missing_high_value_fields) ? payload.missing_high_value_fields : [];
 
       if (isPartial && missing.length > 0) {
-        const fields: DynamicField[] = missing.map((f: DynamicField | string) =>
-          typeof f === "string"
-            ? { key: f, label: f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") }
-            : f
-        );
-        if (result?.intake_id) setIntakeId(result.intake_id);
+        const fields: DynamicField[] = missing.map((f: any) => ({
+          key: typeof f === "string" ? f : f.key,
+          label:
+            typeof f === "string"
+              ? f
+                  .split("_")
+                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(" ")
+              : f.label || f.key,
+          type: f.type || "text",
+          required: f.required ?? false,
+        }));
+
+        if (payload?.intake_id) setIntakeId(payload.intake_id);
         setDynamicFields(fields);
-        setPhase("dynamic_quiz");
+        setPhase("dynamic_quiz"); // Moves UI to Phase 5
       } else {
         setPhase("results");
         syncToGHL({});
@@ -334,8 +328,11 @@ if (isPartial && missing.length > 0) {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
@@ -349,7 +346,6 @@ if (isPartial && missing.length > 0) {
   const handleDownloadMd = () => {
     downloadFile(quizArtifactToMarkdown(buildArtifact()), `quiz-${Date.now()}.md`, "text/markdown");
   };
-
 
   return (
     <div className="min-h-screen bg-background">
@@ -381,7 +377,8 @@ if (isPartial && missing.length > 0) {
               </span>
               <h1 className="text-3xl md:text-4xl font-bold">Analyze Your Revenue Communication Stack</h1>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Answer 3 quick questions. Our AI Swarm will analyze your profile and generate custom diagnostic questions for your exact business model.
+                Answer 3 quick questions. Our AI Swarm will analyze your profile and generate custom diagnostic
+                questions for your exact business model.
               </p>
             </div>
 
@@ -484,8 +481,9 @@ if (isPartial && missing.length > 0) {
 
                 <div className="space-y-2">
                   {currentSeedQuestion.options.map((opt, idx) => {
-                    const isSelected = seedAnswers[currentSeedQuestion.id]?.points === opt.points
-                      && seedAnswers[currentSeedQuestion.id]?.label === opt.label;
+                    const isSelected =
+                      seedAnswers[currentSeedQuestion.id]?.points === opt.points &&
+                      seedAnswers[currentSeedQuestion.id]?.label === opt.label;
                     return (
                       <button
                         key={idx}
@@ -496,9 +494,11 @@ if (isPartial && missing.length > 0) {
                             : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted/30"
                         }`}
                       >
-                        <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                          isSelected ? "border-primary bg-primary" : "border-border"
-                        }`}>
+                        <span
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                            isSelected ? "border-primary bg-primary" : "border-border"
+                          }`}
+                        >
                           {isSelected && <CheckCircle2 className="w-4 h-4 text-primary-foreground" />}
                         </span>
                         {opt.label}
@@ -510,7 +510,12 @@ if (isPartial && missing.length > 0) {
             </Card>
 
             <div className="flex justify-between">
-              <Button variant="ghost" onClick={() => setCurrentQ((p) => Math.max(0, p - 1))} disabled={currentQ === 0} className="gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => setCurrentQ((p) => Math.max(0, p - 1))}
+                disabled={currentQ === 0}
+                className="gap-2"
+              >
                 <ArrowLeft className="w-4 h-4" /> Back
               </Button>
               <Button
@@ -532,7 +537,8 @@ if (isPartial && missing.length > 0) {
             <Loader2 className="w-12 h-12 mx-auto animate-spin text-primary" />
             <h2 className="text-2xl font-bold">Analyzing Your Business Architecture...</h2>
             <p className="text-muted-foreground max-w-md mx-auto">
-              Our AI Swarm is evaluating your inputs against industry benchmark contracts to build custom follow-up questions.
+              Our AI Swarm is evaluating your inputs against industry benchmark contracts to build custom follow-up
+              questions.
             </p>
           </div>
         )}
@@ -603,9 +609,7 @@ if (isPartial && missing.length > 0) {
 
                 {adminMode && (
                   <div className="mt-4 p-4 rounded-lg border border-primary/30 bg-primary/5 space-y-3">
-                    <div className="text-xs uppercase tracking-wider font-semibold text-primary">
-                      Admin Export
-                    </div>
+                    <div className="text-xs uppercase tracking-wider font-semibold text-primary">Admin Export</div>
                     <div className="flex flex-wrap gap-2">
                       <Button variant="outline" size="sm" onClick={handleCopyJson}>
                         <Copy className="w-4 h-4 mr-2" /> Copy JSON
