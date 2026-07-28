@@ -237,6 +237,138 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
+        {/* Quiz Submissions (admin-only) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <ClipboardList className="h-4 w-4" />
+              Conversation Map Quiz Submissions
+              <Badge variant="secondary" className="text-xs ml-1">{quizSubs.length}</Badge>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="space-y-3 animate-pulse">
+                {[1, 2, 3].map((i) => <div key={i} className="h-12 bg-muted rounded" />)}
+              </div>
+            ) : quizSubs.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">No quiz submissions yet.</p>
+            ) : (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[40px]" />
+                      <TableHead>Date</TableHead>
+                      <TableHead>Contact</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>ICP</TableHead>
+                      <TableHead>Tier</TableHead>
+                      <TableHead>Score</TableHead>
+                      <TableHead>Export</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {quizSubs.map((q) => {
+                      const isOpen = expandedQuiz === q.id;
+                      const baseName = `quiz-${(q.contact_email || q.id).replace(/[^a-z0-9]/gi, "-")}-${q.id.slice(0, 8)}`;
+                      const downloadBlob = (content: string, filename: string, mime: string) => {
+                        const blob = new Blob([content], { type: mime });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = filename;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      };
+                      return (
+                        <>
+                          <TableRow
+                            key={q.id}
+                            className="cursor-pointer hover:bg-muted/50"
+                            onClick={() => setExpandedQuiz(isOpen ? null : q.id)}
+                          >
+                            <TableCell>
+                              {isOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                            </TableCell>
+                            <TableCell className="text-sm whitespace-nowrap">
+                              <div className="flex items-center gap-1.5">
+                                <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                                {formatDate(q.created_at)}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-sm">{q.contact_first_name || <span className="text-muted-foreground">—</span>}</TableCell>
+                            <TableCell className="text-sm">
+                              {q.contact_email ? (
+                                <a href={`mailto:${q.contact_email}`} className="text-primary hover:underline" onClick={(e) => e.stopPropagation()}>{q.contact_email}</a>
+                              ) : <span className="text-muted-foreground">—</span>}
+                            </TableCell>
+                            <TableCell className="text-sm">{q.icp || <span className="text-muted-foreground">—</span>}</TableCell>
+                            <TableCell>
+                              {q.tier ? <Badge variant="outline" className="text-xs">{q.tier}</Badge> : <span className="text-muted-foreground text-xs">—</span>}
+                            </TableCell>
+                            <TableCell className="text-sm">
+                              {q.total_score != null ? `${q.total_score}/${q.max_score ?? "?"}` : <span className="text-muted-foreground">—</span>}
+                            </TableCell>
+                            <TableCell>
+                              {q.exportUrl ? (
+                                <a href={q.exportUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-xs flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                                  Link <ExternalLink className="h-3 w-3" />
+                                </a>
+                              ) : <span className="text-muted-foreground text-xs">—</span>}
+                            </TableCell>
+                          </TableRow>
+                          {isOpen && (
+                            <TableRow key={`${q.id}-detail`}>
+                              <TableCell colSpan={8} className="bg-muted/30 p-4">
+                                <div className="flex flex-wrap gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      downloadBlob(JSON.stringify(q.artifact, null, 2), `${baseName}.json`, "application/json");
+                                    }}
+                                  >
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Download JSON
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      downloadBlob(quizArtifactToMarkdown(q.artifact), `${baseName}.md`, "text/markdown");
+                                    }}
+                                  >
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Download Markdown
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigator.clipboard.writeText(JSON.stringify(q.artifact, null, 2));
+                                      toast.success("JSON copied to clipboard");
+                                    }}
+                                  >
+                                    Copy JSON
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Analyses Table */}
         <Card>
           <CardHeader>
