@@ -398,6 +398,20 @@ export default function ConversationQuiz() {
   const [syncing, setSyncing] = useState(false);
   const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([]);
   const [isLoadingSwarm, setIsLoadingSwarm] = useState(false);
+  const [adminMode, setAdminMode] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Admin toggle: Ctrl+Shift+B (unhides JSON / MD export on the results screen)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === "B") {
+        setAdminMode((prev) => !prev);
+        toast.success(adminMode ? "Admin mode off" : "Admin mode on");
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [adminMode]);
 
   // Load GHL embed script
   useEffect(() => {
