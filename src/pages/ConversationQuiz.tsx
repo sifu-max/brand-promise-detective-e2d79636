@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Target,
-  TrendingUp, Zap, Mail, Sparkles, Shield, Loader2,
+  TrendingUp, Zap, Mail, Sparkles, Shield, Loader2, Copy, Download, FileText,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
