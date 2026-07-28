@@ -188,6 +188,7 @@ export default function ConversationQuiz() {
             ? { key: f, label: f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") }
             : f
         );
+        if (result?.intake_id) setIntakeId(result.intake_id);
         setDynamicFields(fields);
         setPhase("dynamic_quiz");
       } else {
