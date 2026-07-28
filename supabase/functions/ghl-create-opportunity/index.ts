@@ -143,13 +143,14 @@ serve(async (req) => {
       customFields.push({ key: "inference_notes", field_value: inferenceNotes });
     }
 
-    // Upload full export JSON to storage
+    // Upload full export JSON to storage + persist quiz submissions to DB (admin-only)
     let exportUrl = "";
-    if (fullExportData) {
-      const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-      const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    let exportPath = "";
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    if (fullExportData) {
       const fileName = `export-${Date.now()}-${crypto.randomUUID().slice(0, 8)}.json`;
       const { error: uploadError } = await sb.storage
         .from("brand-exports")
@@ -161,6 +162,7 @@ serve(async (req) => {
       if (uploadError) {
         console.error("Storage upload error:", uploadError);
       } else {
+        exportPath = fileName;
         const { data: signed } = await sb.storage
           .from("brand-exports")
           .createSignedUrl(fileName, 60 * 60 * 24 * 365);
@@ -170,6 +172,28 @@ serve(async (req) => {
 
     if (exportUrl) {
       customFields.push({ key: "brand_research_export_link", field_value: exportUrl });
+    }
+
+    // Persist Conversation Map Quiz submissions to admin-only table
+    if (fullExportData && flatBrandData.quizType === "conversation-map") {
+      try {
+        const { error: insertError } = await sb.from("quiz_submissions").insert({
+          quiz_type: String(flatBrandData.quizType),
+          contact_email: contactEmail || null,
+          contact_first_name: contactName || null,
+          icp: (flatBrandData.icp as string) || null,
+          tier: (flatBrandData.tier as string) || null,
+          total_score:
+            typeof flatBrandData.totalScore === "number" ? flatBrandData.totalScore : null,
+          max_score:
+            typeof flatBrandData.maxScore === "number" ? flatBrandData.maxScore : null,
+          export_path: exportPath || null,
+          artifact: fullExportData,
+        });
+        if (insertError) console.error("quiz_submissions insert error:", insertError);
+      } catch (e) {
+        console.error("quiz_submissions insert threw:", e);
+      }
     }
 
     // ── 2. Create or update contact with custom fields ─────────────────
