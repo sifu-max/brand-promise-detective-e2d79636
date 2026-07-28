@@ -150,17 +150,65 @@ export default function ConversationQuiz() {
     }
   };
 
-  const triggerSwarmEvaluation = async () => {
-    setPhase("evaluating");
-    const swarmUrl = import.meta.env.VITE_N8N_SWARM_INTAKE_URL;
+const triggerSwarmEvaluation = async () => {
+  setPhase("evaluating");
+  const swarmUrl = import.meta.env.VITE_N8N_SWARM_INTAKE_URL;
 
-    if (!swarmUrl) {
-      toast.error("Swarm webhook URL not configured");
+  if (!swarmUrl) {
+    toast.error("Swarm webhook URL not configured");
+    setPhase("results");
+    syncToGHL({});
+    return;
+  }
+
+  try {
+    const response = await fetch(swarmUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contactName: contactInfo.firstName,
+        contactEmail: contactInfo.email,
+        brandData: {
+          icp: selectedIcp,
+          lead_capture_status: seedAnswers["capture"]?.label,
+          speed_to_lead_status: seedAnswers["speed"]?.label,
+          hurtingArea: seedAnswers["hurting_area"]?.label,
+        },
+      }),
+    });
+
+    const result = await response.json();
+
+    // Safely parse n8n response body
+    const payload = result.json || result.body || result;
+    const isPartial = payload?.normalization_status === "partial";
+    const missing = Array.isArray(payload?.missing_high_value_fields) ? payload.missing_high_value_fields : [];
+
+    if (isPartial && missing.length > 0) {
+      // Map to exact DynamicField schema expected by DynamicFieldsForm
+      const fields: DynamicField[] = missing.map((f: any) => ({
+        key: typeof f === "string" ? f : f.key,
+        label: typeof f === "string" 
+          ? f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") 
+          : (f.label || f.key),
+        type: f.type || "text",
+        required: f.required ?? false,
+      }));
+
+      if (payload?.intake_id) setIntakeId(payload.intake_id);
+      setDynamicFields(fields);
+      setPhase("dynamic_quiz"); // Moves UI to Phase 5
+    } else {
       setPhase("results");
       syncToGHL({});
-      return;
     }
-
+  } catch (error) {
+    console.error("Swarm evaluation error:", error);
+    toast.error("Swarm evaluation bypassed. Advancing to results.");
+    setPhase("results");
+    syncToGHL({});
+  }
+};
     try {
       const response = await fetch(swarmUrl, {
         method: "POST",
