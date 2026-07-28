@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import {
   ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Target,
-  TrendingUp, Zap, Globe, Mail, RotateCcw, ChevronRight, Sparkles, Shield
+  TrendingUp, Zap, Globe, Mail, RotateCcw, ChevronRight, Sparkles, Shield,
+  Copy, Check, Download
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import DynamicFieldsForm, { type DynamicField } from "@/components/DynamicFieldsForm";
+import { toast } from "sonner";
 
 /* ─────────────────────────  ICP Definitions  ───────────────────────── */
 
