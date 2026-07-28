@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   ArrowRight, ArrowLeft, CheckCircle2, AlertTriangle, Target,
-  TrendingUp, Zap, Mail, Sparkles, Shield, Loader2,
+  TrendingUp, Zap, Mail, Sparkles, Shield, Loader2, Copy, Download, FileText,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import DynamicFieldsForm, { type DynamicField } from "@/components/DynamicFieldsForm";
+import { quizArtifactToMarkdown, type QuizArtifact } from "@/lib/quizArtifact";
 import { toast } from "sonner";
 
 /* ───────────────────────── ICP Definitions ───────────────────────── */
@@ -111,7 +112,7 @@ export default function ConversationQuiz() {
   const [contactInfo, setContactInfo] = useState({ firstName: "", email: "" });
   const [currentQ, setCurrentQ] = useState(0);
   const [seedAnswers, setSeedAnswers] = useState<Record<string, { label: string; points: number }>>({});
-  const [, setDynamicAnswers] = useState<Record<string, string>>({});
+  const [dynamicAnswers, setDynamicAnswers] = useState<Record<string, string>>({});
   const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([]);
   const [syncing, setSyncing] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
@@ -231,6 +232,53 @@ export default function ConversationQuiz() {
   };
 
   const progress = ((currentQ + 1) / seedQuestions.length) * 100;
+
+  const buildArtifact = (): QuizArtifact => ({
+    schemaVersion: "1.0",
+    submissionId: `local-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    source: "conversation-map-quiz",
+    contact: { firstName: contactInfo.firstName || null, email: contactInfo.email || null },
+    quiz: {
+      quizType: "conversation-map",
+      totalScore: totalSeedScore,
+      maxScore: 15,
+      tier: band.label,
+      diagnosis: band.diagnosis,
+      recommendation: band.recommendation,
+      modules: [],
+      questionBreakdown: seedQuestions.map((q) => ({
+        questionId: q.id,
+        title: q.title,
+        stage: q.stage,
+        score: seedAnswers[q.id]?.points ?? 0,
+        maxScore: Math.max(...q.options.map((o) => o.points)),
+      })),
+    },
+    brandBuilder: { seedAnswers, dynamicAnswers },
+    inference: { icp: selectedIcp },
+  });
+
+  const downloadFile = (content: string, filename: string, mime: string) => {
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopyJson = async () => {
+    await navigator.clipboard.writeText(JSON.stringify(buildArtifact(), null, 2));
+    toast.success("JSON copied");
+  };
+  const handleDownloadJson = () => {
+    downloadFile(JSON.stringify(buildArtifact(), null, 2), `quiz-${Date.now()}.json`, "application/json");
+  };
+  const handleDownloadMd = () => {
+    downloadFile(quizArtifactToMarkdown(buildArtifact()), `quiz-${Date.now()}.md`, "text/markdown");
+  };
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -481,6 +529,25 @@ export default function ConversationQuiz() {
                   {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   {band.cta} <ArrowRight className="w-4 h-4" />
                 </Button>
+
+                {adminMode && (
+                  <div className="mt-4 p-4 rounded-lg border border-primary/30 bg-primary/5 space-y-3">
+                    <div className="text-xs uppercase tracking-wider font-semibold text-primary">
+                      Admin Export
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" onClick={handleCopyJson}>
+                        <Copy className="w-4 h-4 mr-2" /> Copy JSON
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleDownloadJson}>
+                        <Download className="w-4 h-4 mr-2" /> Download JSON
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleDownloadMd}>
+                        <FileText className="w-4 h-4 mr-2" /> Download Markdown
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -495,7 +562,7 @@ export default function ConversationQuiz() {
           </DialogHeader>
           <div className="flex-1 overflow-hidden">
             <iframe
-              src="https://link.crmchains.com/widget/booking/BEsvGyKvUvfDTvi4Xhcf"
+              src="https://link.crmchains.com/widget/bookings/qualification-discovery"
               className="w-full h-full border-0"
               title="Book Strategy Call"
             />
