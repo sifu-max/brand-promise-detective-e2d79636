@@ -225,10 +225,31 @@ const triggerSwarmEvaluation = async () => {
         }),
       });
 
-      const result = await response.json();
+const result = await response.json();
 
-      const isPartial = result?.normalization_status === "partial";
-      const missing = Array.isArray(result?.missing_high_value_fields) ? result.missing_high_value_fields : [];
+// Unwrap n8n wrapper safely:
+const payload = result.json || result.body || result;
+
+const isPartial = payload?.normalization_status === "partial";
+const missing = Array.isArray(payload?.missing_high_value_fields) ? payload.missing_high_value_fields : [];
+
+if (isPartial && missing.length > 0) {
+  const fields: DynamicField[] = missing.map((f: any) => ({
+    key: typeof f === "string" ? f : f.key,
+    label: typeof f === "string" 
+      ? f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") 
+      : (f.label || f.key),
+    type: f.type || "text",
+    required: f.required ?? false,
+  }));
+
+  if (payload?.intake_id) setIntakeId(payload.intake_id);
+  setDynamicFields(fields);
+  setPhase("dynamic_quiz"); // <-- THIS MOVES THE UI TO PAGE 2
+} else {
+  setPhase("results");
+  syncToGHL({});
+}
 
       if (isPartial && missing.length > 0) {
         const fields: DynamicField[] = missing.map((f: DynamicField | string) =>
