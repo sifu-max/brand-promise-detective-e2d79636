@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import DynamicFieldsForm, { type DynamicField } from "@/components/DynamicFieldsForm";
 
 /* ─────────────────────────  ICP Definitions  ───────────────────────── */
 
