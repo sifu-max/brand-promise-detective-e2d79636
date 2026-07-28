@@ -93,8 +93,10 @@ const AdminDashboard = () => {
   const [adminVerified, setAdminVerified] = useState(false);
   const [analyses, setAnalyses] = useState<AnalysisRow[]>([]);
   const [leads, setLeads] = useState<LeadRow[]>([]);
+  const [quizSubs, setQuizSubs] = useState<QuizSubmissionRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const [expandedQuiz, setExpandedQuiz] = useState<string | null>(null);
 
   // Require Ctrl+Shift+B to access
   useEffect(() => {
@@ -111,13 +113,17 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [analysesRes, leadsRes] = await Promise.all([
+      const [analysesRes, leadsRes, quizRes] = await Promise.all([
         supabase.from("brand_analyses").select("*").order("created_at", { ascending: false }),
         supabase.from("leads").select("*").order("created_at", { ascending: false }),
+        supabase.functions.invoke("list-quiz-submissions"),
       ]);
 
       if (analysesRes.data) setAnalyses(analysesRes.data as AnalysisRow[]);
       if (leadsRes.data) setLeads(leadsRes.data as LeadRow[]);
+      if (quizRes.data && Array.isArray((quizRes.data as { submissions?: unknown }).submissions)) {
+        setQuizSubs((quizRes.data as { submissions: QuizSubmissionRow[] }).submissions);
+      }
     } catch (err) {
       console.error("Failed to fetch data:", err);
       toast.error("Failed to load dashboard data");
