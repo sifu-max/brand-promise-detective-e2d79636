@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
 import DynamicFieldsForm, { type DynamicField } from "@/components/DynamicFieldsForm";
+import { quizArtifactToMarkdown, type QuizArtifact } from "@/lib/quizArtifact";
 import { toast } from "sonner";
 
 /* ───────────────────────── ICP Definitions ───────────────────────── */
