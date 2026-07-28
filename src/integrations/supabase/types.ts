@@ -73,6 +73,48 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_submissions: {
+        Row: {
+          artifact: Json
+          contact_email: string | null
+          contact_first_name: string | null
+          created_at: string
+          export_path: string | null
+          icp: string | null
+          id: string
+          max_score: number | null
+          quiz_type: string
+          tier: string | null
+          total_score: number | null
+        }
+        Insert: {
+          artifact: Json
+          contact_email?: string | null
+          contact_first_name?: string | null
+          created_at?: string
+          export_path?: string | null
+          icp?: string | null
+          id?: string
+          max_score?: number | null
+          quiz_type?: string
+          tier?: string | null
+          total_score?: number | null
+        }
+        Update: {
+          artifact?: Json
+          contact_email?: string | null
+          contact_first_name?: string | null
+          created_at?: string
+          export_path?: string | null
+          icp?: string | null
+          id?: string
+          max_score?: number | null
+          quiz_type?: string
+          tier?: string | null
+          total_score?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

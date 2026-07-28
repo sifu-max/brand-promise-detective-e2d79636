@@ -705,6 +705,7 @@ export default function ConversationQuiz() {
             questionBreakdown: quizData,
             brandingIntake: brandingData,
           },
+          fullExportData: buildQuizArtifact(),
         },
       });
     } catch (err) {
