@@ -112,7 +112,7 @@ export default function ConversationQuiz() {
   const [contactInfo, setContactInfo] = useState({ firstName: "", email: "" });
   const [currentQ, setCurrentQ] = useState(0);
   const [seedAnswers, setSeedAnswers] = useState<Record<string, { label: string; points: number }>>({});
-  const [, setDynamicAnswers] = useState<Record<string, string>>({});
+  const [dynamicAnswers, setDynamicAnswers] = useState<Record<string, string>>({});
   const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([]);
   const [syncing, setSyncing] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
