@@ -439,6 +439,146 @@ export default function ConversationQuiz() {
 
   const band = scoreBands.find((b) => totalScore >= b.min && totalScore <= b.max) || scoreBands[0];
 
+  /* ─────────────────────────  Admin Export (in-memory)  ───────────────────────── */
+  const buildQuizArtifact = () => {
+    const questionBreakdown = quizQuestions.map((q) => {
+      const a = answers[q.id];
+      const score = Array.isArray(a) ? Math.min(a.reduce((s, v) => s + v, 0), 5) : (a as number) || 0;
+      return { questionId: q.id, title: q.title, stage: q.stage, score, maxScore: 5 };
+    });
+    return {
+      schemaVersion: "1.0",
+      submissionId: `quiz_${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      source: "lovable-quiz",
+      contact: {
+        firstName: contactInfo.firstName || null,
+        email: contactInfo.email || null,
+        primaryGoal: brandingData.primaryGoal || null,
+        speedPreference: brandingData.speedPreference || null,
+      },
+      quiz: {
+        quizType: "conversation-map",
+        totalScore,
+        maxScore: maxPossible,
+        tier: band.label,
+        diagnosis: band.diagnosis,
+        recommendation: band.recommendation,
+        modules: band.modules,
+        questionBreakdown,
+      },
+      brandBuilder: {
+        tagline: brandingData.tagline || null,
+        primaryCallToAction: brandingData.cta || null,
+        coreServiceSolution: brandingData.coreSolution || null,
+        painPoints: (brandingData.painPoints || "").split(/\n+/).map((s) => s.trim()).filter(Boolean),
+        communicationTone: brandingData.communicationTone || null,
+        budgetTimeline: brandingData.clientBudgetTimeline || null,
+        coreOfferInvestment: brandingData.coreOfferInvestment || null,
+        offerStructure: brandingData.offerStructure || null,
+        idealClient: brandingData.idealClient || null,
+        hurtingArea: brandingData.hurtingArea || null,
+        salesScript: brandingData.salesScript || null,
+        customerProfiles: brandingData.customerProfiles || null,
+        profileGoals: brandingData.profileGoals || null,
+        profileTriggers: brandingData.profileTriggers || null,
+        entryPoint: brandingData.entryPoint || null,
+        currentMomentum: brandingData.currentMomentum || null,
+        desiredMomentum: brandingData.desiredMomentum || null,
+        postEngagement: brandingData.postEngagement || null,
+      },
+      inference: {
+        icp: selectedIcp || null,
+        notes: null,
+      },
+      audit: {
+        submittedFrom: typeof window !== "undefined" ? window.location.href : null,
+        gHLSyncStatus: syncing ? "in_progress" : "complete",
+      },
+    };
+  };
+
+  const quizToMarkdown = (artifact: ReturnType<typeof buildQuizArtifact>): string => {
+    const L: string[] = [];
+    L.push(`# Intake Artifact — Conversation Map Quiz`);
+    L.push("");
+    L.push(`- Submission ID: ${artifact.submissionId}`);
+    L.push(`- Created At: ${artifact.createdAt}`);
+    L.push(`- Source: ${artifact.source}`);
+    L.push(`- GHL Sync Status: ${artifact.audit.gHLSyncStatus}`);
+    L.push("");
+    L.push(`## Contact`);
+    L.push(`- First Name: ${artifact.contact.firstName ?? "—"}`);
+    L.push(`- Email: ${artifact.contact.email ?? "—"}`);
+    L.push(`- Primary Goal: ${artifact.contact.primaryGoal ?? "—"}`);
+    L.push(`- Speed Preference: ${artifact.contact.speedPreference ?? "—"}`);
+    L.push("");
+    L.push(`## Quiz`);
+    L.push(`- Quiz Type: ${artifact.quiz.quizType}`);
+    L.push(`- Total Score: ${artifact.quiz.totalScore}`);
+    L.push(`- Max Score: ${artifact.quiz.maxScore}`);
+    L.push(`- Tier: ${artifact.quiz.tier}`);
+    L.push(`- Diagnosis: ${artifact.quiz.diagnosis}`);
+    L.push(`- Recommendation: ${artifact.quiz.recommendation}`);
+    L.push(`- Modules: ${artifact.quiz.modules.join(", ") || "—"}`);
+    L.push("");
+    L.push(`### Question Breakdown`);
+    L.push("| Question | Stage | Score | Max |", "|---|---|---|---|");
+    for (const qb of artifact.quiz.questionBreakdown) {
+      L.push(`| ${qb.title} | ${qb.stage} | ${qb.score} | ${qb.maxScore} |`);
+    }
+    L.push("");
+    L.push(`## Brand Builder`);
+    L.push(`- Tagline: ${artifact.brandBuilder.tagline ?? "—"}`);
+    L.push(`- Primary CTA: ${artifact.brandBuilder.primaryCallToAction ?? "—"}`);
+    L.push(`- Core Service / Solution: ${artifact.brandBuilder.coreServiceSolution ?? "—"}`);
+    L.push(`- Communication Tone: ${artifact.brandBuilder.communicationTone ?? "—"}`);
+    L.push(`- Budget Timeline: ${artifact.brandBuilder.budgetTimeline ?? "—"}`);
+    L.push(`- Pricing: ${artifact.brandBuilder.coreOfferInvestment ?? "—"}`);
+    L.push(`- Offer Structure: ${artifact.brandBuilder.offerStructure ?? "—"}`);
+    L.push(`- Ideal Client: ${artifact.brandBuilder.idealClient ?? "—"}`);
+    L.push(`- Hurting Area: ${artifact.brandBuilder.hurtingArea ?? "—"}`);
+    L.push(`- Sales Script: ${artifact.brandBuilder.salesScript ?? "—"}`);
+    L.push(`- Customer Profiles: ${artifact.brandBuilder.customerProfiles ?? "—"}`);
+    L.push(`- Profile Goals: ${artifact.brandBuilder.profileGoals ?? "—"}`);
+    L.push(`- Profile Triggers: ${artifact.brandBuilder.profileTriggers ?? "—"}`);
+    L.push(`- Entry Point: ${artifact.brandBuilder.entryPoint ?? "—"}`);
+    L.push(`- Current Momentum: ${artifact.brandBuilder.currentMomentum ?? "—"}`);
+    L.push(`- Desired Momentum: ${artifact.brandBuilder.desiredMomentum ?? "—"}`);
+    L.push(`- Post Engagement: ${artifact.brandBuilder.postEngagement ?? "—"}`);
+    L.push(`- Pain Points:`);
+    for (const p of artifact.brandBuilder.painPoints) L.push(`  - ${p}`);
+    if (artifact.brandBuilder.painPoints.length === 0) L.push(`  —`);
+    L.push("");
+    L.push(`## Inference`);
+    L.push(`- ICP: ${artifact.inference.icp ?? "—"}`);
+    return L.join("\n");
+  };
+
+  const handleCopyJson = async () => {
+    try {
+      await navigator.clipboard.writeText(JSON.stringify(buildQuizArtifact(), null, 2));
+      setCopied(true);
+      toast.success("JSON copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy");
+    }
+  };
+
+  const downloadFile = (content: string, filename: string, type: string) => {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(`${filename.split(".").pop()?.toUpperCase()} file downloaded`);
+  };
+
   const isCurrentAnswered = () => {
     const a = answers[question?.id];
     if (question?.multiSelect) return Array.isArray(a) && a.length > 0;
