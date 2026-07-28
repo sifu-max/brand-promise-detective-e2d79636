@@ -884,11 +884,74 @@ export default function ConversationQuiz() {
               </Button>
               <Button
                 onClick={nextBranding}
-                disabled={!isBrandingScreenValid()}
+                disabled={!isBrandingScreenValid() || isLoadingSwarm}
                 className="gap-2 px-6"
               >
-                {brandingScreen === totalBrandingScreens - 1 ? "See My Results" : "Next"}
+                {brandingScreen === totalBrandingScreens - 1
+                  ? isLoadingSwarm ? "Evaluating…" : "See My Results"
+                  : "Next"}
                 <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* ── PHASE: Dynamic follow-up (Swarm-requested fields) ── */}
+        {phase === "dynamic" && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold text-foreground">A few more details</h2>
+              <p className="text-muted-foreground">
+                Our analysis flagged {dynamicFields.length} high-value {dynamicFields.length === 1 ? "field" : "fields"} that will sharpen your results.
+              </p>
+            </div>
+
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                {dynamicFields.map((field) => (
+                  <div key={field.key} className="space-y-2">
+                    <Label htmlFor={`dyn-${field.key}`} className="text-sm font-medium">
+                      {field.label}
+                    </Label>
+                    {field.helpText && (
+                      <p className="text-xs text-muted-foreground">{field.helpText}</p>
+                    )}
+                    {field.type === "select" && field.options ? (
+                      <Select
+                        value={dynamicData[field.key] || ""}
+                        onValueChange={(v) => setDynamicData((p) => ({ ...p, [field.key]: v }))}
+                      >
+                        <SelectTrigger id={`dyn-${field.key}`}><SelectValue placeholder="Select…" /></SelectTrigger>
+                        <SelectContent>
+                          {field.options.map((opt) => (
+                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : field.type === "textarea" ? (
+                      <Textarea
+                        id={`dyn-${field.key}`}
+                        value={dynamicData[field.key] || ""}
+                        onChange={(e) => setDynamicData((p) => ({ ...p, [field.key]: e.target.value }))}
+                      />
+                    ) : (
+                      <Input
+                        id={`dyn-${field.key}`}
+                        value={dynamicData[field.key] || ""}
+                        onChange={(e) => setDynamicData((p) => ({ ...p, [field.key]: e.target.value }))}
+                      />
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => { setPhase("results"); syncToGHL(); }} className="gap-2">
+                Skip
+              </Button>
+              <Button onClick={submitDynamic} className="gap-2 px-6">
+                See My Results <ChevronRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
