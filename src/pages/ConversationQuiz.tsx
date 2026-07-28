@@ -495,7 +495,7 @@ export default function ConversationQuiz() {
           </DialogHeader>
           <div className="flex-1 overflow-hidden">
             <iframe
-              src="https://link.crmchains.com/widget/booking/BEsvGyKvUvfDTvi4Xhcf"
+              src="https://link.crmchains.com/widget/bookings/qualification-discovery"
               className="w-full h-full border-0"
               title="Book Strategy Call"
             />
