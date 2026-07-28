@@ -1,12 +1,28 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Users, BarChart3, Mail, Calendar, ExternalLink, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
+import { ArrowLeft, Users, BarChart3, Mail, Calendar, ExternalLink, ChevronDown, ChevronUp, RefreshCw, ClipboardList, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
+import { quizArtifactToMarkdown, type QuizArtifact } from "@/lib/quizArtifact";
+
+interface QuizSubmissionRow {
+  id: string;
+  quiz_type: string;
+  contact_email: string | null;
+  contact_first_name: string | null;
+  icp: string | null;
+  tier: string | null;
+  total_score: number | null;
+  max_score: number | null;
+  export_path: string | null;
+  exportUrl: string | null;
+  artifact: QuizArtifact;
+  created_at: string;
+}
 
 interface LeadRow {
   id: string;
