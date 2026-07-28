@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import crmchainsLogo from "@/assets/crmchains-logo.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import DynamicFieldsForm, { type DynamicField } from "@/components/DynamicFieldsForm";
 
 /* ─────────────────────────  ICP Definitions  ───────────────────────── */
 
@@ -382,14 +383,6 @@ const stages = [
 
 type Phase = "icp" | "contact" | "quiz" | "branding" | "dynamic" | "results";
 
-type DynamicField = {
-  key: string;
-  label: string;
-  type?: "text" | "textarea" | "select";
-  options?: string[];
-  helpText?: string;
-};
-
 export default function ConversationQuiz() {
   const [phase, setPhase] = useState<Phase>("icp");
   const [bookingOpen, setBookingOpen] = useState(false);
@@ -402,7 +395,6 @@ export default function ConversationQuiz() {
   const [brandingScreen, setBrandingScreen] = useState(0);
   const [syncing, setSyncing] = useState(false);
   const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([]);
-  const [dynamicData, setDynamicData] = useState<Record<string, string>>({});
   const [isLoadingSwarm, setIsLoadingSwarm] = useState(false);
 
   // Load GHL embed script
@@ -517,10 +509,9 @@ export default function ConversationQuiz() {
     }
   };
 
-  const submitDynamic = () => {
-    setBrandingData((prev) => ({ ...prev, ...dynamicData }));
+  const handleDynamicSuccess = (answers: Record<string, string>) => {
+    setBrandingData((prev) => ({ ...prev, ...answers }));
     setPhase("results");
-    // Fire GHL sync with merged data
     setTimeout(() => syncToGHL(), 0);
   };
 
@@ -899,62 +890,20 @@ export default function ConversationQuiz() {
 
         {/* ── PHASE: Dynamic follow-up (Swarm-requested fields) ── */}
         {phase === "dynamic" && (
-          <div className="space-y-6 animate-in fade-in duration-300">
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold text-foreground">A few more details</h2>
-              <p className="text-muted-foreground">
-                Our analysis flagged {dynamicFields.length} high-value {dynamicFields.length === 1 ? "field" : "fields"} that will sharpen your results.
-              </p>
-            </div>
-
-            <Card>
-              <CardContent className="p-6 space-y-4">
-                {dynamicFields.map((field) => (
-                  <div key={field.key} className="space-y-2">
-                    <Label htmlFor={`dyn-${field.key}`} className="text-sm font-medium">
-                      {field.label}
-                    </Label>
-                    {field.helpText && (
-                      <p className="text-xs text-muted-foreground">{field.helpText}</p>
-                    )}
-                    {field.type === "select" && field.options ? (
-                      <Select
-                        value={dynamicData[field.key] || ""}
-                        onValueChange={(v) => setDynamicData((p) => ({ ...p, [field.key]: v }))}
-                      >
-                        <SelectTrigger id={`dyn-${field.key}`}><SelectValue placeholder="Select…" /></SelectTrigger>
-                        <SelectContent>
-                          {field.options.map((opt) => (
-                            <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    ) : field.type === "textarea" ? (
-                      <Textarea
-                        id={`dyn-${field.key}`}
-                        value={dynamicData[field.key] || ""}
-                        onChange={(e) => setDynamicData((p) => ({ ...p, [field.key]: e.target.value }))}
-                      />
-                    ) : (
-                      <Input
-                        id={`dyn-${field.key}`}
-                        value={dynamicData[field.key] || ""}
-                        onChange={(e) => setDynamicData((p) => ({ ...p, [field.key]: e.target.value }))}
-                      />
-                    )}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <div className="flex justify-between">
-              <Button variant="outline" onClick={() => { setPhase("results"); syncToGHL(); }} className="gap-2">
-                Skip
-              </Button>
-              <Button onClick={submitDynamic} className="gap-2 px-6">
-                See My Results <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
+          <div className="max-w-2xl mx-auto p-6 bg-card rounded-xl shadow-lg border animate-in fade-in duration-300">
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Just a few quick details...
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Our AI Swarm identified a couple of specific gaps to make your strategy call 100% actionable.
+            </p>
+            <DynamicFieldsForm
+              fields={dynamicFields}
+              agencyId={contactInfo.email}
+              jobId={`job_${Date.now()}`}
+              webhookUrl={import.meta.env.VITE_N8N_DYNAMIC_FIELDS_WEBHOOK_URL}
+              onSuccess={handleDynamicSuccess}
+            />
           </div>
         )}
 
