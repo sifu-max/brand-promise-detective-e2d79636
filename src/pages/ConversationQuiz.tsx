@@ -114,6 +114,7 @@ export default function ConversationQuiz() {
   const [seedAnswers, setSeedAnswers] = useState<Record<string, { label: string; points: number }>>({});
   const [dynamicAnswers, setDynamicAnswers] = useState<Record<string, string>>({});
   const [dynamicFields, setDynamicFields] = useState<DynamicField[]>([]);
+  const [intakeId, setIntakeId] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [adminMode, setAdminMode] = useState(false);
 
@@ -187,6 +188,7 @@ export default function ConversationQuiz() {
             ? { key: f, label: f.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") }
             : f
         );
+        if (result?.intake_id) setIntakeId(result.intake_id);
         setDynamicFields(fields);
         setPhase("dynamic_quiz");
       } else {
