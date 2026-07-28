@@ -474,9 +474,53 @@ export default function ConversationQuiz() {
     if (brandingScreen < totalBrandingScreens - 1) {
       setBrandingScreen((p) => p + 1);
     } else {
+      handleBrandingComplete();
+    }
+  };
+
+  const handleBrandingComplete = async () => {
+    const swarmUrl = import.meta.env.VITE_N8N_SWARM_INTAKE_URL;
+    if (!swarmUrl) {
       setPhase("results");
       syncToGHL();
+      return;
     }
+    setIsLoadingSwarm(true);
+    try {
+      const response = await fetch(swarmUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contactName: contactInfo.firstName,
+          contactEmail: contactInfo.email,
+          brandData: { ...contactInfo, icp: selectedIcp, ...brandingData },
+        }),
+      });
+      const result = await response.json();
+      if (Array.isArray(result?.missing_high_value_fields) && result.missing_high_value_fields.length > 0) {
+        const fields: DynamicField[] = result.missing_high_value_fields.map((f: DynamicField | string) =>
+          typeof f === "string" ? { key: f, label: f } : f
+        );
+        setDynamicFields(fields);
+        setPhase("dynamic");
+      } else {
+        setPhase("results");
+        syncToGHL();
+      }
+    } catch (error) {
+      console.error("Swarm evaluation failed, advancing to results", error);
+      setPhase("results");
+      syncToGHL();
+    } finally {
+      setIsLoadingSwarm(false);
+    }
+  };
+
+  const submitDynamic = () => {
+    setBrandingData((prev) => ({ ...prev, ...dynamicData }));
+    setPhase("results");
+    // Fire GHL sync with merged data
+    setTimeout(() => syncToGHL(), 0);
   };
 
   const prevBranding = () => {
