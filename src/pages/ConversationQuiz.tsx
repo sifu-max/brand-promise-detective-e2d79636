@@ -1172,6 +1172,29 @@ export default function ConversationQuiz() {
                   </Button>
                 </div>
 
+                {adminMode && (
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-border">
+                    <Button variant="outline" size="sm" onClick={handleCopyJson}>
+                      {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
+                      {copied ? "Copied" : "Copy JSON"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => downloadFile(JSON.stringify(buildQuizArtifact(), null, 2), `intake-quiz-${new Date().toISOString().split("T")[0]}.json`, "application/json")}
+                    >
+                      <Download className="h-4 w-4 mr-2" /> Download JSON
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => downloadFile(quizToMarkdown(buildQuizArtifact()), `intake-quiz-${new Date().toISOString().split("T")[0]}.md`, "text/markdown")}
+                    >
+                      <Download className="h-4 w-4 mr-2" /> Download Markdown
+                    </Button>
+                  </div>
+                )}
+
                 {syncing && (
                   <p className="text-xs text-muted-foreground text-center animate-pulse">Saving your results…</p>
                 )}
