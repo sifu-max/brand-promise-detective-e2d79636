@@ -230,15 +230,16 @@ export default function ConversationQuiz() {
       });
 
       const result = await response.json();
+      console.log("N8N RAW RESPONSE:", result);
 
       // Unwrap n8n wrapper safely:
-      const payload = result.json || result.body || result;
+      const payload = result.json ?? result.body ?? result;
 
       const isPartial = payload?.normalization_status === "partial";
       const missing = Array.isArray(payload?.missing_high_value_fields) ? payload.missing_high_value_fields : [];
 
       if (isPartial && missing.length > 0) {
-        const fields: DynamicField[] = missing.map((f: any) => ({
+        const fields: DynamicField[] = missing.map((f: string | Partial<DynamicField>) => ({
           key: typeof f === "string" ? f : f.key,
           label:
             typeof f === "string"
@@ -259,7 +260,7 @@ export default function ConversationQuiz() {
         syncToGHL({});
       }
     } catch (error) {
-      console.error("Swarm evaluation error:", error);
+      console.error("Swarm evaluation error:", error instanceof Error ? error.stack : error);
       toast.error("Swarm evaluation bypassed. Advancing to results.");
       setPhase("results");
       syncToGHL({});
