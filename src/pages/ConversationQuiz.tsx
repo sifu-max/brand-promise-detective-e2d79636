@@ -529,6 +529,25 @@ export default function ConversationQuiz() {
                   {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
                   {band.cta} <ArrowRight className="w-4 h-4" />
                 </Button>
+
+                {adminMode && (
+                  <div className="mt-4 p-4 rounded-lg border border-primary/30 bg-primary/5 space-y-3">
+                    <div className="text-xs uppercase tracking-wider font-semibold text-primary">
+                      Admin Export
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button variant="outline" size="sm" onClick={handleCopyJson}>
+                        <Copy className="w-4 h-4 mr-2" /> Copy JSON
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleDownloadJson}>
+                        <Download className="w-4 h-4 mr-2" /> Download JSON
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleDownloadMd}>
+                        <FileText className="w-4 h-4 mr-2" /> Download Markdown
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
