@@ -323,6 +323,21 @@ export const brandingScreens: { title: string; subtitle: string; fields: Brandin
       { key: "postEngagement", label: "What should happen after someone engages?", type: "textarea", placeholder: "Describe the ideal next steps..." },
     ],
   },
+  {
+    title: "Brand DNA & Identity",
+    subtitle: "Share your website, logo, colors, and fonts so we can match your brand.",
+    fields: [
+      { key: "source_url", label: "Website URL", type: "text", placeholder: "https://yourdomain.com" },
+      { key: "logo_url", label: "Logo URL", type: "text", placeholder: "https://yourdomain.com/logo.png" },
+      { key: "brand_primary_color", label: "Primary Color", type: "text", placeholder: "#1E40AF" },
+      { key: "brand_secondary_color", label: "Secondary Color", type: "text", placeholder: "#64748B" },
+      { key: "brand_accent_color", label: "Accent Color", type: "text", placeholder: "#F59E0B" },
+      { key: "brand_heading_font", label: "Heading Font", type: "text", placeholder: "e.g. Playfair Display" },
+      { key: "brand_body_font", label: "Body Font", type: "text", placeholder: "e.g. Source Sans" },
+      { key: "video_url", label: "Brand Video URL", type: "text", placeholder: "https://youtube.com/watch?v=..." },
+      { key: "embed_links", label: "Brand Assets / Supporting Files Link", type: "text", placeholder: "https://drive.google.com/..." },
+    ],
+  },
 ];
 
 export const stages = [
