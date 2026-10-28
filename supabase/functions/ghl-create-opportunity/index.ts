@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { sendTemplateEmail } from "../_shared/transactional-email-templates/send-email.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -193,6 +194,36 @@ serve(async (req) => {
         if (insertError) console.error("quiz_submissions insert error:", insertError);
       } catch (e) {
         console.error("quiz_submissions insert threw:", e);
+      }
+    }
+
+    // Email an admin copy when a Conversation Quiz is completed
+    if (flatBrandData.quizType === "conversation-map") {
+      try {
+        const toRows = (o: unknown) =>
+          o && typeof o === "object"
+            ? Object.entries(o as Record<string, unknown>)
+                .filter(([, v]) => v !== undefined && v !== null && v !== "")
+                .map(([k, v]) => ({ label: k, value: Array.isArray(v) ? v.join(", ") : String(v) }))
+            : [];
+        const breakdown = Array.isArray(flatBrandData.questionBreakdown) ? flatBrandData.questionBreakdown as Array<Record<string, unknown>> : [];
+        const answers = breakdown.map((q) => ({ label: String(q.title ?? q.questionId), value: `${q.answer ?? ""} (${q.score ?? 0}/${q.maxScore ?? 5})` }));
+        const result = await sendTemplateEmail("quiz-completed-admin", "sifu@medalloinnovations.ai", {
+          templateData: {
+            firstName: contactName || "",
+            email: contactEmail || "",
+            icp: String(flatBrandData.icp ?? ""),
+            tier: String(flatBrandData.tier ?? ""),
+            score: `${flatBrandData.totalScore ?? "?"} / ${flatBrandData.maxScore ?? "?"}`,
+            answers,
+            branding: [...toRows(brandData.brandingIntake), ...toRows(brandData.dynamicAnswers)],
+            exportUrl: exportUrl || undefined,
+          },
+          idempotencyKey: `quiz-completed-admin-${exportPath || crypto.randomUUID()}`,
+        });
+        console.log("Admin quiz email result:", JSON.stringify(result));
+      } catch (e) {
+        console.error("Admin quiz email failed:", e);
       }
     }
 
