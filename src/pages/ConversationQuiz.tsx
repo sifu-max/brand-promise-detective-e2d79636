@@ -201,6 +201,7 @@ export default function ConversationQuiz() {
             brandingIntake: brandingIntakePayload(),
             dynamicAnswers: finalDynamicAnswers,
           },
+          fullExportData: { ...buildArtifact(), brandBuilder: { brandingIntake: brandingIntakePayload(), dynamicAnswers: finalDynamicAnswers } },
         },
       });
     } catch (err) {
