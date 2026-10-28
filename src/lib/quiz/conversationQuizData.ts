@@ -1,0 +1,334 @@
+import { createElement } from "react";
+import { AlertTriangle, Target, TrendingUp, Zap } from "lucide-react";
+
+/* ─────────────────────────  Quiz Questions  ───────────────────────── */
+
+export interface QuizOption {
+  label: string;
+  points: number;
+}
+
+export interface QuizQuestion {
+  id: string;
+  stage: string;
+  title: string;
+  prompt: string;
+  beliefBefore: string;
+  beliefAfter: string;
+  purpose: string;
+  options: QuizOption[];
+  multiSelect?: boolean;
+  unscored?: boolean;
+}
+export const quizQuestions: QuizQuestion[] = [
+  // ── PROBLEM AWARENESS ──
+  {
+    id: "capture",
+    stage: "Problem Awareness",
+    title: "Conversation Capture",
+    prompt: "How confident are you that your business captures every incoming customer conversation — calls, texts, social DMs, website forms?",
+    beliefBefore: "I think we're doing okay.",
+    beliefAfter: "There might be leads I'm not even seeing.",
+    purpose: "Diagnose lead capture reliability",
+    options: [
+      { label: "We capture and track everything automatically", points: 5 },
+      { label: "Most conversations are captured", points: 3 },
+      { label: "Some slip through the cracks", points: 2 },
+      { label: "We probably miss a lot", points: 1 },
+    ],
+  },
+  {
+    id: "channels",
+    stage: "Problem Awareness",
+    title: "Communication Channels",
+    prompt: "Where do customers typically start conversations with your business?",
+    beliefBefore: "We cover the main channels.",
+    beliefAfter: "We're spread too thin — or missing channels entirely.",
+    purpose: "Map channel complexity & gaps",
+    multiSelect: true,
+    options: [
+      { label: "Phone calls", points: 1 },
+      { label: "SMS / text", points: 1 },
+      { label: "Email", points: 1 },
+      { label: "Social media (DMs)", points: 1 },
+      { label: "Website funnels / forms", points: 1 },
+    ],
+  },
+  // ── SELF DIAGNOSIS ──
+  {
+    id: "speed",
+    stage: "Self Diagnosis",
+    title: "Response Speed",
+    prompt: "When someone reaches out, how quickly do they usually get a response?",
+    beliefBefore: "We respond fast enough.",
+    beliefAfter: "Speed matters more than I thought — every minute costs money.",
+    purpose: "Expose speed-to-lead gap",
+    options: [
+      { label: "Immediate automated + personalized response", points: 5 },
+      { label: "Quick automated response within minutes", points: 4 },
+      { label: "Manual response within about an hour", points: 3 },
+      { label: "Responses are inconsistent", points: 2 },
+      { label: "Sometimes no response happens", points: 1 },
+    ],
+  },
+  {
+    id: "centralization",
+    stage: "Self Diagnosis",
+    title: "System Centralization",
+    prompt: "How are your client conversations and engagements managed today?",
+    beliefBefore: "Our tools work fine.",
+    beliefAfter: "Scattered tools = scattered results.",
+    purpose: "Diagnose tool fragmentation",
+    options: [
+      { label: "Everything is centralized in one system", points: 5 },
+      { label: "2–3 tools manage conversations", points: 3 },
+      { label: "Spread across multiple apps", points: 2 },
+      { label: "Completely scattered", points: 1 },
+    ],
+  },
+  // ── CONSEQUENCE AMPLIFICATION ──
+  {
+    id: "followup",
+    stage: "Consequence Amplification",
+    title: "Lead Follow-Up",
+    prompt: "If a potential customer doesn't respond or goes cold, what typically happens?",
+    beliefBefore: "We follow up when we can.",
+    beliefAfter: "Every unworked lead is lost revenue — multiplied over months.",
+    purpose: "Reveal the cost of inconsistent follow-up",
+    options: [
+      { label: "Automated follow-up and reactivation campaigns run automatically", points: 5 },
+      { label: "We follow up manually and occasionally revisit old leads", points: 4 },
+      { label: "We follow up sometimes but inconsistently", points: 3 },
+      { label: "We rarely follow up or revisit old leads", points: 2 },
+      { label: "Nothing usually happens", points: 1 },
+    ],
+  },
+  {
+    id: "afterhours",
+    stage: "Consequence Amplification",
+    title: "After-Hours Coverage",
+    prompt: "If someone calls or messages your business after hours, what happens?",
+    beliefBefore: "People understand we're closed.",
+    beliefAfter: "My competitors answer 24/7 — I'm losing deals while I sleep.",
+    purpose: "Expose the after-hours revenue gap",
+    options: [
+      { label: "AI answers, qualifies, and books appointments", points: 5 },
+      { label: "Voicemail with automated follow-up", points: 3 },
+      { label: "Voicemail only", points: 2 },
+      { label: "Missed call — no response", points: 1 },
+    ],
+  },
+  // ── SOLUTION FRAMING ──
+  {
+    id: "referrals",
+    stage: "Solution Framing",
+    title: "Referral & Review Engine",
+    prompt: "Do you have an automated system that asks happy clients for reviews or referrals?",
+    beliefBefore: "Referrals happen naturally.",
+    beliefAfter: "Without a system, I'm leaving the easiest revenue on the table.",
+    purpose: "Reveal untapped referral revenue",
+    options: [
+      { label: "Yes — automated review requests + referral campaigns", points: 5 },
+      { label: "We ask sometimes but it's manual", points: 3 },
+      { label: "Rarely", points: 2 },
+      { label: "No system at all", points: 1 },
+    ],
+  },
+  {
+    id: "payments",
+    stage: "Solution Framing",
+    title: "Payment Automation",
+    prompt: "How do you collect payments from clients?",
+    beliefBefore: "Invoicing is just admin work.",
+    beliefAfter: "Slow invoicing = slow cash flow = slower growth.",
+    purpose: "Diagnose payment friction",
+    options: [
+      { label: "Automated invoicing with recurring billing & auto-reminders", points: 5 },
+      { label: "Manual invoices with online payment links", points: 4 },
+      { label: "Manual invoices, chase payments by phone/email", points: 2 },
+      { label: "No consistent invoicing process", points: 1 },
+    ],
+  },
+  // ── QUALIFICATION ──
+  {
+    id: "qualification",
+    stage: "Solution Framing",
+    title: "Lead Qualification",
+    prompt: "Do you collect structured information from leads before your team talks to them?",
+    beliefBefore: "We just get on the phone.",
+    beliefAfter: "Pre-qualified leads close faster and waste less of my team's time.",
+    purpose: "Diagnose intake/qualification process",
+    options: [
+      { label: "Automated intake forms with scoring", points: 5 },
+      { label: "Basic forms but no scoring", points: 3 },
+      { label: "We ask questions manually", points: 2 },
+      { label: "No qualification process", points: 1 },
+    ],
+  },
+  {
+    id: "metrics",
+    stage: "Solution Framing",
+    title: "Performance Visibility",
+    prompt: "Can you easily see your response time, show rate, and conversion rate right now?",
+    beliefBefore: "We know our numbers well enough.",
+    beliefAfter: "If I can't measure it, I can't improve it.",
+    purpose: "Expose lack of actionable data",
+    options: [
+      { label: "Yes — real-time dashboard with all key metrics", points: 5 },
+      { label: "Some metrics in different tools", points: 3 },
+      { label: "Limited visibility", points: 2 },
+      { label: "No tracking at all", points: 1 },
+    ],
+  },
+];
+  {
+    id: "hurting_area",
+    stage: "Solution Framing",
+    title: "Primary Bottleneck",
+    prompt: "Which of these areas is hurting your business the most right now?",
+    beliefBefore: "Everything is a little bit broken.",
+    beliefAfter: "Fixing the biggest bottleneck first unlocks everything else.",
+    purpose: "Identify the #1 priority (not scored)",
+    unscored: true,
+    options: [
+      { label: "Speed-to-lead gap & missed call leakage", points: 0 },
+      { label: "Rising lead costs / poor ad return", points: 0 },
+      { label: "High no-show rates for appointments", points: 0 },
+      { label: "Dormant leads that go cold without follow-up", points: 0 },
+      { label: "Tool fragmentation & manual data entry", points: 0 },
+      { label: "Inconsistent follow-up after quotes or proposals", points: 0 },
+      { label: "Few reviews or referrals", points: 0 },
+      { label: "Slow or missed payments", points: 0 },
+    ],
+  },
+];
+
+export const maxPossible = 50;
+export const scoreBands = [
+  {
+    min: 0,
+    max: 15,
+    label: "Severe Revenue Leakage",
+    color: "text-destructive",
+    bg: "bg-destructive/10 border-destructive/30",
+    icon: createElement(AlertTriangle, { className: "w-7 h-7" }),
+    headline: "You're losing revenue at nearly every stage.",
+    diagnosis:
+      "Your business is missing conversations, responding inconsistently, has no automated follow-up, no referral engine, and fragmented payment collection. Revenue is leaking at nearly every touchpoint.",
+    recommendation:
+      "Start with the fundamentals: capture every conversation, centralize communication, install automated follow-up, and build a referral + payment system.",
+    modules: ["Inbound Caller", "Web Chat", "SMS Nurture", "Reactivation Engine"],
+    cta: "Book a strategy call to plug your biggest leaks",
+    urgency: "Businesses in this range typically recover 30–50% of lost revenue within 90 days of fixing these systems.",
+  },
+  {
+    min: 16,
+    max: 28,
+    label: "Fragmented Infrastructure",
+    color: "text-[hsl(35,90%,50%)]",
+    bg: "bg-[hsl(35,90%,50%)]/10 border-[hsl(35,90%,50%)]/30",
+    icon: createElement(Target, { className: "w-7 h-7" }),
+    headline: "You have pieces — but the gaps are costing you.",
+    diagnosis:
+      "Some systems are in place, but critical gaps remain in areas like follow-up consistency, referral generation, payment automation, or after-hours coverage.",
+    recommendation:
+      "Centralize your channels, automate your most important follow-up paths, and close the gaps in referrals and invoicing.",
+    modules: ["Multi-Channel Messenger", "AI Intake", "Review Booster", "Payment Automation"],
+    cta: "Book a strategy call to map your highest-impact upgrades",
+    urgency: "Most businesses at this level see measurable improvement within 60 days of closing 2–3 key gaps.",
+  },
+  {
+    min: 29,
+    max: 39,
+    label: "Strong Communication Systems",
+    color: "text-primary",
+    bg: "bg-primary/10 border-primary/30",
+    icon: createElement(TrendingUp, { className: "w-7 h-7" }),
+    headline: "Solid foundation — time to optimize for conversion.",
+    diagnosis:
+      "You have a solid communication and revenue foundation. Most systems are in place, but there's room to optimize conversion rates, referral workflows, and analytics.",
+    recommendation:
+      "Optimize routing, qualification, conversion flows, and tighten up remaining gaps. Focus on turning existing demand into more booked appointments and closed deals.",
+    modules: ["Lead Scoring", "Calendar Workflows", "Insights Dashboard"],
+    cta: "Book a strategy call to optimize what you already have",
+    urgency: "At this level, optimization typically yields 15–25% improvement in conversion rates.",
+  },
+  {
+    min: 40,
+    max: 50,
+    label: "Advanced Revenue Infrastructure",
+    color: "text-[hsl(145,60%,40%)]",
+    bg: "bg-[hsl(145,60%,40%)]/10 border-[hsl(145,60%,40%)]/30",
+    icon: createElement(Zap, { className: "w-7 h-7" }),
+    headline: "Your systems are performing at a high level.",
+    diagnosis:
+      "Your revenue communication systems are well structured across all key areas. You're capturing, qualifying, nurturing, and converting at a high level.",
+    recommendation:
+      "Shift from setup to performance engineering — improve analytics, A/B test automations, and engineer better revenue performance across every touchpoint.",
+    modules: ["Performance Management", "Advanced Analytics", "Scale Optimization"],
+    cta: "Book a strategy call for advanced optimization and scale",
+    urgency: "Top-performing businesses at this level focus on compounding gains — small improvements multiply across high volume.",
+  },
+];
+
+/* ─────────────────────────  Branding Intake Screens  ───────────────────────── */
+
+export interface BrandingField {
+  key: string;
+  label: string;
+  type: "text" | "textarea" | "select";
+  placeholder?: string;
+  options?: string[];
+  required?: boolean;
+}
+
+export const brandingScreens: { title: string; subtitle: string; fields: BrandingField[] }[] = [
+  {
+    title: "Business Foundation",
+    subtitle: "Tell us about your brand voice and core offer.",
+    fields: [
+      { key: "tagline", label: "Business Tagline", type: "text", placeholder: 'e.g. "Your Growth, Our Mission."' },
+      { key: "cta", label: "What is your Primary Call to Action (CTA)?", type: "text", placeholder: "e.g. 'Book a Free Consultation', 'Get a Quote'" },
+      { key: "coreSolution", label: "Core Service/Solution: What do you do to solve the urgent problem?", type: "textarea", placeholder: "Describe your core service..." },
+      { key: "communicationTone", label: "Communication Tone", type: "select", options: ["Professional", "Casual/Friendly", "Urgent/Direct"], required: true },
+    ],
+  },
+  {
+    title: "Offer & Investment",
+    subtitle: "Define your pricing and ideal client profile.",
+    fields: [
+      { key: "clientBudgetTimeline", label: "What is your client's typical budget and timeline for solving this problem?", type: "textarea", placeholder: "e.g. $500–$5,000, within 30 days" },
+      { key: "coreOfferInvestment", label: "What is the price or fee for the customer?", type: "text", placeholder: "e.g. $2,500/mo or $10,000 one-time" },
+      { key: "offerStructure", label: "Offer Structure: What clear options will you offer?", type: "select", options: ["Basic & Premium Options", "Single Price Offer", "Tiered (3+ Options)"] },
+      { key: "idealClient", label: "Ideal Client (Niche): Who is the primary audience you serve?", type: "text", placeholder: "e.g. Families, 35+, Homeowners" },
+      { key: "painPoints", label: "What are the core pain points you solve for your ideal clients?", type: "textarea", placeholder: "List the key problems..." },
+    ],
+  },
+  {
+    title: "Sales & Customer Profiles",
+    subtitle: "Help us understand your customers and sales approach.",
+    fields: [
+      { key: "salesScript", label: "Sales Script Formula: Problem → Solution → Benefits → Investment. Outline your approach.", type: "textarea", placeholder: "Describe your sales flow..." },
+      { key: "customerProfiles", label: "What are your main customer profiles, and which offer should each one be matched with?", type: "textarea", placeholder: "Profile A → Offer X, Profile B → Offer Y..." },
+      { key: "profileGoals", label: "What is each profile trying to solve or accomplish?", type: "textarea", placeholder: "Describe goals per profile..." },
+      { key: "profileTriggers", label: "What makes each profile take action?", type: "textarea", placeholder: "Describe what triggers them to buy..." },
+    ],
+  },
+  {
+    title: "Momentum & Engagement",
+    subtitle: "Map where engagement is happening and where you want more.",
+    fields: [
+      { key: "entryPoint", label: "What asset or entry point do they usually interact with first?", type: "textarea", placeholder: "e.g. Google search, social ad, referral..." },
+      { key: "currentMomentum", label: "Where is momentum already happening?", type: "textarea", placeholder: "Describe what's working..." },
+      { key: "desiredMomentum", label: "Where would you like to create more momentum?", type: "textarea", placeholder: "Describe where you want growth..." },
+      { key: "postEngagement", label: "What should happen after someone engages?", type: "textarea", placeholder: "Describe the ideal next steps..." },
+    ],
+  },
+];
+
+export const stages = [
+  "Problem Awareness",
+  "Self Diagnosis",
+  "Consequence Amplification",
+  "Solution Framing",
+];
