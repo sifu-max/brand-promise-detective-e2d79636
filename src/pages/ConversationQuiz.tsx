@@ -239,18 +239,25 @@ export default function ConversationQuiz() {
       const missing = Array.isArray(payload?.missing_high_value_fields) ? payload.missing_high_value_fields : [];
 
       if (isPartial && missing.length > 0) {
-        const fields: DynamicField[] = missing.map((f: string | Partial<DynamicField>) => ({
-          key: typeof f === "string" ? f : f.key,
-          label:
-            typeof f === "string"
-              ? f
-                  .split("_")
-                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-                  .join(" ")
-              : f.label || f.key,
-          type: f.type || "text",
-          required: f.required ?? false,
-        }));
+        const fields: DynamicField[] = missing.map((f: string | Partial<DynamicField>) => {
+          if (typeof f === "string") {
+            return {
+              key: f,
+              label: f
+                .split("_")
+                .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(" "),
+              type: "text" as const,
+              required: false,
+            };
+          }
+          return {
+            key: f.key,
+            label: f.label || f.key,
+            type: f.type || ("text" as const),
+            required: f.required ?? false,
+          };
+        });
 
         if (payload?.intake_id) setIntakeId(payload.intake_id);
         setDynamicFields(fields);
