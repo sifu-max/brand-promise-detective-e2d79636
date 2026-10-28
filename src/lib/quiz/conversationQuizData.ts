@@ -180,7 +180,6 @@ export const quizQuestions: QuizQuestion[] = [
       { label: "No tracking at all", points: 1 },
     ],
   },
-];
   {
     id: "hurting_area",
     stage: "Solution Framing",
